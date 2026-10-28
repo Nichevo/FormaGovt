@@ -182,3 +182,28 @@ button.link { text-align: left; }
 .readout { margin: 8px 0 0; }
 .poach-note { border-left: 3px solid #c62828; padding-left: 8px; }
 .results li button.link { display: inline; }
+.chip.taken { opacity: 0.55; }
+
+/* Phase 4b: tips, history, sharing, compass, About */
+.app-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.app-header .link { margin-top: 16px; white-space: nowrap; }
+.coach { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; background: var(--surface); border: 1px solid var(--accent); border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.95rem; }
+.coach strong { color: var(--accent); }
+.coach span { flex: 1 1 240px; }
+.coach-off { text-align: right; margin: -8px 0 8px; }
+.small { font-size: 0.85rem; }
+.history { list-style: none; padding: 0; margin: 0 0 12px; }
+.history li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 10px; border-left: 4px solid; border-bottom: 1px solid var(--border); }
+.row-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; }
+.challenge-note { border-color: var(--accent); }
+.compass { margin: 0; }
+.compass figcaption { font-size: 0.9rem; margin-bottom: 6px; }
+.compass svg { width: 100%; max-width: 300px; height: auto; display: block; color: var(--text); }
+.compass .frame { fill: none; stroke: var(--border); }
+.compass .axis-line { stroke: var(--border); }
+.compass .axis { font-size: 10px; fill: var(--muted); }
+.compass .label { font-size: 11px; fill: var(--text); font-weight: 600; }
+.compass .comfort { fill: none; stroke-width: 1.5; stroke-dasharray: 4 3; }
+.compass .drift { stroke: currentColor; stroke-width: 2; }
+.about h3 { margin-bottom: 4px; }
+.about li { margin: 4px 0; }

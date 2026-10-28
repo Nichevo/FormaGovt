@@ -1,6 +1,14 @@
 import type { Party, Policy } from '../data/schema';
 import { budgetFor, type Budget } from './budget';
-import { compatibility, eligiblePortfolios, evaluateOffer, reactionTo, type Offer, type OfferResponse } from './negotiation';
+import {
+  compatibility,
+  eligiblePortfolios,
+  evaluateOffer,
+  reactionTo,
+  type Offer,
+  type OfferResponse,
+  type PortfolioId,
+} from './negotiation';
 import { createRng } from './random';
 import { voterMood, type VoterMood } from './voters';
 
@@ -193,6 +201,16 @@ export function agreedPolicies(state: GameState, parties: Party[], exceptPartner
   return [...ids].map((id) => byId.get(id)).filter((p): p is Policy => p !== undefined);
 }
 
+/** Cabinet roles promised in deals signed or being signed, with the partner holding each. */
+export function takenPortfolios(state: GameState, exceptPartnerId?: string): Map<PortfolioId, string> {
+  const taken = new Map<PortfolioId, string>();
+  for (const [id, p] of Object.entries(state.partners)) {
+    if (id === exceptPartnerId || !p.deal || (p.status !== 'signed' && p.status !== 'ratifying')) continue;
+    for (const portfolio of p.deal.portfolios) taken.set(portfolio, id);
+  }
+  return taken;
+}
+
 /** Plays one offer, which uses up the day. Returns the new state; the input is not changed. */
 export function makeOffer(state: GameState, parties: Party[], offer: Offer): GameState {
   if (state.outcome !== 'playing') return state;
@@ -201,6 +219,9 @@ export function makeOffer(state: GameState, parties: Party[], offer: Offer): Gam
   const current = state.partners[offer.partnerId];
   if (!current || (current.status !== 'open' && current.status !== 'rival')) return state;
   const poaching = current.status === 'rival';
+  // A cabinet role can only be promised once.
+  const taken = takenPortfolios(state, partner.id);
+  offer = { ...offer, portfolios: offer.portfolios.filter((p) => !taken.has(p)) };
 
   const otherAgreed = agreedPolicies(state, parties, partner.id);
   const offered = [...partner.policies, ...player.policies].filter(
@@ -213,6 +234,7 @@ export function makeOffer(state: GameState, parties: Party[], offer: Offer): Gam
     pressure: pressureFor(state, parties, partner.id),
     otherAgreed,
     budgetChange: budgetFor([...otherAgreed, ...offered]).change,
+    takenPortfolios: [...taken.keys()],
   });
   if (poaching && response.kind === 'accept' && response.utility < response.threshold + POACH_PREMIUM) {
     // Good enough to sign fresh, not good enough to break a deal: they ask for more.

@@ -100,6 +100,8 @@ export interface NegotiationContext {
   otherAgreed?: Policy[];
   /** Change to the operating balance (NZ$m a year) from the whole programme if this offer is agreed. */
   budgetChange?: number;
+  /** Cabinet roles already promised to other partners. */
+  takenPortfolios?: PortfolioId[];
 }
 
 export type ResponseKind = 'accept' | 'counter' | 'hold' | 'walk';
@@ -204,7 +206,9 @@ export function evaluateOffer(offer: Offer, ctx: NegotiationContext): OfferRespo
       return { kind: 'counter', utility, threshold, redLines, missingBottomLines, counter: { addPolicy: nextPolicy } };
     }
     if (offer.arrangement === 'coalition') {
-      const portfolio = eligiblePortfolios(partner).find((p) => !offer.portfolios.includes(p));
+      const portfolio = eligiblePortfolios(partner).find(
+        (p) => !offer.portfolios.includes(p) && !(ctx.takenPortfolios ?? []).includes(p),
+      );
       if (portfolio) {
         return { kind: 'counter', utility, threshold, redLines, missingBottomLines, counter: { addPortfolio: portfolio } };
       }

@@ -10,14 +10,14 @@ Once GitHub Pages is switched on (below), the game is at **https://nichevo.githu
 
 ## Status
 
-Phases 1 to 3 of 5 and the first half of phase 4 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The other big party leads a rival bloc that courts the same partners each day, pressure builds as either side nears a majority, and a graph tracks the race. Difficulty is rated for each election result by test plays. The tutorial, sharing and play history arrive next.
+Phases 1 to 4 of 5 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The other big party leads a rival bloc that courts the same partners each day, pressure builds as either side nears a majority, and a graph tracks the race. Difficulty is rated for each election result by test plays. First-time players get tips as they go, the About page explains how to play and share, results show the cabinet and a policy drift compass, and you can send a challenge link, save a result image and replay past games kept in your browser.
 
 | Phase | What it adds |
 | --- | --- |
 | 1. Data and seat maths | Seven parties, MMP seat calculator, poll scenarios, variance |
 | 2. Core negotiation | Offers, AI responses, policy comparison |
 | 3. Scoring and voters | Weighted score, voter mood, budget tracker, policy cards, MMP explainers, press conferences |
-| 4. Polish and launch | All parties playable, rival bloc and pressure, tutorial, share links |
+| 4. Polish and launch | Rival bloc and pressure, progress graph, tips, share and challenge links, result image, play history, drift compass, About page |
 | 5. Extras | Historical scenarios, achievements, daily scenario |
 
 ## Content rules

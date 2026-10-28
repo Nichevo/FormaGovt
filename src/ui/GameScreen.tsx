@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PARTIES, PARTY_BY_ID } from '../data/parties';
 import { ISSUE_LABELS, type Party, type Policy } from '../data/schema';
 import {
@@ -16,6 +16,7 @@ import {
   pressureFor,
   reopenTalks,
   rivalSeats,
+  takenPortfolios,
   seatsAgreed,
   seatsSecured,
   summarise,
@@ -42,6 +43,12 @@ import { Explain } from './Explain';
 import { BudgetMeter, MoodMeter } from './Meters';
 import { PolicyCard } from './PolicyCard';
 import { ProgressGraph } from './ProgressGraph';
+import { Coach } from './Coach';
+import { DriftCompass } from './Compass';
+import { saveRecord } from './history';
+import { downloadResultCard } from './resultCard';
+import { challengeUrl, shareLink } from './share';
+import { cabinetOf } from '../engine/cabinet';
 
 const STATUS_LABELS: Record<DealStatus, string> = {
   open: 'Open to talks',
@@ -60,7 +67,15 @@ function toggle<T>(list: T[], item: T): T[] {
   return list.includes(item) ? list.filter((x) => x !== item) : [...list, item];
 }
 
-export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => void }) {
+export function GameScreen({
+  setup,
+  onQuit,
+  onRematch,
+}: {
+  setup: GameSetup;
+  onQuit: () => void;
+  onRematch: () => void;
+}) {
   const player = PARTY_BY_ID[setup.playerId]!;
   const seats = useMemo(
     () => Object.fromEntries(setup.result.parties.map((p) => [p.partyId, p.total])),
@@ -86,7 +101,7 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
   if (game.outcome !== 'playing') {
     return (
       <>
-        <Results game={game} setup={setup} onQuit={onQuit} onCard={setCard} />
+        <Results game={game} setup={setup} onQuit={onQuit} onRematch={onRematch} onCard={setCard} />
         {cardView}
       </>
     );
@@ -162,6 +177,8 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
           Compare policies
         </button>
       </div>
+
+      <Coach game={game} />
 
       {tab === 'compare' ? (
         <ComparisonView player={player} onCard={setCard} />
@@ -278,6 +295,7 @@ function PolicyTitle({ policy, onCard }: { policy: Policy; onCard: (policy: Poli
 
 function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen, onCard }: OfferBuilderProps) {
   const state = game.partners[partner.id]!;
+  const taken = takenPortfolios(game, partner.id);
   const programme = agreedPolicies(game, PARTIES, partner.id).filter((p) => !partner.policies.includes(p));
   const programmeClashes = programme.filter((p) => reactionTo(partner, p) === -2);
   const asked = player.policies.filter((p) => draft.playerPolicyIds.includes(p.id));
@@ -386,19 +404,24 @@ function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen
       {draft.arrangement === 'coalition' && (
         <fieldset>
           <legend>Cabinet roles for them</legend>
-          <p className="muted small">Only roles they have someone with the right skills for.</p>
+          <p className="muted small">
+            Only roles they have someone with the right skills for. You keep the Prime Minister's office, and each role can
+            be promised once.
+          </p>
           <div className="chips">
             {eligiblePortfolios(partner).map((id: PortfolioId) => {
               const person = bestPersonFor(partner, id)!;
               const label = PORTFOLIOS.find((p) => p.id === id)!.label;
+              const holder = taken.get(id);
               return (
-                <label key={id} className={`chip ${draft.portfolios.includes(id) ? 'on' : ''}`}>
+                <label key={id} className={`chip ${draft.portfolios.includes(id) ? 'on' : ''} ${holder ? 'taken' : ''}`}>
                   <input
                     type="checkbox"
-                    checked={draft.portfolios.includes(id)}
+                    disabled={!!holder}
+                    checked={draft.portfolios.includes(id) && !holder}
                     onChange={() => setDraft({ ...draft, portfolios: toggle(draft.portfolios, id) })}
                   />
-                  {label}: {person.name}
+                  {label}: {holder ? `promised to ${PARTY_BY_ID[holder]!.name}` : person.name}
                 </label>
               );
             })}
@@ -478,18 +501,49 @@ function Results({
   game,
   setup,
   onQuit,
+  onRematch,
   onCard,
 }: {
   game: GameState;
   setup: GameSetup;
   onQuit: () => void;
+  onRematch: () => void;
   onCard: (policy: Policy) => void;
 }) {
   const summary = summarise(game, PARTIES);
   const player = PARTY_BY_ID[game.playerId]!;
   const partners = summary.partners.map((id) => PARTY_BY_ID[id]!);
-  const budget = budgetFor(programmeOf(game, PARTIES, false));
+  const programme = programmeOf(game, PARTIES, false);
+  const budget = budgetFor(programme);
   const won = game.outcome === 'won';
+  const [shareNote, setShareNote] = useState('');
+
+  useEffect(() => {
+    saveRecord({
+      id: `${setup.startedAt}-${setup.playerId}-${setup.seed}`,
+      at: new Date().toISOString(),
+      playerId: setup.playerId,
+      scenarioId: setup.scenarioId,
+      scenarioLabel: setup.scenarioLabel,
+      variance: setup.variance,
+      seed: setup.seed,
+      outcome: won ? 'won' : 'lost',
+      lostTo: game.lostTo,
+      score: summary.score,
+      partners: summary.partners,
+    });
+    // Saved once when the results first show.
+  }, []);
+
+  const challenge = async () => {
+    const url = challengeUrl(setup);
+    // Neutral wording: the party played and the score, nothing about who should win.
+    const text = won
+      ? `I formed a government playing as ${player.name} in FormaGovt and scored ${summary.score}/100. Same election result, your turn.`
+      : `I tried to form a government playing as ${player.name} in FormaGovt. Same election result, your turn.`;
+    const outcome = await shareLink(url, text);
+    setShareNote(outcome === 'copied' ? 'Link copied.' : outcome === 'failed' ? `Copy this link: ${url}` : '');
+  };
   return (
     <section className="panel results">
       <h2>{won ? 'Government formed' : 'No government formed'}</h2>
@@ -586,6 +640,51 @@ function Results({
           </div>
         </div>
       )}
+      {won && (
+        <div className="two-col">
+          <div>
+            <h3>Cabinet</h3>
+            <ul className="factors">
+              {cabinetOf(game, PARTIES).map((c) => (
+                <li key={c.role}>
+                  <span>{c.role}</span>
+                  <span>
+                    <span className="swatch" style={{ background: PARTY_BY_ID[c.partyId]!.colour }} />
+                    {c.person}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <DriftCompass player={player} programme={programme} />
+        </div>
+      )}
+      <div className="row-buttons">
+        <button type="button" onClick={challenge}>
+          Challenge a friend
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            downloadResultCard({
+              playerId: player.id,
+              won,
+              lostToRival: game.lostTo === 'rival',
+              partners: summary.partners,
+              seats: seatsSecured(game),
+              majority: game.majority,
+              score: summary.score,
+              scenarioLabel: setup.scenarioLabel,
+            })
+          }
+        >
+          Save result image
+        </button>
+        <button type="button" onClick={onRematch}>
+          Rematch: same result
+        </button>
+        {shareNote && <span className="muted small">{shareNote}</span>}
+      </div>
       <ProgressGraph
         history={game.history}
         majority={game.majority}
