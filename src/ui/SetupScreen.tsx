@@ -8,6 +8,8 @@ import { SCENARIOS } from '../data/scenarios';
 import { Hemicycle } from './Hemicycle';
 import type { GameSetup } from './App';
 import { Explain } from './Explain';
+import { HistoryPanel } from './HistoryPanel';
+import type { Challenge } from './share';
 
 const VARIANCE_LABELS: Record<Exclude<VarianceLevel, 'custom'>, string> = {
   off: 'Off: use the scenario exactly',
@@ -21,11 +23,23 @@ export function leftRight(partyId: string): number {
   return stances.reduce((s, v) => s + v, 0) / Math.max(1, stances.length);
 }
 
-export function SetupScreen({ onStart }: { onStart: (setup: GameSetup) => void }) {
-  const [scenarioId, setScenarioId] = useState(SCENARIOS[0]!.id);
-  const [variance, setVariance] = useState<Exclude<VarianceLevel, 'custom'>>('off');
-  const [seed, setSeed] = useState(() => randomSeed());
-  const [playerId, setPlayerId] = useState<string | null>(null);
+export function SetupScreen({
+  initial,
+  onStart,
+  onReplay,
+}: {
+  /** A challenge link or replayed game to start from. */
+  initial: Challenge | null;
+  onStart: (setup: GameSetup) => void;
+  onReplay: (challenge: Challenge) => void;
+}) {
+  const known = initial && SCENARIOS.some((s) => s.id === initial.scenarioId) ? initial : null;
+  const [scenarioId, setScenarioId] = useState(known?.scenarioId ?? SCENARIOS[0]!.id);
+  const [variance, setVariance] = useState<Exclude<VarianceLevel, 'custom'>>(known?.variance ?? 'off');
+  const [seed, setSeed] = useState(() => known?.seed ?? randomSeed());
+  const [playerId, setPlayerId] = useState<string | null>(
+    known?.playerId && PARTY_BY_ID[known.playerId] ? known.playerId : null,
+  );
 
   const scenario = SCENARIOS.find((s) => s.id === scenarioId)!;
   const result = useMemo(
@@ -49,6 +63,12 @@ export function SetupScreen({ onStart }: { onStart: (setup: GameSetup) => void }
 
   return (
     <>
+      {known && (
+        <section className="panel challenge-note">
+          You are playing a shared setup: the same election result{known.playerId ? ' and party' : ''} as the person who
+          sent it. Change anything you like.
+        </section>
+      )}
       <section className="panel">
         <h2>1. Election result</h2>
         <div className="controls">
@@ -196,13 +216,23 @@ export function SetupScreen({ onStart }: { onStart: (setup: GameSetup) => void }
             className="primary"
             disabled={!playerId || !canPlay(playerId)}
             onClick={() =>
-              playerId && onStart({ playerId, result, seed, scenarioLabel: scenario.label })
+              playerId &&
+              onStart({
+                playerId,
+                result,
+                seed,
+                scenarioId,
+                variance,
+                scenarioLabel: scenario.label,
+                startedAt: Date.now(),
+              })
             }
           >
             {playerId ? `Start negotiating as ${PARTY_BY_ID[playerId]!.name}` : 'Pick a party to start'}
           </button>
         </div>
       </section>
+      <HistoryPanel onReplay={onReplay} />
     </>
   );
 }

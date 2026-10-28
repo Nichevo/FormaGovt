@@ -2,6 +2,8 @@ import type { Party } from '../data/schema';
 import { createGame, holdPress, makeOffer, pendingPress, summarise, waitDay, type GameState } from './game';
 import { compatibility, eligiblePortfolios, reactionTo, type Offer } from './negotiation';
 
+export type BotStrategy = 'closest' | 'seats';
+
 export interface BotRun {
   won: boolean;
   score: number;
@@ -9,7 +11,7 @@ export interface BotRun {
 }
 
 /**
- * A simple player: courts the closest parties first, offers their bottom lines
+ * A simple player: courts the best-fitting parties first, offers their bottom lines
  * and everything it can live with, asks for its own policies they can accept,
  * and follows counter-offers. Used to rate how hard each party is to play.
  */
@@ -17,12 +19,14 @@ export function playBot(
   player: Party,
   parties: Party[],
   setup: { seats: Record<string, number>; majority: number; totalSeats: number; seed: number },
+  strategy: BotStrategy = 'closest',
 ): BotRun {
   let g = createGame({ player, parties, ...setup });
   const byId = new Map(parties.map((p) => [p.id, p]));
-  const order = Object.keys(g.partners).sort(
-    (a, b) => compatibility(player, byId.get(b)!) - compatibility(player, byId.get(a)!),
-  );
+  // "closest" courts the best fits first; "seats" weights fit by the seats a party brings.
+  const value = (id: string) =>
+    compatibility(player, byId.get(id)!) * (strategy === 'seats' ? Math.sqrt(setup.seats[id] ?? 0) : 1);
+  const order = Object.keys(g.partners).sort((a, b) => value(b) - value(a));
   const drafts: Record<string, Offer> = {};
   for (const id of order) {
     const partner = byId.get(id)!;
@@ -60,7 +64,10 @@ export function playBot(
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
-/** Rates each party for this election result by how often the bot forms a government with it. */
+/**
+ * Rates each party for this election result by how often the bot forms a
+ * government with it, across both strategies and a few seeds.
+ */
 export function rateDifficulty(
   parties: Party[],
   setup: { seats: Record<string, number>; majority: number; totalSeats: number },
@@ -69,8 +76,11 @@ export function rateDifficulty(
   const ratings: Record<string, Difficulty> = {};
   for (const player of parties) {
     if ((setup.seats[player.id] ?? 0) === 0) continue;
-    const wins = seeds.filter((seed) => playBot(player, parties, { ...setup, seed }).won).length / seeds.length;
-    ratings[player.id] = wins >= 0.67 ? 'easy' : wins > 0 ? 'medium' : 'hard';
+    const runs = (['closest', 'seats'] as const).flatMap((strategy) =>
+      seeds.map((seed) => playBot(player, parties, { ...setup, seed }, strategy).won),
+    );
+    const wins = runs.filter(Boolean).length / runs.length;
+    ratings[player.id] = wins >= 0.5 ? 'easy' : wins > 0 ? 'medium' : 'hard';
   }
   return ratings;
 }
