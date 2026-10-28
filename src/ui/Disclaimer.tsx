@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { VERSION_LABEL } from '../version';
 
 export const DISCLAIMER =
   'FormaGovt is a game, not a prediction or an official source. Party policies, positions, people and processes are simplified and may be out of date or differ from reality. Characters are based on real public figures, but their responses in the game are invented by the game’s rules. The game is not affiliated with or endorsed by any political party. For accurate information, check each party’s own website and the Electoral Commission.';
@@ -46,6 +47,7 @@ export function DisclaimerFooter() {
         A game: simplified and may not match reality
       </button>
       {open && <p>{DISCLAIMER}</p>}
+      <p className="version">{VERSION_LABEL}</p>
     </footer>
   );
 }
