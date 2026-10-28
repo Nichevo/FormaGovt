@@ -2,11 +2,32 @@
   "note": "Party vote percentages. 'other' is the remainder up to 100 (including undecided-adjusted minor parties). Te Pāti Māori is 'tpm', Opportunity is 'opportunity'.",
   "polls": [
     {
+      "pollster": "RNZ–Reid Research",
+      "fieldwork": "2026-10-20 to 2026-10-26",
+      "date": "2026-10-26",
+      "sourceUrl": "https://www.odt.co.nz/news/national/national-dips-below-disastrous-2020-result-as-opportunity-surges-in-latest-poll-j7ac6t0v",
+      "partyVote": { "national": 24.8, "labour": 30.6, "greens": 14.5, "act": 10.1, "nzfirst": 9.9, "opportunity": 7.2, "tpm": 1.9 }
+    },
+    {
       "pollster": "1News–Verian",
       "fieldwork": "2026-10-21 to 2026-10-25",
       "date": "2026-10-25",
       "sourceUrl": "https://www.1news.co.nz/2026/10/27/poll-coalition-has-path-to-power-but-labour-steady-amid-gangs-row/",
       "partyVote": { "national": 29, "labour": 27, "greens": 15, "act": 12, "nzfirst": 10, "opportunity": 6, "tpm": 0.1 }
+    },
+    {
+      "pollster": "The Post–Freshwater Strategy",
+      "fieldwork": "2026-10-09 to 2026-10-19",
+      "date": "2026-10-19",
+      "sourceUrl": "https://www.odt.co.nz/news/national/new-poll-puts-opportunity-and-parliament-on-a-knife-edge-uvcd9nv4",
+      "partyVote": { "national": 27.6, "labour": 28.7, "greens": 14.3, "act": 9, "nzfirst": 11.8, "opportunity": 5.4, "tpm": 2 }
+    },
+    {
+      "pollster": "1News–Verian",
+      "fieldwork": "2026-10-15 to 2026-10-19",
+      "date": "2026-10-19",
+      "sourceUrl": "https://www.1news.co.nz/2026/10/20/poll-national-jumps-leaving-labours-position-perilous/",
+      "partyVote": { "national": 32, "labour": 27, "greens": 16, "act": 11, "nzfirst": 8, "opportunity": 7, "tpm": 0.7 }
     },
     {
       "pollster": "Taxpayers' Union–Curia",

@@ -45,7 +45,7 @@ describe('party data', () => {
 describe('scenarios', () => {
   it('averages polls by party', () => {
     const avg = averagePolls(POLLS);
-    expect(avg.national).toBeCloseTo((29 + 28.5 + 29 + 25.9 + 28 + 31) / 6, 6);
+    expect(avg.national).toBeCloseTo((24.8 + 29 + 27.6 + 32 + 28.5 + 29 + 25.9 + 28 + 31) / 9, 6);
   });
 
   it.each(SCENARIOS)('$label produces a valid Parliament', (scenario) => {
