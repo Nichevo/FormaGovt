@@ -5,6 +5,7 @@ import { SetupScreen } from './SetupScreen';
 import { GameScreen } from './GameScreen';
 import { About } from './About';
 import { parseChallenge, type Challenge } from './share';
+import { APP_VERSION } from '../version';
 
 export interface GameSetup extends Required<Omit<Challenge, 'daily'>> {
   daily: boolean;
@@ -42,7 +43,9 @@ export function App() {
       <Disclaimer />
       <header className="app-header">
         <div>
-          <h1>FormaGovt</h1>
+          <h1>
+            FormaGovt <span className="version-badge">v{APP_VERSION}</span>
+          </h1>
           <p className="tagline">Form a New Zealand government after the election.</p>
         </div>
         <button type="button" className="link" onClick={() => openAbout(!about)}>

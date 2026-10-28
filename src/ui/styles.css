@@ -265,3 +265,4 @@ button.link { text-align: left; }
 .why-number { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
 .why-number summary { cursor: pointer; }
 .footer .version, .election-day .version { font-size: 0.8rem; color: var(--muted); margin: 4px 0 0; }
+.version-badge { font-size: 0.8rem; font-weight: 500; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; vertical-align: middle; }
