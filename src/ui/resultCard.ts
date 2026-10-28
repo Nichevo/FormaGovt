@@ -45,7 +45,7 @@ export function downloadResultCard(data: CardData): void {
     ? `${player.name}${partners.length ? ` with ${partners.map((p) => p.name).join(', ')}` : ' alone'}: ${data.seats} seats (needed ${data.majority})`
     : data.lostToRival
       ? 'The rival bloc reached a majority first'
-      : 'The deadline passed without a majority';
+      : 'Nobody reached a majority: a snap election would follow';
   wrap(ctx, line, 64, 320, 1072, 42);
 
   if (data.won) {

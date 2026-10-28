@@ -1,8 +1,9 @@
 import { readJson, writeJson } from './storage';
 import type { Challenge } from './share';
 
-export interface PlayRecord extends Required<Challenge> {
+export interface PlayRecord extends Required<Omit<Challenge, 'daily'>> {
   id: string;
+  daily?: boolean;
   /** ISO time the game ended. */
   at: string;
   scenarioLabel: string;

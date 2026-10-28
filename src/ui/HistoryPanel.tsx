@@ -26,13 +26,14 @@ export function HistoryPanel({ onReplay }: { onReplay: (c: Challenge) => void })
                     ? `formed a government${r.partners.length ? ` with ${r.partners.map((id) => PARTY_BY_ID[id]?.shortName ?? id).join(', ')}` : ''}, score ${r.score}`
                     : r.lostTo === 'rival'
                       ? 'lost to the rival bloc'
-                      : 'ran out of time'}
+                      : 'no majority, snap election'}
                   <span className="muted small">
                     {' '}
-                    · {r.scenarioLabel} · {new Date(r.at).toLocaleDateString()}
+                    · {r.scenarioLabel}
+                    {r.daily ? ' (daily)' : ''} · {new Date(r.at).toLocaleDateString()}
                   </span>
                 </span>
-                <button type="button" onClick={() => onReplay(r)}>
+                <button type="button" onClick={() => onReplay({ ...r, daily: false })}>
                   Replay
                 </button>
               </li>

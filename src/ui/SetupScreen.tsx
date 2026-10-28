@@ -9,6 +9,8 @@ import { Hemicycle } from './Hemicycle';
 import type { GameSetup } from './App';
 import { Explain } from './Explain';
 import { HistoryPanel } from './HistoryPanel';
+import { AchievementsPanel } from './AchievementsPanel';
+import { dailyChallenge } from '../engine/daily';
 import type { Challenge } from './share';
 
 const VARIANCE_LABELS: Record<Exclude<VarianceLevel, 'custom'>, string> = {
@@ -63,11 +65,39 @@ export function SetupScreen({
 
   return (
     <>
-      {known && (
+      {known?.daily ? (
         <section className="panel challenge-note">
-          You are playing a shared setup: the same election result{known.playerId ? ' and party' : ''} as the person who
-          sent it. Change anything you like.
+          Today's challenge: everyone in New Zealand gets the same election-night result and party today. A new one starts
+          at midnight.
         </section>
+      ) : (
+        known && (
+          <section className="panel challenge-note">
+            You are playing a shared setup: the same election result{known.playerId ? ' and party' : ''} as the person
+            who sent it. Change anything you like.
+          </section>
+        )
+      )}
+      {!known?.daily && (
+        <div className="start-row">
+          <button
+            type="button"
+            onClick={() => {
+              const pollAverage = SCENARIOS.find((s) => s.id === 'poll-average')!;
+              const daily = dailyChallenge(PARTIES, (s) =>
+                Object.fromEntries(
+                  allocateSeats(applyVariance(pollAverage, { level: 'election-night', seed: s })).parties.map((p) => [
+                    p.partyId,
+                    p.total,
+                  ]),
+                ),
+              );
+              onReplay({ ...daily, daily: true });
+            }}
+          >
+            Play today's challenge
+          </button>
+        </div>
       )}
       <section className="panel">
         <h2>1. Election result</h2>
@@ -192,7 +222,7 @@ export function SetupScreen({
                     )}
                   </div>
                   <div className="muted">
-                    {seats} seats · {party.people.filter((p) => p.isKeyFigure).map((p) => p.name).join(', ')}
+                    {seats} seat{seats === 1 ? '' : 's'} · {party.people.filter((p) => p.isKeyFigure).map((p) => p.name).join(', ')}
                   </div>
                   <ul className="flagships">
                     {party.policies
@@ -225,6 +255,8 @@ export function SetupScreen({
                 variance,
                 scenarioLabel: scenario.label,
                 startedAt: Date.now(),
+                // Still the daily game only if nothing was changed.
+                daily: !!known?.daily && known.seed === seed && known.variance === variance && known.scenarioId === scenarioId && known.playerId === playerId,
               })
             }
           >
@@ -233,6 +265,7 @@ export function SetupScreen({
         </div>
       </section>
       <HistoryPanel onReplay={onReplay} />
+      <AchievementsPanel />
     </>
   );
 }

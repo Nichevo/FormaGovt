@@ -51,6 +51,7 @@ export function About({ onClose }: { onClose: () => void }) {
         </li>
         <li>"Save result image" downloads a picture of your result, with the disclaimer on it.</li>
         <li>Your past games stay in this browser. Use Export and Import on the start screen to move them.</li>
+        <li>"Play today's challenge" gives everyone in New Zealand the same result and party for the day, so you can compare.</li>
       </ul>
 
       <h3>Ground rules</h3>
@@ -60,6 +61,7 @@ export function About({ onClose }: { onClose: () => void }) {
         <li>Only party leaders and a few key figures are named; other MPs are role titles.</li>
         <li>No party logos are used, and no party has endorsed the game.</li>
         <li>The game is switched off on election day, 7 November 2026.</li>
+        <li>The 2017 scenario is a what-if: real 2017 seats played with today's parties and policies.</li>
       </ul>
 
       <h3>Where the data comes from</h3>

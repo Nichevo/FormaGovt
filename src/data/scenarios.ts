@@ -79,4 +79,23 @@ export const SCENARIOS: Scenario[] = [
     otherElectorates: 0,
     marginalElectorates: [],
   },
+  {
+    id: 'election-2017',
+    label: '2017 seats, today\'s parties',
+    description:
+      'What if: the official 2017 party votes and electorate wins, played with today\'s parties and policies. The Māori Party\'s 2017 vote is counted for Te Pāti Māori.',
+    sourceUrl: 'https://en.wikipedia.org/wiki/2017_New_Zealand_general_election',
+    partyVote: {
+      national: 1_152_075,
+      labour: 956_184,
+      nzfirst: 186_706,
+      greens: 162_443,
+      opportunity: 63_261,
+      tpm: 30_580,
+      act: 13_075,
+    },
+    electorates: { national: 41, labour: 29, act: 1 },
+    otherElectorates: 0,
+    marginalElectorates: [],
+  },
 ];
