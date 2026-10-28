@@ -32,7 +32,9 @@
     "patience": 5,
     "greed": 0.6,
     "kingmaker": false,
-    "fiscalTolerance": 0
+    "fiscalTolerance": 0,
+    "holdout": 0.4,
+    "fiscalStance": "hawk"
   },
   "ratification": {
     "body": "Leader with the party board",
@@ -134,8 +136,10 @@
       "stance": 2,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "fixed",
       "voterSalience": 0.9,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "No direct cost; rules out new revenue.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
@@ -151,6 +155,7 @@
       "isBottomLine": false,
       "voterSalience": 0.8,
       "fiscalImpactNZDm": -2500,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -165,6 +170,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": -1200,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -179,6 +185,7 @@
       "isBottomLine": false,
       "voterSalience": 0.2,
       "fiscalImpactNZDm": -20,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -193,6 +200,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": -60,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -207,6 +215,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": -50,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate of running costs.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -221,6 +230,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Law change; little direct cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -235,6 +245,7 @@
       "isBottomLine": false,
       "voterSalience": 0.3,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Changes how projects are financed, not the operating budget.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -249,6 +260,7 @@
       "isBottomLine": false,
       "voterSalience": 0.3,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Law change; little direct cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -263,6 +275,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 3000,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate of savings.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"

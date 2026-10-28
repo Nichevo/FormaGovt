@@ -5,6 +5,8 @@
   --muted: #6b6a65;
   --border: #e2e0d8;
   --accent: #1f5fa8;
+  --revenue: #1f5fa8;
+  --spending: #c2410c;
   color-scheme: light dark;
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
@@ -16,6 +18,8 @@
     --muted: #a3a29b;
     --border: #3a3936;
     --accent: #6ea3e0;
+    --revenue: #5b93d6;
+    --spending: #d46f32;
   }
 }
 * { box-sizing: border-box; }
@@ -214,3 +218,43 @@ button.link { text-align: left; }
 .achievements li.on { opacity: 1; border-color: var(--accent); }
 .new-achievements { border: 1px solid var(--accent); border-radius: 10px; padding: 8px 12px; margin: 8px 0; }
 .gov-type { display: inline-block; font-size: 0.85rem; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--border); margin-left: 8px; vertical-align: middle; }
+
+/* v1.1: budget tab */
+.budget-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.budget-stats .meter-value.small-value { font-size: 1rem; }
+.chart .bar-revenue { fill: var(--revenue); }
+.chart .bar-spending { fill: var(--spending); }
+.chart .zero { stroke: var(--muted); stroke-width: 1; }
+.chart .dot { stroke: var(--surface); stroke-width: 2; }
+.legend-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+.swatch-revenue { background: var(--revenue); }
+.swatch-spending { background: var(--spending); }
+.budget-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.budget-table th, .budget-table td { text-align: right; padding: 4px 6px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.budget-table th:first-child, .budget-table td:first-child { text-align: left; white-space: normal; }
+.budget-table .bad { color: #c62828; }
+.basis { font-size: 0.75rem; color: var(--muted); }
+.group-list details { border-bottom: 1px solid var(--border); padding: 4px 0; }
+.group-list summary { display: flex; justify-content: space-between; gap: 12px; cursor: pointer; font-size: 0.9rem; }
+.group-list ul { margin: 4px 0 8px; padding-left: 18px; font-size: 0.85rem; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.meter-button { all: unset; display: block; cursor: pointer; border-radius: 10px; }
+.meter-button:focus-visible { outline: 2px solid var(--accent); }
+.progress-text { font-weight: 600; }
+.news { margin: 0; padding-left: 18px; font-size: 0.9rem; }
+.tag { display: inline-block; font-size: 0.75rem; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+.tag.holding-out { border-color: #b26a00; color: #b26a00; }
+.tag.keen { border-color: #2e7d32; color: #2e7d32; }
+.tag.unsettled { border-color: #c62828; color: #c62828; }
+.status.rival-signing { color: #b26a00; }
+.diff-added { color: #2e7d32; }
+.diff-removed { text-decoration: line-through; color: var(--muted); }
+.why { margin-top: 6px; font-size: 0.85rem; }
+.why ul { margin: 4px 0; padding-left: 18px; }
+.preview-notes { list-style: none; padding: 0; margin: 8px 0; font-size: 0.9rem; }
+.preview-notes li { padding: 2px 0; }
+.preview-notes .bad { color: #c62828; }
+.compromise-toggle { font-size: 0.8rem; margin-left: 6px; }
+.days-table { font-size: 0.85rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.check-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }

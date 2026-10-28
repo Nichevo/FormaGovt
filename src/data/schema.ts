@@ -42,12 +42,29 @@ export const PolicySchema = z.object({
   /** How much the party cares about this policy, 1 (minor) to 5 (flagship). */
   weight: z.number().int().min(1).max(5),
   isBottomLine: z.boolean(),
+  /** For a bottom line: fixed never bends, firm bends late or for a big win, soft bends readily. */
+  flex: z.enum(['fixed', 'firm', 'soft']).optional(),
+  /** A scaled-back version a firm or soft bottom line can accept. Written for the game, not a party proposal. */
+  compromise: z
+    .object({
+      title: z.string().min(3),
+      summary: z.string().min(10),
+      /** Share of the full policy's budget effect the compromise keeps, 0 to 1. */
+      fiscalShare: z.number().min(0).max(1),
+    })
+    .optional(),
   /** "declared" when the party has said so publicly, "inferred" when set from its messaging. */
   bottomLineBasis: z.enum(['declared', 'inferred']).optional(),
   /** How much the party's voters notice this policy, 0 to 1. */
   voterSalience: z.number().min(0).max(1),
   /** Yearly change to the operating balance in NZ$ millions (negative costs money); null until costed. */
   fiscalImpactNZDm: z.number().nullable(),
+  /** "revenue" for tax changes, "spending" for programmes and cuts. */
+  fiscalType: z.enum(['revenue', 'spending']),
+  /** First fiscal year with an effect; before it the policy costs nothing. Defaults to a half year in 2026/27. */
+  fiscalStart: z.enum(['2026/27', '2027/28', '2028/29', '2029/30']).optional(),
+  /** Yearly figures 2026/27 to 2029/30 where a source gives them; otherwise derived from the single figure. */
+  fiscalByYear: z.array(z.number()).length(4).optional(),
   /** "party" when the figure comes from the party's own costing, "estimate" when it is a rough game estimate. */
   fiscalBasis: z.enum(['party', 'estimate']).optional(),
   /** How the figure was worked out, shown on the policy card. */
@@ -55,6 +72,8 @@ export const PolicySchema = z.object({
   /** Where a party costing was reported. */
   fiscalSourceUrl: z.string().url().optional(),
   sourceUrl: z.string().url(),
+  /** Set by the game on the scaled-back version of a bottom line; never in the data files. */
+  isCompromise: z.boolean().optional(),
 });
 export type Policy = z.infer<typeof PolicySchema>;
 
@@ -125,6 +144,12 @@ export const PartySchema = z.object({
     kingmaker: z.boolean(),
     /** Deficit increase (NZ$m a year) it tolerates before balking. */
     fiscalTolerance: z.number().min(0),
+    /** How long it holds out for more while it has options, 0 to 1. */
+    holdout: z.number().min(0).max(1),
+    /** Hawks reject deals that dig the deficit too deep; spenders reject deep cuts to services. */
+    fiscalStance: z.enum(['hawk', 'balanced', 'spender']),
+    /** Spending cuts (NZ$m a year) it accepts before objecting. */
+    servicesCutTolerance: z.number().min(0).optional(),
   }),
   ratification: RatificationSchema,
   relationships: z.array(RelationshipSchema),

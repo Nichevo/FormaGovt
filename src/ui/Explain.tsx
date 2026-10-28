@@ -17,15 +17,25 @@ export const EXPLAINERS = {
   'bottom-line':
     'A bottom line is a policy a party has said, or strongly signalled, it must have in any deal. A red line is a policy from someone else that a party cannot accept.',
   budget:
-    'Every deal changes the forecast operating balance for 2028/29, measured from Treasury\'s pre-election forecast of a $4.0bn surplus. Figures are the party\'s own costing where one was reported, and rough game estimates otherwise.',
+    'Every deal changes the forecast operating balance, measured from Treasury\'s pre-election forecast (a $4.0bn surplus in 2028/29). The Budget tab shows four years, revenue against spending, and who and what drives the change. Figures are the party\'s own costing where one was reported, and rough game estimates otherwise. Some parties judge the budget as well as the policies: fiscal hawks reject deals that dig the deficit too deep, and others reject deep cuts to services.',
   mood:
     'Your own voters judge the deal: how many of your policies made it, what you gave up, who you went into government with, and the budget. Below 35 they revolt, and it shows in your score.',
   rival:
-    'The other big party is building its own majority at the same time, making one offer a day to whoever fits it best. If its bloc reaches a majority first, you lose. You can try to win its partners back, but breaking a deal takes a clearly better offer.',
+    'The other big party is building its own majority at the same time, starting on day 3 and making one offer a day to whoever fits it best (a big offer takes it two days, as it does you). Its deals go through each party\'s own sign-off, just like yours. If its bloc reaches a majority first, you lose. You can try to win its partners back: breaking a signed deal takes a clearly better offer, less so while it is still signing off or unhappy there.',
   pressure:
     'Pressure rises each day and jumps when either bloc gets close to a majority. Under pressure, parties settle for less, and pre-election promises about who they would not work with soften. Kingmaker parties feel it less.',
   score:
-    'Your score is 60% policies won (weighted by how much your party cares about each), 30% voter mood and 10% stability. You only score if you form a government.',
+    'Your score is 60% policies won (weighted by how much your party cares about each, with bottom lines counting double and compromises for less), 30% voter mood and 10% stability. Unsettled partners lower stability. You only score if you form a government.',
+  cabinet:
+    'Partners expect cabinet roles in line with their seats. A major partner, with about a quarter of the government\'s seats or more, wants close to its share and a senior role such as Deputy Prime Minister or Finance. A minor partner settles for less. Giving away far more than a fair share upsets your own voters.',
+  compromise:
+    'Some bottom lines can bend. Fixed ones never do. Firm ones accept a scaled-back version late in talks or for a strong offer; soft ones accept it readily. A compromise keeps about 60% of the policy\'s value and part of its budget effect. Compromise versions are written for the game, not proposed by any party.',
+  reopen:
+    'You can reopen one deal per party to change it. It costs trust and a little voter mood, and the partner usually wants something in return. The changed deal goes through sign-off again; if it fails, the old deal stands. If a new deal includes something a partner already in government hates, that partner asks to renegotiate for free, and if it crosses a red line you have two days to fix it before it leaves. A partner that finds its signed deal thin may also reach out once to ask for a change; a strong deal rarely prompts this.',
+  time:
+    'Talks take time in proportion to what is on the table. A small offer or change, of three items or fewer, takes no time, and you can make two of those a day. A typical offer uses a day, and one with twelve or more policies and roles takes two days.',
+  leverage:
+    'A party courted by both blocs, whose seats could decide the majority, holds out for more. When it stops being needed, or the side it prefers falls behind, it lowers its demands. Some parties, such as NZ First, hold out longer than others.',
 } as const;
 export type ExplainTopic = keyof typeof EXPLAINERS;
 

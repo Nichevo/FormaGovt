@@ -32,7 +32,9 @@
     "patience": 3,
     "greed": 0.8,
     "kingmaker": true,
-    "fiscalTolerance": 1500
+    "fiscalTolerance": 1500,
+    "holdout": 0.9,
+    "fiscalStance": "hawk"
   },
   "ratification": {
     "body": "Leader decides",
@@ -135,6 +137,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": -800,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -149,6 +152,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": -60,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "About 60,000 births a year at $1,000 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -161,8 +165,16 @@
       "stance": 2,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "firm",
+      "compromise": {
+        "title": "Longer residency rule for NZ Super",
+        "summary": "Lengthens the residency needed for NZ Super instead of limiting it to citizens.",
+        "fiscalShare": 0.5
+      },
       "voterSalience": 0.8,
       "fiscalImpactNZDm": 200,
+      "fiscalType": "spending",
+      "fiscalStart": "2028/29",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate; starts in 2029.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
@@ -178,6 +190,7 @@
       "isBottomLine": false,
       "voterSalience": 0.7,
       "fiscalImpactNZDm": -300,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -190,8 +203,15 @@
       "stance": 2,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "firm",
+      "compromise": {
+        "title": "Targeted immigration curbs",
+        "summary": "Tightens selected immigration categories instead of across the board.",
+        "fiscalShare": 1
+      },
       "voterSalience": 0.9,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Settings change; little direct cost.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/",
@@ -207,6 +227,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "No near-term operating cost in the game.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
@@ -221,6 +242,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Law change; no direct cost.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
@@ -235,6 +257,7 @@
       "isBottomLine": false,
       "voterSalience": 0.7,
       "fiscalImpactNZDm": -300,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"

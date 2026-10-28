@@ -1,8 +1,10 @@
 import { readJson, writeJson } from './storage';
 import type { Challenge } from './share';
 
-export interface PlayRecord extends Required<Omit<Challenge, 'daily'>> {
+export interface PlayRecord extends Required<Omit<Challenge, 'daily' | 'days'>> {
   id: string;
+  /** Length of talks; games saved before v1.1 have none and were ten days. */
+  days?: number;
   daily?: boolean;
   /** ISO time the game ended. */
   at: string;
