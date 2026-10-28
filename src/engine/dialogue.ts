@@ -3,9 +3,14 @@ import { PORTFOLIOS } from './negotiation';
 import type { LogEntry } from './game';
 
 /**
- * Templated lines for each response. These are written for the game, not quotes:
- * the UI labels them as fictional.
+ * Templated lines for each response. These are written for the game, not quotes.
+ * They are spoken by a party's negotiating team, never by a named real person,
+ * and the UI labels them as fictional.
  */
+export function speakerFor(party: Party): string {
+  return `${party.name} negotiating team`;
+}
+
 export function leaderOf(party: Party): string {
   const leader = party.people.find((p) => p.isKeyFigure && /leader/i.test(p.role) && !/deputy/i.test(p.role));
   return leader?.name ?? `${party.name} negotiator`;

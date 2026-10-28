@@ -20,6 +20,16 @@ Phases 1 and 2 of 5 are in: pick any party, then spend 10 days negotiating with 
 | 4. Polish and launch | All parties playable, rival bloc and pressure, tutorial, share links |
 | 5. Extras | Historical scenarios, achievements, daily scenario |
 
+## Content rules
+
+- Real names are used only for key public figures. Every other MP is a role-named placeholder.
+- No invented quotes from real people. Talks replies come from a party's "negotiating team", are templated by the game's rules, and are labelled fictional.
+- Portraits, when added, are original cartoons, never traced from press photos.
+- No party logos. Party names and the game's own colours only.
+- Nothing may suggest a party or leader endorses the game. The disclaimer says it is not affiliated with or endorsed by any party.
+- Policy cards stay accurate and link to a source.
+- The game shows only a notice on election day (7 November 2026, NZ time).
+
 ## Run it locally
 
 ```sh

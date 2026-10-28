@@ -25,7 +25,7 @@ import {
   type Offer,
   type PortfolioId,
 } from '../engine/negotiation';
-import { leaderOf, lineFor } from '../engine/dialogue';
+import { leaderOf, lineFor, speakerFor } from '../engine/dialogue';
 import type { GameSetup } from './App';
 import { ComparisonView } from './ComparisonView';
 
@@ -335,7 +335,7 @@ function TalksLog({ game }: { game: GameState }) {
   return (
     <section className="panel">
       <h2>Talks so far</h2>
-      <p className="muted small">Leader replies are fictional lines written for the game, not real quotes.</p>
+      <p className="muted small">Replies are fictional lines written for the game. They are not quotes from any real person or party.</p>
       <ul className="log">
         {entries.map((entry, i) => {
           const p = PARTY_BY_ID[entry.partnerId]!;
@@ -345,7 +345,7 @@ function TalksLog({ game }: { game: GameState }) {
                 Day {entry.day} · {p.name}
               </span>
               <span>
-                <strong>{leaderOf(p)} (fictional):</strong> {lineFor(entry, p)}
+                <strong>{speakerFor(p)} (fictional):</strong> {lineFor(entry, p)}
               </span>
             </li>
           );
