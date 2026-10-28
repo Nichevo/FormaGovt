@@ -6,6 +6,8 @@ export interface Challenge {
   variance: Exclude<VarianceLevel, 'custom'>;
   seed: number;
   playerId?: string;
+  /** Set when this is today's daily challenge; never part of a link. */
+  daily?: boolean;
 }
 
 const VARIANCES = ['off', 'poll-error', 'election-night'] as const;

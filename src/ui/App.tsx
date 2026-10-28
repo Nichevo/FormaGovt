@@ -6,7 +6,8 @@ import { GameScreen } from './GameScreen';
 import { About } from './About';
 import { parseChallenge, type Challenge } from './share';
 
-export interface GameSetup extends Required<Challenge> {
+export interface GameSetup extends Required<Omit<Challenge, 'daily'>> {
+  daily: boolean;
   result: SeatResult;
   scenarioLabel: string;
   /** When play started, which identifies the game in the history. */
@@ -54,7 +55,11 @@ export function App() {
         {setup ? (
           <GameScreen
             setup={setup}
-            onQuit={() => setSetup(null)}
+            onQuit={() => {
+              setSetup(null);
+              setChallenge(null);
+              if (location.hash.startsWith('#play')) history.replaceState(null, '', location.pathname);
+            }}
             onRematch={() => {
               const { scenarioId, variance, seed, playerId } = setup;
               setChallenge({ scenarioId, variance, seed, playerId });

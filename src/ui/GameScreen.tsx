@@ -46,6 +46,10 @@ import { ProgressGraph } from './ProgressGraph';
 import { Coach } from './Coach';
 import { DriftCompass } from './Compass';
 import { saveRecord } from './history';
+import { unlock } from './achievementStore';
+import { ACHIEVEMENTS, earnedBy } from '../engine/achievements';
+import { ACTUAL_2026 } from '../data/actual';
+import type { GovType } from '../engine/game';
 import { downloadResultCard } from './resultCard';
 import { challengeUrl, shareLink } from './share';
 import { cabinetOf } from '../engine/cabinet';
@@ -476,6 +480,18 @@ function TalksLog({ game }: { game: GameState }) {
   );
 }
 
+const GOV_TYPE_LABELS: Record<GovType, string> = {
+  'single-party': 'Single-party majority',
+  'majority-coalition': 'Majority coalition',
+  minority: 'Minority government',
+  'grand-coalition': 'Grand coalition',
+  'fragile-minority': 'Fragile minority',
+};
+
+function sameGovernment(a: string[], b: string[]): boolean {
+  return a.length === b.length && a.every((id) => b.includes(id));
+}
+
 function joinNames(names: string[]): string {
   return names.length <= 1 ? (names[0] ?? '') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
 }
@@ -517,9 +533,10 @@ function Results({
   const budget = budgetFor(programme);
   const won = game.outcome === 'won';
   const [shareNote, setShareNote] = useState('');
+  const [fresh, setFresh] = useState<string[]>([]);
 
   useEffect(() => {
-    saveRecord({
+    const records = saveRecord({
       id: `${setup.startedAt}-${setup.playerId}-${setup.seed}`,
       at: new Date().toISOString(),
       playerId: setup.playerId,
@@ -531,7 +548,10 @@ function Results({
       lostTo: game.lostTo,
       score: summary.score,
       partners: summary.partners,
+      daily: setup.daily,
     });
+    const partiesWon = records.filter((r) => r.outcome === 'won').map((r) => r.playerId);
+    setFresh(unlock(earnedBy({ game, scenarioId: setup.scenarioId, daily: setup.daily, partiesWon })));
     // Saved once when the results first show.
   }, []);
 
@@ -546,7 +566,10 @@ function Results({
   };
   return (
     <section className="panel results">
-      <h2>{won ? 'Government formed' : 'No government formed'}</h2>
+      <h2>
+        {won ? 'Government formed' : 'No government formed'}
+        {game.govType && <span className="gov-type">{GOV_TYPE_LABELS[game.govType]}</span>}
+      </h2>
       {won ? (
         <p>
           {player.name}
@@ -557,7 +580,7 @@ function Results({
         <p>
           {game.lostTo === 'rival' && game.rivalId
             ? `The rival bloc led by ${PARTY_BY_ID[game.rivalId]!.name} reached ${game.majority} seats first and will form the government.`
-            : "The deadline passed without a majority. A snap election or another party's deal would follow."}
+            : 'Nobody could put together a majority by the deadline. A snap election would follow.'}
         </p>
       )}
       <p className="score">
@@ -584,7 +607,36 @@ function Results({
           </tbody>
         </table>
       )}
-      <p className="muted small">Scenario: {setup.scenarioLabel}.</p>
+      {game.govType === 'fragile-minority' && (
+        <p className="muted small">
+          You are the largest bloc but short of a majority, so you govern vote by vote. Stability counts for little.
+        </p>
+      )}
+      <p className="muted small">
+        Scenario: {setup.scenarioLabel}
+        {setup.daily ? " (today's challenge)" : ''}.
+      </p>
+      {fresh.length > 0 && (
+        <div className="new-achievements">
+          <strong>New achievement{fresh.length > 1 ? 's' : ''}:</strong>{' '}
+          {fresh.map((id) => ACHIEVEMENTS.find((a) => a.id === id)!.title).join(', ')}
+        </div>
+      )}
+      {ACTUAL_2026.available && (
+        <div className="panel">
+          <h3>What actually happened</h3>
+          <p>
+            After the 2026 election, the government was formed by{' '}
+            {joinNames(ACTUAL_2026.government.map((id) => PARTY_BY_ID[id]?.name ?? id))} ({ACTUAL_2026.arrangement}).{' '}
+            {sameGovernment(ACTUAL_2026.government, [player.id, ...summary.partners])
+              ? 'Your government has the same parties.'
+              : 'Your government is different.'}{' '}
+            <a href={ACTUAL_2026.sourceUrl} target="_blank" rel="noreferrer">
+              Source
+            </a>
+          </p>
+        </div>
+      )}
       <div className="two-col">
         <div>
           <h3>Policies secured</h3>

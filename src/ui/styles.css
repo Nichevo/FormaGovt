@@ -207,3 +207,10 @@ button.link { text-align: left; }
 .compass .drift { stroke: currentColor; stroke-width: 2; }
 .about h3 { margin-bottom: 4px; }
 .about li { margin: 4px 0; }
+
+/* Phase 5: achievements, outcomes, post-election check */
+.achievements { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.achievements li { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; opacity: 0.6; }
+.achievements li.on { opacity: 1; border-color: var(--accent); }
+.new-achievements { border: 1px solid var(--accent); border-radius: 10px; padding: 8px 12px; margin: 8px 0; }
+.gov-type { display: inline-block; font-size: 0.85rem; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--border); margin-left: 8px; vertical-align: middle; }

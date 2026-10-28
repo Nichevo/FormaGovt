@@ -1,3 +1,4 @@
+import { SCENARIOS } from '../data/scenarios';
 import { describe, expect, it } from 'vitest';
 import { allocateSeats, sainteLague } from './seats';
 
@@ -62,6 +63,14 @@ describe('allocateSeats', () => {
       otherElectorates: 2,
     });
     expect(result.parties.reduce((s, p) => s + p.total, 0)).toBe(118);
+    expect(result.totalSeats).toBe(120);
+  });
+
+  it('reproduces the official 2017 seat count', () => {
+    const s2017 = SCENARIOS.find((s) => s.id === 'election-2017')!;
+    const result = allocateSeats(s2017);
+    const seats = Object.fromEntries(result.parties.filter((p) => p.total > 0).map((p) => [p.partyId, p.total]));
+    expect(seats).toEqual({ national: 56, labour: 46, nzfirst: 9, greens: 8, act: 1 });
     expect(result.totalSeats).toBe(120);
   });
 });

@@ -160,3 +160,37 @@ describe('rival bloc', () => {
     expect(g.log.some((l) => l.kind === 'rival-collapse')).toBe(true);
   });
 });
+
+describe('kinds of government', () => {
+  const custom = { labour: 40, greens: 16, opportunity: 8, national: 30, act: 10, nzfirst: 10, tpm: 6 };
+  const game = () => ({
+    ...createGame({ player: PARTY_BY_ID.labour!, parties: PARTIES, seats: custom, majority: 61, totalSeats: 120, seed: 3 }),
+    rivalId: null,
+  });
+
+  it('calls a cabinet short of a majority, backed by confidence and supply, a minority government', () => {
+    let g: GameState = game();
+    g = makeOffer(g, PARTIES, fullOffer('greens', ['lab-gp-visits']));
+    g = makeOffer(g, PARTIES, { ...fullOffer('opportunity'), arrangement: 'confidence-supply', portfolios: [] });
+    for (let i = 0; i < 3 && g.outcome === 'playing'; i++) g = waitDay(g, PARTIES);
+    expect(g.outcome).toBe('won');
+    expect(g.govType).toBe('minority');
+  });
+
+  it('lets a bloc within five seats govern as a fragile minority at the deadline', () => {
+    let g: GameState = game();
+    g = makeOffer(g, PARTIES, fullOffer('greens', ['lab-gp-visits']));
+    for (let i = 0; i < DAYS && g.outcome === 'playing'; i++) g = waitDay(g, PARTIES);
+    // 40 + 16 = 56, five short of 61.
+    expect(g.outcome).toBe('won');
+    expect(g.govType).toBe('fragile-minority');
+    expect(summarise(g, PARTIES).stability).toBeLessThanOrEqual(20);
+  });
+
+  it('ends in a snap election when nobody is close', () => {
+    let g: GameState = game();
+    for (let i = 0; i < DAYS && g.outcome === 'playing'; i++) g = waitDay(g, PARTIES);
+    expect(g.outcome).toBe('lost');
+    expect(g.lostTo).toBe('deadline');
+  });
+});

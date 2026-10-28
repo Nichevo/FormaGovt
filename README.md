@@ -10,7 +10,7 @@ Once GitHub Pages is switched on (below), the game is at **https://nichevo.githu
 
 ## Status
 
-Phases 1 to 4 of 5 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The other big party leads a rival bloc that courts the same partners each day, pressure builds as either side nears a majority, and a graph tracks the race. Difficulty is rated for each election result by test plays. First-time players get tips as they go, the About page explains how to play and share, results show the cabinet and a policy drift compass, and you can send a challenge link, save a result image and replay past games kept in your browser.
+All five phases are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The other big party leads a rival bloc that courts the same partners each day, pressure builds as either side nears a majority, and a graph tracks the race. Difficulty is rated for each election result by test plays. First-time players get tips as they go, the About page explains how to play and share, results show the cabinet and a policy drift compass, and you can send a challenge link, save a result image and replay past games kept in your browser. Extras: a 2017 what-if scenario, a daily challenge that is the same for everyone in New Zealand, achievements, and endings for minority governments, grand coalitions, fragile minorities and snap elections. A post-election check will compare your government with the real one once it is announced (`src/data/actual-2026.json`).
 
 | Phase | What it adds |
 | --- | --- |
@@ -18,7 +18,7 @@ Phases 1 to 4 of 5 are in: pick any party, then spend 10 days negotiating with t
 | 2. Core negotiation | Offers, AI responses, policy comparison |
 | 3. Scoring and voters | Weighted score, voter mood, budget tracker, policy cards, MMP explainers, press conferences |
 | 4. Polish and launch | Rival bloc and pressure, progress graph, tips, share and challenge links, result image, play history, drift compass, About page |
-| 5. Extras | Historical scenarios, achievements, daily scenario |
+| 5. Extras | 2017 what-if, daily challenge, achievements, more endings, post-election check |
 
 ## Content rules
 

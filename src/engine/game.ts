@@ -67,9 +67,23 @@ export interface GameState {
   rivalId: string | null;
   history: DayPoint[];
   outcome: 'playing' | 'won' | 'lost';
-  /** Why the game was lost. */
+  /** Why the game was lost: the rival got there first, or nobody could govern (a snap election). */
   lostTo?: 'deadline' | 'rival';
+  /** What kind of government the player formed. */
+  govType?: GovType;
 }
+
+/**
+ * single-party: a majority alone. majority-coalition: cabinet parties hold a
+ * majority. minority: cabinet is short of a majority and relies on confidence
+ * and supply partners. grand-coalition: National and Labour together.
+ * fragile-minority: no majority at the deadline, but the largest bloc and close
+ * enough to govern vote by vote.
+ */
+export type GovType = 'single-party' | 'majority-coalition' | 'minority' | 'grand-coalition' | 'fragile-minority';
+
+/** At the deadline, a bloc this close to a majority, and ahead of the rival, can try to govern alone. */
+export const FRAGILE_MARGIN = 5;
 
 export type PressSpin = 'wins' | 'partner' | 'stability';
 
@@ -372,10 +386,27 @@ function processSignOffs(state: GameState, parties: Party[], day: number): GameS
 
 function checkOutcome(state: GameState): GameState {
   if (state.outcome !== 'playing') return state;
-  if (seatsSecured(state) >= state.majority) return { ...state, outcome: 'won' };
+  if (seatsSecured(state) >= state.majority) return { ...state, outcome: 'won', govType: govTypeOf(state) };
   if (rivalSeats(state) >= state.majority) return { ...state, outcome: 'lost', lostTo: 'rival', day: Math.min(state.day, DAYS) };
-  if (state.day > DAYS) return { ...state, outcome: 'lost', lostTo: 'deadline', day: DAYS };
+  if (state.day > DAYS) {
+    const secured = seatsSecured(state);
+    if (secured >= state.majority - FRAGILE_MARGIN && secured > rivalSeats(state)) {
+      return { ...state, outcome: 'won', govType: 'fragile-minority', day: DAYS };
+    }
+    return { ...state, outcome: 'lost', lostTo: 'deadline', day: DAYS };
+  }
   return state;
+}
+
+function govTypeOf(state: GameState): GovType {
+  const signed = Object.entries(state.partners).filter(([, p]) => p.status === 'signed');
+  if (signed.length === 0) return 'single-party';
+  const ids = new Set([state.playerId, ...signed.map(([id]) => id)]);
+  if (ids.has('national') && ids.has('labour')) return 'grand-coalition';
+  const cabinetSeats = signed
+    .filter(([, p]) => p.deal?.arrangement === 'coalition')
+    .reduce((s, [id]) => s + (state.seats[id] ?? 0), state.seats[state.playerId] ?? 0);
+  return cabinetSeats >= state.majority ? 'majority-coalition' : 'minority';
 }
 
 /** A rejected deal can be renegotiated, but trust has taken a hit. */
@@ -489,7 +520,8 @@ export function summarise(state: GameState, parties: Party[]): GameSummary {
     return { won, lost, policyScore: 0, mood, stability: 0, score: 0, partners: signed.map(([id]) => id) };
   }
   const policyScore = Math.round((earned / total) * 100);
-  const stability = Math.round((seatWeight / seatTotal) * 100);
+  // Governing without a majority, vote by vote, is the least stable arrangement.
+  const stability = Math.round((seatWeight / seatTotal) * 100 * (state.govType === 'fragile-minority' ? 0.2 : 1));
   const score = Math.round(0.6 * policyScore + 0.3 * mood.mood + 0.1 * stability);
   return { won, lost, policyScore, mood, stability, score, partners: signed.map(([id]) => id) };
 }
