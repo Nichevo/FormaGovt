@@ -1,0 +1,86 @@
+import { useEffect, useRef } from 'react';
+import { PARTIES } from '../data/parties';
+import { ISSUE_LABELS, type Policy } from '../data/schema';
+import { formatChange } from '../engine/budget';
+import { ownerOf } from '../engine/negotiation';
+
+const STANCE_LABELS: Record<string, string> = {
+  '-2': 'Strongly left or progressive',
+  '-1': 'Left or progressive',
+  '0': 'Centre',
+  '1': 'Right or conservative',
+  '2': 'Strongly right or conservative',
+};
+
+function stanceLabel(stance: number): string {
+  return STANCE_LABELS[String(Math.round(stance))] ?? 'Centre';
+}
+
+/** A policy's details and sources, shown in a modal dialog. */
+export function PolicyCard({ policy, onClose }: { policy: Policy; onClose: () => void }) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const dialog = ref.current;
+    if (dialog && !dialog.open) dialog.showModal?.();
+  }, []);
+  const owner = ownerOf(PARTIES, policy.id);
+  return (
+    <dialog ref={ref} className="policy-card" onClose={onClose} onCancel={onClose}>
+      <div className="policy-card-head" style={{ borderTopColor: owner?.colour }}>
+        <span className="muted small">
+          {owner?.name} · {ISSUE_LABELS[policy.issue]}
+        </span>
+        <h2>{policy.title}</h2>
+      </div>
+      <p>{policy.summary}</p>
+      <dl>
+        <dt>Priority for the party</dt>
+        <dd>
+          {policy.weight} of 5{policy.weight >= 4 ? ' (flagship)' : ''}
+        </dd>
+        <dt>Bottom line</dt>
+        <dd>
+          {policy.isBottomLine
+            ? policy.bottomLineBasis === 'declared'
+              ? 'Yes, declared by the party'
+              : 'Yes, inferred by the game from party messaging'
+            : 'No'}
+        </dd>
+        <dt>Where it sits</dt>
+        <dd>{stanceLabel(policy.stance)} (game rating)</dd>
+        <dt>Budget, 2028/29</dt>
+        <dd>
+          {policy.fiscalImpactNZDm === null ? 'Not costed' : `${formatChange(policy.fiscalImpactNZDm)} a year`}
+          {policy.fiscalBasis && (
+            <span className="muted small">
+              {' '}
+              ({policy.fiscalBasis === 'party' ? 'party costing' : 'rough game estimate'})
+            </span>
+          )}
+          {policy.fiscalNote && <div className="muted small">{policy.fiscalNote}</div>}
+          {policy.fiscalSourceUrl && (
+            <div className="small">
+              <a href={policy.fiscalSourceUrl} target="_blank" rel="noreferrer">
+                Costing source
+              </a>
+            </div>
+          )}
+        </dd>
+      </dl>
+      <p className="small">
+        <a href={policy.sourceUrl} target="_blank" rel="noreferrer">
+          Policy source
+        </a>
+      </p>
+      <p className="muted small">
+        Simplified for the game and may not match the party's full policy. Check the party's own material before relying
+        on it.
+      </p>
+      <form method="dialog">
+        <button type="submit" className="primary">
+          Close
+        </button>
+      </form>
+    </dialog>
+  );
+}

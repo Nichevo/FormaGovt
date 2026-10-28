@@ -98,6 +98,8 @@ export interface NegotiationContext {
   pressure: number;
   /** Policies other partners have already agreed to; the partner judges the whole programme. */
   otherAgreed?: Policy[];
+  /** Change to the operating balance (NZ$m a year) from the whole programme if this offer is agreed. */
+  budgetChange?: number;
 }
 
 export type ResponseKind = 'accept' | 'counter' | 'hold' | 'walk';
@@ -131,6 +133,8 @@ export function scoreOffer(offer: Offer, ctx: NegotiationContext): number {
   for (const policy of askedPolicies(offer, ctx)) {
     const r = reactionTo(partner, policy);
     if (r === 1) utility += 0.03;
+    // Even a policy it can live with costs something to back.
+    if (r === 0) utility -= 0.1 * concernFor(partner, policy);
     if (r === -1) utility -= 0.12 * concernFor(partner, policy);
   }
 
@@ -138,6 +142,10 @@ export function scoreOffer(offer: Offer, ctx: NegotiationContext): number {
   utility += 0.15 * ((ctx.trust - 50) / 50);
 
   utility -= ruledOutBias(partner, player.id) * 0.45 * (1 - 0.6 * ctx.pressure);
+
+  // A party balks when the programme digs the deficit deeper than it can defend.
+  const overspend = -(ctx.budgetChange ?? 0) - partner.personality.fiscalTolerance;
+  if (overspend > 0) utility -= 0.08 * (overspend / 1000);
   return utility;
 }
 

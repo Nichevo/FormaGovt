@@ -1,7 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { PARTIES, PARTY_BY_ID } from '../data/parties';
 import { eligiblePortfolios, type Offer } from './negotiation';
-import { createGame, DAYS, makeOffer, seatsSecured, summarise, waitDay } from './game';
+import {
+  createGame,
+  DAYS,
+  holdPress,
+  makeOffer,
+  moodOf,
+  pendingPress,
+  PRESS_OPTIONS,
+  previewDeal,
+  seatsSecured,
+  summarise,
+  waitDay,
+} from './game';
 
 const seats = { national: 35, labour: 34, greens: 18, act: 12, nzfirst: 12, opportunity: 7, tpm: 4 };
 const newGame = (playerId: string, seed = 1) =>
@@ -69,5 +81,41 @@ describe('game flow', () => {
     const insulting: Offer = { ...fullOffer('act', ['lab-cgt']) };
     for (let i = 0; i < PARTY_BY_ID.act!.personality.patience; i++) g = makeOffer(g, PARTIES, insulting);
     expect(g.partners.act!.status).toBe('walked');
+  });
+});
+
+describe('scoring and press conferences', () => {
+  it('scores a formed government on policies, mood and stability', () => {
+    let g = newGame('national');
+    g = makeOffer(g, PARTIES, fullOffer('nzfirst', ['nat-kiwisaver-compulsory']));
+    expect(pendingPress(g)).toEqual(['nzfirst']);
+    const before = g.partners.act!.trust;
+    g = holdPress(g, 'nzfirst', 'partner');
+    expect(pendingPress(g)).toEqual([]);
+    expect(g.partners.act!.trust).toBe(before + PRESS_OPTIONS.partner.openTrust);
+    expect(moodOf(g, PARTIES).factors.some((f) => f.label === 'Press conferences')).toBe(true);
+  });
+
+  it('counts policies backed only through confidence and supply for less', () => {
+    const play = (arrangement: 'coalition' | 'confidence-supply') => {
+      let g = newGame('labour');
+      g = makeOffer(g, PARTIES, { ...fullOffer('greens', ['lab-gp-visits']), arrangement, portfolios: [] });
+      g = waitDay(g, PARTIES);
+      return { ...g, outcome: 'won' as const };
+    };
+    const coalition = summarise(play('coalition'), PARTIES);
+    const cs = summarise(play('confidence-supply'), PARTIES);
+    expect(cs.policyScore).toBeLessThan(coalition.policyScore);
+    expect(cs.stability).toBeLessThan(coalition.stability);
+  });
+
+  it('previews the budget and mood of an offer before it is sent', () => {
+    const g = newGame('labour');
+    const few = previewDeal(g, PARTIES, fullOffer('greens', ['lab-cgt']));
+    const many = previewDeal(g, PARTIES, fullOffer('greens', PARTY_BY_ID.labour!.policies.map((p) => p.id)));
+    expect(few.budget.change).not.toBe(0);
+    expect(many.mood.mood).toBeGreaterThan(few.mood.mood);
+    // Nothing changes until the offer is actually sent.
+    expect(g.partners.greens!.status).toBe('open');
   });
 });

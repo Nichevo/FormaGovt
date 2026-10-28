@@ -4,7 +4,7 @@ import { ISSUES, ISSUE_LABELS, type Party, type Policy } from '../data/schema';
 import { compatibility, REACTION_LABELS, reactionTo } from '../engine/negotiation';
 
 /** Policy groups down the side, parties across the top, coloured by how your party sees each policy. */
-export function ComparisonView({ player }: { player: Party }) {
+export function ComparisonView({ player, onCard }: { player: Party; onCard: (policy: Policy) => void }) {
   const others = PARTIES.filter((p) => p.id !== player.id);
   const [targetId, setTargetId] = useState(others[0]!.id);
   const target = PARTY_BY_ID[targetId]!;
@@ -16,7 +16,7 @@ export function ComparisonView({ player }: { player: Party }) {
         <h2>Policy grid</h2>
         <p className="muted small">
           Each party's main policy in each group, coloured by how {player.name} sees it. 🔒 marks a bottom line. Policy
-          summaries are simplified; tap a title for the source.
+          summaries are simplified; tap a title for its card and source.
         </p>
         <div className="grid-scroll">
           <table className="compare">
@@ -40,10 +40,10 @@ export function ComparisonView({ player }: { player: Party }) {
                     const r = reactionTo(player, top);
                     return (
                       <td key={p.id} className={`r${r}`} title={`${top.summary} (${REACTION_LABELS[r]})`}>
-                        <a href={top.sourceUrl} target="_blank" rel="noreferrer">
+                        <button type="button" className="link" onClick={() => onCard(top)}>
                           {top.isBottomLine ? '🔒 ' : ''}
                           {top.title}
-                        </a>
+                        </button>
                       </td>
                     );
                   })}
@@ -69,13 +69,13 @@ export function ComparisonView({ player }: { player: Party }) {
         <p className="score">
           Compatibility: <strong>{compatibility(player, target)}%</strong>
         </p>
-        <Differences player={player} target={target} />
+        <Differences player={player} target={target} onCard={onCard} />
       </section>
     </>
   );
 }
 
-function Differences({ player, target }: { player: Party; target: Party }) {
+function Differences({ player, target, onCard }: { player: Party; target: Party; onCard: (policy: Policy) => void }) {
   const pairs: { policy: Policy; owner: Party; judge: Party }[] = [
     ...player.policies.map((policy) => ({ policy, owner: player, judge: target })),
     ...target.policies.map((policy) => ({ policy, owner: target, judge: player })),
@@ -92,7 +92,9 @@ function Differences({ player, target }: { player: Party; target: Party }) {
         {items.map(({ policy, owner, judge }) => (
           <li key={policy.id}>
             <span className="swatch" style={{ background: owner.colour }} />
-            {policy.title}{' '}
+            <button type="button" className="link" onClick={() => onCard(policy)}>
+              {policy.title}
+            </button>{' '}
             <span className="muted small">
               ({owner.shortName}; {judge.shortName}: {REACTION_LABELS[reactionTo(judge, policy)].toLowerCase()})
             </span>

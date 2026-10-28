@@ -132,7 +132,10 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 3760,
+      "fiscalBasis": "party",
+      "fiscalNote": "Green Party costing for 2027/28, rising to $4.14bn by 2030/31.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/greens-fiscal-plan-30-billion-health-wealth-tax-new-zealand-election-2026/",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
       "bottomLineBasis": "inferred"
     },
@@ -145,7 +148,10 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 953,
+      "fiscalBasis": "party",
+      "fiscalNote": "Green Party costing, $953m to $1.1bn a year.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/greens-fiscal-plan-30-billion-health-wealth-tax-new-zealand-election-2026/",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -157,7 +163,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.8,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -3700,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate: about 3.5 million taxpayers saving up to $1,050 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -169,7 +177,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 1500,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -181,7 +191,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.4,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 1200,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -193,7 +205,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 300,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate: 0.06% on the big four banks' liabilities.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -205,7 +219,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 500,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -217,7 +233,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -500,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
       "bottomLineBasis": "inferred"
     }

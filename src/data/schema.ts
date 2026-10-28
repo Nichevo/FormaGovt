@@ -46,8 +46,14 @@ export const PolicySchema = z.object({
   bottomLineBasis: z.enum(['declared', 'inferred']).optional(),
   /** How much the party's voters notice this policy, 0 to 1. */
   voterSalience: z.number().min(0).max(1),
-  /** Yearly change to the operating balance in NZ$ millions; null until costed. */
+  /** Yearly change to the operating balance in NZ$ millions (negative costs money); null until costed. */
   fiscalImpactNZDm: z.number().nullable(),
+  /** "party" when the figure comes from the party's own costing, "estimate" when it is a rough game estimate. */
+  fiscalBasis: z.enum(['party', 'estimate']).optional(),
+  /** How the figure was worked out, shown on the policy card. */
+  fiscalNote: z.string().optional(),
+  /** Where a party costing was reported. */
+  fiscalSourceUrl: z.string().url().optional(),
   sourceUrl: z.string().url(),
 });
 export type Policy = z.infer<typeof PolicySchema>;

@@ -119,7 +119,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -13000,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate. The party says about 4.2 million people would gain about $4,000 a year on average.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
       "bottomLineBasis": "inferred"
     },
@@ -132,7 +134,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 12000,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate. The party says its whole package raises about $20bn.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -144,7 +148,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.4,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 3000,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -156,7 +162,10 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 2100,
+      "fiscalBasis": "party",
+      "fiscalNote": "Te Pāti Māori expects $2.1bn.",
+      "fiscalSourceUrl": "https://thespinoff.co.nz/the-bulletin/27-08-2026/te-pati-maoris-tax-plan-30k-tax-free-a-new-stamp-duty-and-a-kai-credit",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -168,7 +177,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -3000,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate: about $1,000 each for around 3 million people.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -180,7 +191,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -150,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -192,7 +205,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rule change; little direct cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -204,7 +219,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -100,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -216,7 +233,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -100,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
       "bottomLineBasis": "inferred"
     }
