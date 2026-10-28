@@ -121,6 +121,7 @@
       "stance": -2,
       "weight": 5,
       "isBottomLine": true,
+      "orPolicyIds": ["tpm-kai-credit"],
       "flex": "firm",
       "compromise": {
         "title": "First $15,000 tax-free, phased in",

@@ -186,6 +186,7 @@
       "stance": -1.5,
       "weight": 4,
       "isBottomLine": true,
+      "orPolicyIds": ["opp-paris"],
       "flex": "soft",
       "compromise": {
         "title": "Bottom trawling phased out in protected areas first",
@@ -208,6 +209,7 @@
       "stance": -1.5,
       "weight": 4,
       "isBottomLine": true,
+      "orPolicyIds": ["opp-bottom-trawling"],
       "flex": "firm",
       "compromise": {
         "title": "Keep Paris commitments, Commission review",

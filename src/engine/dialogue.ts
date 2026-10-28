@@ -65,6 +65,10 @@ export function lineFor(entry: LogEntry, partner: Party): string {
         if (r.counter.compromise && r.counter.addPolicy.compromise) {
           return `We know "${r.counter.addPolicy.title}" is hard for others. We would accept "${r.counter.addPolicy.compromise.title}" instead.`;
         }
+        if (r.counter.either?.length) {
+          const others = r.counter.either.map((p) => `"${p.title}"`).join(' or ');
+          return `We need "${r.counter.addPolicy.title}" in the agreement, or ${others} instead. One of them is a bottom line for us.`;
+        }
         const bottomLine = r.counter.addPolicy.isBottomLine ? ' That is a bottom line for us.' : '';
         return `We are close, but we need "${r.counter.addPolicy.title}" in the agreement.${bottomLine}`;
       }

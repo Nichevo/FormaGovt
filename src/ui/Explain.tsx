@@ -29,7 +29,7 @@ export const EXPLAINERS = {
   cabinet:
     'Partners expect cabinet roles in line with their seats. A major partner, with about a quarter of the government\'s seats or more, wants close to its share and a senior role such as Deputy Prime Minister or Finance. A minor partner settles for less. Giving away far more than a fair share upsets your own voters.',
   compromise:
-    'Some bottom lines can bend. Fixed ones never do. Firm ones accept a scaled-back version late in talks or for a strong offer; soft ones accept it readily. A compromise keeps about 60% of the policy\'s value and part of its budget effect. Compromise versions are written for the game, not proposed by any party.',
+    'Some bottom lines can bend. Fixed ones never do. Firm ones accept a scaled-back version late in talks or for a strong offer; soft ones accept it readily. A compromise keeps about 60% of the policy\'s value and part of its budget effect. Compromise versions are written for the game, not proposed by any party. Some bottom lines are an either-or: the party needs one of two of its policies, not both, and will ask for the one that suits you best.',
   reopen:
     'You can reopen one deal per party to change it. It costs trust and a little voter mood, and the partner usually wants something in return. The changed deal goes through sign-off again; if it fails, the old deal stands. If a new deal includes something a partner already in government hates, that partner asks to renegotiate for free, and if it crosses a red line you have two days to fix it before it leaves. A partner that finds its signed deal thin may also reach out once to ask for a change; a strong deal rarely prompts this.',
   time:

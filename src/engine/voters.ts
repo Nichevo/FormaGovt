@@ -62,7 +62,9 @@ export function voterMood({ player, programme, partners, spin, seatShare, reopen
     const hits = player.policies
       .map((p) => {
         const kept = inDeal.get(p.id);
-        const hit = droppedPolicyHit(p) * (!kept ? 1 : kept.isCompromise ? 0.5 : 0);
+        // A bottom line met by one of its stand-ins is not a dropped promise.
+        const covered = !kept && p.isBottomLine && (p.orPolicyIds ?? []).some((id) => inDeal.has(id) && !inDeal.get(id)!.isCompromise);
+        const hit = covered ? 0 : droppedPolicyHit(p) * (!kept ? 1 : kept.isCompromise ? 0.5 : 0);
         return { p, hit, compromised: !!kept?.isCompromise };
       })
       .filter((h) => h.hit > 0)

@@ -53,6 +53,11 @@ export const PolicySchema = z.object({
       fiscalShare: z.number().min(0).max(1),
     })
     .optional(),
+  /**
+   * For a bottom line: other policies of the same party that can stand in for it, so the
+   * party needs this one or any of those. Set by the game, not a party statement.
+   */
+  orPolicyIds: z.array(z.string()).optional(),
   /** "declared" when the party has said so publicly, "inferred" when set from its messaging. */
   bottomLineBasis: z.enum(['declared', 'inferred']).optional(),
   /** How much the party's voters notice this policy, 0 to 1. */

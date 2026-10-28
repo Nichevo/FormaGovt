@@ -16,6 +16,7 @@ import {
   type Offer,
   type OfferResponse,
   type PortfolioId,
+  bottomLineOptions,
 } from './negotiation';
 import { createRng } from './random';
 import { voterMood, type VoterMood } from './voters';
@@ -894,7 +895,12 @@ function rivalOfferFor(state: GameState, rival: Party, party: Party, p: PartnerS
     if (!acceptable) continue;
     if (crossesPartner(pol)) {
       if (!pol.isBottomLine) continue;
-      // A bottom line that would upset its partners: offer the compromise, or skip this party.
+      // A bottom line that would upset its partners: offer a stand-in, the compromise, or skip this party.
+      const alt = bottomLineOptions(party, pol).slice(1).find((a) => !crossesPartner(a));
+      if (alt) {
+        if (!included.includes(alt)) included.push(alt);
+        continue;
+      }
       if (!canCompromise(pol)) return null;
       compromisePolicyIds.push(pol.id);
     }

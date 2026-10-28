@@ -48,6 +48,7 @@ export function About({ onClose }: { onClose: () => void }) {
         <li>Deals with the rival bloc now go through each party's sign-off, and the talks log explains why a party signed with the other side.</li>
         <li>Partners can come back to you asking to change a thin deal. A strong deal rarely prompts this.</li>
         <li>Small offers and changes take no time, up to two a day, while big offers take two days.</li>
+        <li>Some bottom lines are an either-or: the party needs one of two of its policies, not both.</li>
       </ul>
       <p>Tips appear above the talks during play. You can hide them and bring them back at any time.</p>
 

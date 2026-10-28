@@ -46,6 +46,15 @@ export function PolicyCard({ policy, onClose }: { policy: Policy; onClose: () =>
               : 'Yes, inferred by the game from party messaging'
             : 'No'}
         </dd>
+        {policy.isBottomLine && policy.orPolicyIds?.length ? (
+          <>
+            <dt>Either or (game rating)</dt>
+            <dd>
+              The party would accept {policy.orPolicyIds.length === 1 ? 'another of its policies' : 'other policies of its own'} in place of this one:{' '}
+              {policy.orPolicyIds.map((id) => `"${PARTIES.flatMap((p) => p.policies).find((p) => p.id === id)?.title ?? id}"`).join(' or ')}.
+            </dd>
+          </>
+        ) : null}
         {policy.isBottomLine && policy.flex && (
           <>
             <dt>Room to compromise (game rating)</dt>

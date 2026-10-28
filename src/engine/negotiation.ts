@@ -182,7 +182,14 @@ export interface OfferResponse {
   /** For a hold-out: the player's policy costing the most. */
   sticking?: Policy;
   /** For a counter: the change the partner asks for. */
-  counter?: { addPolicy?: Policy; compromise?: boolean; addPortfolio?: PortfolioId; cutPolicy?: Policy };
+  counter?: {
+    addPolicy?: Policy;
+    compromise?: boolean;
+    /** Other policies the party would take instead of addPolicy. */
+    either?: Policy[];
+    addPortfolio?: PortfolioId;
+    cutPolicy?: Policy;
+  };
   /** The budget is past the party's line. */
   budget?: BudgetProblem;
   /** A party holding out early, while it still has options. */
@@ -287,6 +294,18 @@ export function acceptanceThreshold(ctx: NegotiationContext, arrangement: Arrang
   return arrangement === 'confidence-supply' ? base - 0.12 : base;
 }
 
+/** A bottom line and the policies that can stand in for it: the party needs any one of them. */
+export function bottomLineOptions(party: Party, policy: Policy): Policy[] {
+  return [policy, ...(policy.orPolicyIds ?? []).map((id) => party.policies.find((p) => p.id === id)).filter((p): p is Policy => !!p)];
+}
+
+/** True when one of a bottom line's stand-ins is in the offer in full. */
+export function metByAlternative(party: Party, policy: Policy, policyIds: string[], compromiseIds: string[] = []): boolean {
+  return bottomLineOptions(party, policy)
+    .slice(1)
+    .some((alt) => policyIds.includes(alt.id) && !compromiseIds.includes(alt.id));
+}
+
 /** Whether a partner takes the compromise version of its own bottom line in this offer. */
 function acceptsCompromise(policy: Policy, ctx: NegotiationContext, utility: number, threshold: number): boolean {
   if (!canCompromise(policy)) return false;
@@ -304,6 +323,7 @@ export function evaluateOffer(offer: Offer, ctx: NegotiationContext): OfferRespo
   const missingBottomLines = partner.policies.filter(
     (p) =>
       p.isBottomLine &&
+      !metByAlternative(partner, p, offer.partnerPolicyIds, offer.compromisePolicyIds) &&
       (!offer.partnerPolicyIds.includes(p.id) ||
         (compromised.has(p.id) && !acceptsCompromise(p, ctx, utility, threshold))),
   );
@@ -321,10 +341,16 @@ export function evaluateOffer(offer: Offer, ctx: NegotiationContext): OfferRespo
   if (missingBottomLines.length > 0) {
     // A missing bottom line is always the first thing a partner asks for. If the full
     // version would cross someone else's red line, it offers its compromise instead.
-    const wanted = [...missingBottomLines].sort((a, b) => b.weight - a.weight)[0]!;
-    const clashes = [player, ...(ctx.currentPartners ?? [])].some((p) => reactionTo(p, wanted) === -2);
-    const compromise = clashes && canCompromise(wanted) && !compromised.has(wanted.id);
-    return { kind: 'counter', ...base, cabinet, counter: { addPolicy: wanted, compromise } };
+    const missing = [...missingBottomLines].sort((a, b) => b.weight - a.weight)[0]!;
+    const others = [player, ...(ctx.currentPartners ?? [])];
+    const clashesFor = (pol: Policy) => others.some((p) => reactionTo(p, pol) === -2);
+    // Where either of two demands will do, it asks for the one the other side can live with best.
+    const options = bottomLineOptions(partner, missing);
+    const fit = (pol: Policy) => (clashesFor(pol) ? -10 : 0) + others.reduce((s, p) => s + reactionTo(p, pol), 0);
+    const wanted = options.length > 1 ? [...options].sort((a, b) => fit(b) - fit(a) || b.weight - a.weight)[0]! : missing;
+    const compromise = clashesFor(wanted) && canCompromise(wanted) && !compromised.has(wanted.id);
+    const either = options.length > 1 ? options.filter((p) => p.id !== wanted.id) : undefined;
+    return { kind: 'counter', ...base, cabinet, counter: { addPolicy: wanted, compromise, either } };
   }
 
   const problem = budgetProblemFor(partner, ctx.budget);

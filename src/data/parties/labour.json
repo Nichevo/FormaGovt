@@ -171,6 +171,7 @@
       "stance": -1.5,
       "weight": 5,
       "isBottomLine": true,
+      "orPolicyIds": ["lab-prescriptions"],
       "flex": "firm",
       "compromise": {
         "title": "One free GP visit a year, phased in",
