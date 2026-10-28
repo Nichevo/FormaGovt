@@ -44,7 +44,7 @@
     {
       "partyId": "labour",
       "trust": 20,
-      "ruledOutBias": 0
+      "ruledOutBias": 0.5
     },
     {
       "partyId": "greens",

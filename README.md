@@ -10,7 +10,7 @@ Once GitHub Pages is switched on (below), the game is at **https://nichevo.githu
 
 ## Status
 
-Phase 1 of 5 is in: party data, the MMP seat calculator and a Parliament view. Negotiation arrives in phase 2.
+Phases 1 and 2 of 5 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, and the whole programme you have agreed so far. Voter mood, the budget and the rival bloc arrive in later phases.
 
 | Phase | What it adds |
 | --- | --- |
@@ -19,6 +19,16 @@ Phase 1 of 5 is in: party data, the MMP seat calculator and a Parliament view. N
 | 3. Scoring and voters | Weighted score, voter mood, budget tracker |
 | 4. Polish and launch | All parties playable, rival bloc and pressure, tutorial, share links |
 | 5. Extras | Historical scenarios, achievements, daily scenario |
+
+## Content rules
+
+- Real names are used only for key public figures. Every other MP is a role-named placeholder.
+- No invented quotes from real people. Talks replies come from a party's "negotiating team", are templated by the game's rules, and are labelled fictional.
+- Portraits, when added, are original cartoons, never traced from press photos.
+- No party logos. Party names and the game's own colours only.
+- Nothing may suggest a party or leader endorses the game. The disclaimer says it is not affiliated with or endorsed by any party.
+- Policy cards stay accurate and link to a source.
+- The game shows only a notice on election day (7 November 2026, NZ time).
 
 ## Run it locally
 
