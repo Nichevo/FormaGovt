@@ -10,7 +10,7 @@ Once GitHub Pages is switched on (below), the game is at **https://nichevo.githu
 
 ## Status
 
-Phase 1 of 5 is in: party data, the MMP seat calculator and a Parliament view. Negotiation arrives in phase 2.
+Phases 1 and 2 of 5 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, and the whole programme you have agreed so far. Voter mood, the budget and the rival bloc arrive in later phases.
 
 | Phase | What it adds |
 | --- | --- |
