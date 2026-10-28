@@ -1,0 +1,227 @@
+{
+  "id": "opportunity",
+  "name": "Opportunity",
+  "shortName": "OPP",
+  "colour": "#2EC4B6",
+  "difficulty": "medium",
+  "issueSalience": {
+    "tax": 0.6,
+    "kiwisaver-retirement": 0.5,
+    "health": 0.9,
+    "cost-of-living": 0.8,
+    "housing": 0.6,
+    "climate-environment": 0.8,
+    "immigration": 0.3,
+    "governance": 0.9,
+    "treaty-maori": 0.4,
+    "law-order": 0.3
+  },
+  "issueStance": {
+    "tax": -0.5,
+    "kiwisaver-retirement": -0.5,
+    "health": -1,
+    "cost-of-living": -0.5,
+    "housing": -1,
+    "climate-environment": -1.5,
+    "immigration": -0.5,
+    "governance": -1.5,
+    "treaty-maori": -0.5,
+    "law-order": -0.5
+  },
+  "personality": {
+    "patience": 6,
+    "greed": 0.5,
+    "kingmaker": true,
+    "fiscalTolerance": 2000
+  },
+  "ratification": {
+    "body": "Party board",
+    "days": 1,
+    "threshold": 0.5,
+    "rejectionRisk": 0.15
+  },
+  "relationships": [
+    {
+      "partyId": "national",
+      "trust": 30,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "labour",
+      "trust": 45,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "greens",
+      "trust": 45,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "act",
+      "trust": 20,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "nzfirst",
+      "trust": 10,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "tpm",
+      "trust": 30,
+      "ruledOutBias": 0
+    }
+  ],
+  "people": [
+    {
+      "id": "opp-wong",
+      "name": "Qiulae Wong",
+      "role": "Leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "economics"
+      ],
+      "experience": 1,
+      "pastRoles": []
+    },
+    {
+      "id": "opp-deputy",
+      "name": "Opportunity deputy leader",
+      "role": "Deputy leader",
+      "isKeyFigure": false,
+      "skills": [
+        "health"
+      ],
+      "experience": 1,
+      "pastRoles": []
+    },
+    {
+      "id": "opp-finance",
+      "name": "Opportunity finance spokesperson",
+      "role": "Finance",
+      "isKeyFigure": false,
+      "skills": [
+        "finance",
+        "economics"
+      ],
+      "experience": 1,
+      "pastRoles": []
+    }
+  ],
+  "policies": [
+    {
+      "id": "opp-commerce-commission",
+      "title": "Stronger Commerce Commission",
+      "summary": "Gives the Commerce Commission more independence and power to tackle market dominance, including forcing structural separation.",
+      "issue": "cost-of-living",
+      "stance": -1,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.8,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
+      "bottomLineBasis": "declared"
+    },
+    {
+      "id": "opp-lobbying-reform",
+      "title": "Lobbying and donations reform",
+      "summary": "A lobbying register, cooling-off periods for departing politicians, a conduct code and a $30,000 cap on donations.",
+      "issue": "governance",
+      "stance": -1.5,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
+      "bottomLineBasis": "declared"
+    },
+    {
+      "id": "opp-health-plan",
+      "title": "Cross-party 10-year health plan",
+      "summary": "A funded 10-year plan for the health system agreed across parties, with workforce and infrastructure commitments.",
+      "issue": "health",
+      "stance": -1,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.8,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
+      "bottomLineBasis": "declared"
+    },
+    {
+      "id": "opp-bottom-trawling",
+      "title": "Phase out bottom trawling",
+      "summary": "Starts phasing out bottom trawling immediately, working with industry, iwi and coastal communities.",
+      "issue": "climate-environment",
+      "stance": -1.5,
+      "weight": 4,
+      "isBottomLine": true,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
+      "bottomLineBasis": "declared"
+    },
+    {
+      "id": "opp-paris",
+      "title": "Recommit to Paris and protect the Climate Change Commission",
+      "summary": "Recommits to Paris Agreement obligations and protects the Climate Change Commission's independence.",
+      "issue": "climate-environment",
+      "stance": -1.5,
+      "weight": 4,
+      "isBottomLine": true,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
+      "bottomLineBasis": "declared"
+    },
+    {
+      "id": "opp-land-tax",
+      "title": "Land value tax",
+      "summary": "A 1.75% tax on urban land value and 0.5% on rural land.",
+      "issue": "tax",
+      "stance": -1,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "opp-citizens-income",
+      "title": "Citizen's Income",
+      "summary": "Pays adults $19,400 a year, means-tested above $350,000.",
+      "issue": "cost-of-living",
+      "stance": -1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "opp-income-tax",
+      "title": "New income tax scale",
+      "summary": "28% up to $50,000, 34% up to $200,000 and 39% above that.",
+      "issue": "tax",
+      "stance": -0.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.4,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "opp-kiwisaver",
+      "title": "KiwiSaver 2.0",
+      "summary": "Compulsory contributions rising to 6% from employees and 6% from employers.",
+      "issue": "kiwisaver-retirement",
+      "stance": -0.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.4,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    }
+  ]
+}

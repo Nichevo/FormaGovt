@@ -1,0 +1,227 @@
+{
+  "id": "nzfirst",
+  "name": "NZ First",
+  "shortName": "NZF",
+  "colour": "#202020",
+  "difficulty": "medium",
+  "issueSalience": {
+    "tax": 0.6,
+    "kiwisaver-retirement": 0.8,
+    "health": 0.5,
+    "cost-of-living": 0.7,
+    "housing": 0.4,
+    "climate-environment": 0.6,
+    "immigration": 0.9,
+    "governance": 0.6,
+    "treaty-maori": 0.8,
+    "law-order": 0.8
+  },
+  "issueStance": {
+    "tax": 0.5,
+    "kiwisaver-retirement": 0.5,
+    "health": 0,
+    "cost-of-living": 0,
+    "housing": 0.5,
+    "climate-environment": 2,
+    "immigration": 2,
+    "governance": 1,
+    "treaty-maori": 2,
+    "law-order": 2
+  },
+  "personality": {
+    "patience": 3,
+    "greed": 0.8,
+    "kingmaker": true,
+    "fiscalTolerance": 1500
+  },
+  "ratification": {
+    "body": "Leader decides",
+    "days": 0,
+    "threshold": 0,
+    "rejectionRisk": 0
+  },
+  "relationships": [
+    {
+      "partyId": "national",
+      "trust": 55,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "labour",
+      "trust": 15,
+      "ruledOutBias": 0.8
+    },
+    {
+      "partyId": "greens",
+      "trust": 5,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "act",
+      "trust": 40,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "tpm",
+      "trust": 5,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "opportunity",
+      "trust": 10,
+      "ruledOutBias": 0
+    }
+  ],
+  "people": [
+    {
+      "id": "nzf-peters",
+      "name": "Winston Peters",
+      "role": "Leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "foreign-affairs"
+      ],
+      "experience": 3,
+      "pastRoles": [
+        "Deputy Prime Minister",
+        "Minister of Foreign Affairs"
+      ]
+    },
+    {
+      "id": "nzf-jones",
+      "name": "Shane Jones",
+      "role": "Deputy leader",
+      "isKeyFigure": true,
+      "skills": [
+        "regional-development"
+      ],
+      "experience": 3,
+      "pastRoles": [
+        "Minister for Regional Development"
+      ]
+    },
+    {
+      "id": "nzf-finance",
+      "name": "NZ First finance spokesperson",
+      "role": "Finance",
+      "isKeyFigure": false,
+      "skills": [
+        "finance"
+      ],
+      "experience": 1,
+      "pastRoles": []
+    },
+    {
+      "id": "nzf-justice",
+      "name": "NZ First justice spokesperson",
+      "role": "Justice",
+      "isKeyFigure": false,
+      "skills": [
+        "justice"
+      ],
+      "experience": 1,
+      "pastRoles": []
+    }
+  ],
+  "policies": [
+    {
+      "id": "nzf-small-business-tax",
+      "title": "20% tax rate for small businesses",
+      "summary": "Cuts the company tax rate from 28% to 20% for businesses with turnover under $30 million.",
+      "issue": "tax",
+      "stance": 1,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "nzf-newborn-kiwisaver",
+      "title": "$1,000 KiwiSaver for every newborn",
+      "summary": "Opens a KiwiSaver account for every newborn, seeded with $1,000.",
+      "issue": "kiwisaver-retirement",
+      "stance": 0,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "nzf-super-citizens",
+      "title": "NZ Super for citizens only from 2029",
+      "summary": "Limits NZ Superannuation to citizens from 2029.",
+      "issue": "kiwisaver-retirement",
+      "stance": 2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.8,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
+      "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "nzf-kids-grant",
+      "title": "$5,000 Kiwi Kids Grant",
+      "summary": "Pays a $5,000-a-year Kiwi Kids Grant.",
+      "issue": "cost-of-living",
+      "stance": -0.5,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "nzf-immigration",
+      "title": "Immigration curbs",
+      "summary": "Tightens immigration settings.",
+      "issue": "immigration",
+      "stance": 2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/",
+      "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "nzf-paris-exit",
+      "title": "Leave the Paris Agreement",
+      "summary": "Withdraws New Zealand from the Paris climate agreement.",
+      "issue": "climate-environment",
+      "stance": 2,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
+    },
+    {
+      "id": "nzf-sex-definitions",
+      "title": "Define 'woman' and 'man' in law",
+      "summary": "Passes a bill defining 'woman' and 'man' in legislation.",
+      "issue": "law-order",
+      "stance": 2,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
+    },
+    {
+      "id": "nzf-regions",
+      "title": "Regional development",
+      "summary": "State support for regional development and investment outside the main cities.",
+      "issue": "governance",
+      "stance": 0,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
+    }
+  ]
+}

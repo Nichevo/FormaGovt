@@ -1,0 +1,225 @@
+{
+  "id": "greens",
+  "name": "Greens",
+  "shortName": "GRN",
+  "colour": "#098137",
+  "difficulty": "hard",
+  "issueSalience": {
+    "tax": 0.8,
+    "kiwisaver-retirement": 0.3,
+    "health": 0.6,
+    "cost-of-living": 0.8,
+    "housing": 0.8,
+    "climate-environment": 1.0,
+    "immigration": 0.4,
+    "governance": 0.5,
+    "treaty-maori": 0.8,
+    "law-order": 0.5
+  },
+  "issueStance": {
+    "tax": -2,
+    "kiwisaver-retirement": -1,
+    "health": -1.5,
+    "cost-of-living": -1.5,
+    "housing": -2,
+    "climate-environment": -2,
+    "immigration": -1.5,
+    "governance": -1,
+    "treaty-maori": -2,
+    "law-order": -1.5
+  },
+  "personality": {
+    "patience": 7,
+    "greed": 0.3,
+    "kingmaker": false,
+    "fiscalTolerance": 4000
+  },
+  "ratification": {
+    "body": "Special meeting of member delegates",
+    "days": 2,
+    "threshold": 0.75,
+    "rejectionRisk": 0.4
+  },
+  "relationships": [
+    {
+      "partyId": "national",
+      "trust": 10,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "labour",
+      "trust": 80,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "act",
+      "trust": 5,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "nzfirst",
+      "trust": 10,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "tpm",
+      "trust": 60,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "opportunity",
+      "trust": 45,
+      "ruledOutBias": 0
+    }
+  ],
+  "people": [
+    {
+      "id": "grn-davidson",
+      "name": "Marama Davidson",
+      "role": "Co-leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "social-services"
+      ],
+      "experience": 2,
+      "pastRoles": [
+        "Minister for the Prevention of Family and Sexual Violence"
+      ]
+    },
+    {
+      "id": "grn-swarbrick",
+      "name": "Chlöe Swarbrick",
+      "role": "Co-leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "housing"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    },
+    {
+      "id": "grn-finance",
+      "name": "Greens finance spokesperson",
+      "role": "Finance",
+      "isKeyFigure": false,
+      "skills": [
+        "finance"
+      ],
+      "experience": 1,
+      "pastRoles": []
+    },
+    {
+      "id": "grn-climate",
+      "name": "Greens climate spokesperson",
+      "role": "Climate",
+      "isKeyFigure": false,
+      "skills": [
+        "environment"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    }
+  ],
+  "policies": [
+    {
+      "id": "grn-wealth-tax",
+      "title": "2.5% wealth tax over $10m",
+      "summary": "Taxes individual net assets above $10 million at 2.5% a year.",
+      "issue": "tax",
+      "stance": -2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
+      "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "grn-inheritance-tax",
+      "title": "33% tax on large inheritances",
+      "summary": "Taxes inheritances and gifts above $1 million at 33%.",
+      "issue": "tax",
+      "stance": -2,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "grn-tax-free-band",
+      "title": "First $10,000 tax-free",
+      "summary": "Makes the first $10,000 of income tax-free.",
+      "issue": "cost-of-living",
+      "stance": -1.5,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.8,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "grn-top-rate",
+      "title": "45% top income tax rate",
+      "summary": "Adds a 45% rate on income over $160,000.",
+      "issue": "tax",
+      "stance": -2,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "grn-company-tax",
+      "title": "33% company tax for large businesses",
+      "summary": "Raises company tax to 33% for large businesses.",
+      "issue": "tax",
+      "stance": -1.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.4,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "grn-bank-levy",
+      "title": "Levy on major banks",
+      "summary": "Adds a levy on the major banks.",
+      "issue": "tax",
+      "stance": -1.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "grn-landlord-rules",
+      "title": "End landlord interest deductions",
+      "summary": "Removes mortgage-interest deductibility and tightens rules for residential landlords.",
+      "issue": "housing",
+      "stance": -2,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "grn-clean-energy",
+      "title": "Public investment in clean energy",
+      "summary": "More public investment in renewable energy and low-carbon infrastructure.",
+      "issue": "climate-environment",
+      "stance": -2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
+      "bottomLineBasis": "inferred"
+    }
+  ]
+}

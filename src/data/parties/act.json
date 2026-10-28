@@ -1,0 +1,251 @@
+{
+  "id": "act",
+  "name": "ACT",
+  "shortName": "ACT",
+  "colour": "#FDE401",
+  "difficulty": "medium",
+  "issueSalience": {
+    "tax": 1.0,
+    "kiwisaver-retirement": 0.5,
+    "health": 0.5,
+    "cost-of-living": 0.6,
+    "housing": 0.7,
+    "climate-environment": 0.4,
+    "immigration": 0.4,
+    "governance": 0.8,
+    "treaty-maori": 0.8,
+    "law-order": 0.8
+  },
+  "issueStance": {
+    "tax": 2,
+    "kiwisaver-retirement": 1.5,
+    "health": 1,
+    "cost-of-living": 1.5,
+    "housing": 1.5,
+    "climate-environment": 1.5,
+    "immigration": 0.5,
+    "governance": 2,
+    "treaty-maori": 2,
+    "law-order": 2
+  },
+  "personality": {
+    "patience": 5,
+    "greed": 0.6,
+    "kingmaker": false,
+    "fiscalTolerance": 0
+  },
+  "ratification": {
+    "body": "Leader with the party board",
+    "days": 0,
+    "threshold": 0.5,
+    "rejectionRisk": 0.05
+  },
+  "relationships": [
+    {
+      "partyId": "national",
+      "trust": 70,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "labour",
+      "trust": 10,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "greens",
+      "trust": 5,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "nzfirst",
+      "trust": 45,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "tpm",
+      "trust": 5,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "opportunity",
+      "trust": 20,
+      "ruledOutBias": 0
+    }
+  ],
+  "people": [
+    {
+      "id": "act-seymour",
+      "name": "David Seymour",
+      "role": "Leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "regulation"
+      ],
+      "experience": 3,
+      "pastRoles": [
+        "Deputy Prime Minister",
+        "Minister for Regulation"
+      ]
+    },
+    {
+      "id": "act-mckee",
+      "name": "Nicole McKee",
+      "role": "Deputy leader",
+      "isKeyFigure": true,
+      "skills": [
+        "justice"
+      ],
+      "experience": 2,
+      "pastRoles": [
+        "Associate Minister of Justice"
+      ]
+    },
+    {
+      "id": "act-finance",
+      "name": "ACT finance spokesperson",
+      "role": "Finance",
+      "isKeyFigure": false,
+      "skills": [
+        "finance",
+        "economics"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    },
+    {
+      "id": "act-health",
+      "name": "ACT health spokesperson",
+      "role": "Health",
+      "isKeyFigure": false,
+      "skills": [
+        "health"
+      ],
+      "experience": 1,
+      "pastRoles": []
+    }
+  ],
+  "policies": [
+    {
+      "id": "act-no-wealth-taxes",
+      "title": "No capital gains, wealth or inheritance tax",
+      "summary": "Opposes any capital gains, wealth or inheritance tax.",
+      "issue": "tax",
+      "stance": 2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
+      "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "act-two-tax-rates",
+      "title": "Two income tax rates, 28% top",
+      "summary": "Moves towards two income tax rates with a top rate of 28%.",
+      "issue": "tax",
+      "stance": 2,
+      "weight": 5,
+      "isBottomLine": false,
+      "voterSalience": 0.8,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "act-kiwisaver-tax",
+      "title": "No tax on KiwiSaver earnings",
+      "summary": "Removes tax on KiwiSaver investment earnings.",
+      "issue": "kiwisaver-retirement",
+      "stance": 1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "act-crypto",
+      "title": "No tax on crypto gains",
+      "summary": "Exempts gains on cryptocurrency from tax.",
+      "issue": "tax",
+      "stance": 1.5,
+      "weight": 1,
+      "isBottomLine": false,
+      "voterSalience": 0.2,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "act-pharmac",
+      "title": "Pharmac share up 1% a year",
+      "summary": "Lifts Pharmac's share of the health budget by 1% a year.",
+      "issue": "health",
+      "stance": 1,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "act-cancer-centre",
+      "title": "Starship for Cancer",
+      "summary": "Builds a dedicated national cancer centre.",
+      "issue": "health",
+      "stance": 0.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "act-rma-reform",
+      "title": "Faster consenting and RMA reform",
+      "summary": "Reforms the Resource Management Act and speeds up building consents.",
+      "issue": "housing",
+      "stance": 2,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "act-ppps",
+      "title": "More public-private partnerships",
+      "summary": "Uses public-private partnerships to build infrastructure.",
+      "issue": "governance",
+      "stance": 1.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.3,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "act-innovation-trials",
+      "title": "Innovation Trials",
+      "summary": "Lets businesses test new technologies with fewer compliance hurdles.",
+      "issue": "governance",
+      "stance": 1.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.3,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "act-spending-restraint",
+      "title": "Tighter government spending",
+      "summary": "Cuts government spending to allow lower taxes over time.",
+      "issue": "governance",
+      "stance": 2,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    }
+  ]
+}

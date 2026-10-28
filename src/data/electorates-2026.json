@@ -1,0 +1,73 @@
+{
+  "note": "Rough assumption for poll-based scenarios, not a forecast. Starts from the 72 electorates in the 2023 result, but with National polling near 29% some of its 44 seats are assumed to fall to Labour, so National holds 35 and Labour 27, roughly in line with National's party-vote entitlement. Te Pāti Māori holds four Māori seats and Te Tai Tokerau is held by an independent, following the 1News scenario of 27 October 2026. Marginal seats are re-rolled on the Election night variance setting, which can create National overhang seats.",
+  "electorates": {
+    "national": 35,
+    "labour": 27,
+    "greens": 3,
+    "act": 2,
+    "tpm": 4
+  },
+  "otherElectorates": 1,
+  "marginalElectorates": [
+    {
+      "seat": "Waiariki",
+      "holder": "tpm",
+      "challenger": "labour",
+      "holdProbability": 0.7
+    },
+    {
+      "seat": "Te Tai Hauāuru",
+      "holder": "tpm",
+      "challenger": "labour",
+      "holdProbability": 0.6
+    },
+    {
+      "seat": "Hauraki-Waikato",
+      "holder": "tpm",
+      "challenger": "labour",
+      "holdProbability": 0.6
+    },
+    {
+      "seat": "Tāmaki Makaurau",
+      "holder": "tpm",
+      "challenger": "labour",
+      "holdProbability": 0.5
+    },
+    {
+      "seat": "Te Tai Tokerau",
+      "holder": "independent",
+      "challenger": "labour",
+      "holdProbability": 0.5
+    },
+    {
+      "seat": "Te Tai Tonga",
+      "holder": "labour",
+      "challenger": "tpm",
+      "holdProbability": 0.6
+    },
+    {
+      "seat": "Marginal general seat A",
+      "holder": "labour",
+      "challenger": "national",
+      "holdProbability": 0.5
+    },
+    {
+      "seat": "Marginal general seat B",
+      "holder": "labour",
+      "challenger": "national",
+      "holdProbability": 0.5
+    },
+    {
+      "seat": "Marginal general seat C",
+      "holder": "labour",
+      "challenger": "national",
+      "holdProbability": 0.5
+    },
+    {
+      "seat": "Marginal general seat D",
+      "holder": "national",
+      "challenger": "labour",
+      "holdProbability": 0.5
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "id": "national",
+  "name": "National",
+  "shortName": "NAT",
+  "colour": "#00529F",
+  "difficulty": "easy",
+  "issueSalience": {
+    "tax": 0.9,
+    "kiwisaver-retirement": 0.7,
+    "health": 0.7,
+    "cost-of-living": 0.8,
+    "housing": 0.6,
+    "climate-environment": 0.3,
+    "immigration": 0.5,
+    "governance": 0.3,
+    "treaty-maori": 0.4,
+    "law-order": 0.7
+  },
+  "issueStance": {
+    "tax": 1.5,
+    "kiwisaver-retirement": 0.5,
+    "health": 0.5,
+    "cost-of-living": 1,
+    "housing": 1,
+    "climate-environment": 1,
+    "immigration": 1,
+    "governance": 0.5,
+    "treaty-maori": 1,
+    "law-order": 1.5
+  },
+  "personality": {
+    "patience": 6,
+    "greed": 0.4,
+    "kingmaker": false,
+    "fiscalTolerance": 1000
+  },
+  "ratification": {
+    "body": "Caucus and party board",
+    "days": 1,
+    "threshold": 0.5,
+    "rejectionRisk": 0.05
+  },
+  "relationships": [
+    {
+      "partyId": "labour",
+      "trust": 20,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "greens",
+      "trust": 10,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "act",
+      "trust": 70,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "nzfirst",
+      "trust": 60,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "tpm",
+      "trust": 10,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "opportunity",
+      "trust": 25,
+      "ruledOutBias": 0.7
+    }
+  ],
+  "people": [
+    {
+      "id": "nat-luxon",
+      "name": "Christopher Luxon",
+      "role": "Leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "economics"
+      ],
+      "experience": 3,
+      "pastRoles": [
+        "Prime Minister"
+      ]
+    },
+    {
+      "id": "nat-willis",
+      "name": "Nicola Willis",
+      "role": "Deputy leader",
+      "isKeyFigure": true,
+      "skills": [
+        "finance",
+        "economics"
+      ],
+      "experience": 3,
+      "pastRoles": [
+        "Minister of Finance"
+      ]
+    },
+    {
+      "id": "nat-health",
+      "name": "National health spokesperson",
+      "role": "Health",
+      "isKeyFigure": false,
+      "skills": [
+        "health"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    },
+    {
+      "id": "nat-justice",
+      "name": "National justice spokesperson",
+      "role": "Justice",
+      "isKeyFigure": false,
+      "skills": [
+        "justice"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    },
+    {
+      "id": "nat-housing",
+      "name": "National housing spokesperson",
+      "role": "Housing",
+      "isKeyFigure": false,
+      "skills": [
+        "housing"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    }
+  ],
+  "policies": [
+    {
+      "id": "nat-no-new-taxes",
+      "title": "No new taxes",
+      "summary": "Rules out introducing any new tax, including a capital gains tax, wealth tax or land tax.",
+      "issue": "tax",
+      "stance": 2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
+      "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "nat-kiwisaver-compulsory",
+      "title": "Compulsory KiwiSaver rising to 12%",
+      "summary": "Makes KiwiSaver compulsory for workers from July 2028, with employer and employee contributions each rising to 6% by 2032.",
+      "issue": "kiwisaver-retirement",
+      "stance": 0.5,
+      "weight": 5,
+      "isBottomLine": false,
+      "voterSalience": 0.8,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "nat-baby-boost",
+      "title": "$1,500 KiwiSaver Baby Boost",
+      "summary": "Auto-enrols newborns in KiwiSaver with a $1,500 government contribution.",
+      "issue": "kiwisaver-retirement",
+      "stance": 0,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "nat-pharmac",
+      "title": "$604m more for Pharmac",
+      "summary": "Adds $604 million for medicines funding, paid for by cutting foreign aid.",
+      "issue": "health",
+      "stance": 0.5,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "nat-parental-leave",
+      "title": "Paid parental leave to 30 weeks",
+      "summary": "Extends paid parental leave to 30 weeks.",
+      "issue": "cost-of-living",
+      "stance": 0,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "nat-first-home-loan",
+      "title": "First Home Loan cap to $300,000",
+      "summary": "Raises the household income cap for First Home Loans to $300,000.",
+      "issue": "housing",
+      "stance": 0.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "nat-investment-boost",
+      "title": "Keep Investment Boost",
+      "summary": "Keeps the 20% immediate tax deduction for businesses buying qualifying new assets.",
+      "issue": "tax",
+      "stance": 1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "nat-surplus",
+      "title": "Surplus by 2028/29",
+      "summary": "Commits to returning the budget to surplus in 2028/29.",
+      "issue": "governance",
+      "stance": 1.5,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "nat-foreign-investment",
+      "title": "Faster foreign investment approvals",
+      "summary": "Speeds up approvals for overseas investment.",
+      "issue": "governance",
+      "stance": 1.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.3,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "nat-trade",
+      "title": "Trade talks with seven more markets",
+      "summary": "Pursues trade negotiations with seven additional markets.",
+      "issue": "governance",
+      "stance": 1,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.3,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    }
+  ]
+}
