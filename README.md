@@ -10,13 +10,13 @@ Once GitHub Pages is switched on (below), the game is at **https://nichevo.githu
 
 ## Status
 
-Phases 1 and 2 of 5 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, and the whole programme you have agreed so far. Voter mood, the budget and the rival bloc arrive in later phases.
+Phases 1 to 3 of 5 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The rival bloc, tutorial and sharing arrive in phase 4.
 
 | Phase | What it adds |
 | --- | --- |
 | 1. Data and seat maths | Seven parties, MMP seat calculator, poll scenarios, variance |
 | 2. Core negotiation | Offers, AI responses, policy comparison |
-| 3. Scoring and voters | Weighted score, voter mood, budget tracker |
+| 3. Scoring and voters | Weighted score, voter mood, budget tracker, policy cards, MMP explainers, press conferences |
 | 4. Polish and launch | All parties playable, rival bloc and pressure, tutorial, share links |
 | 5. Extras | Historical scenarios, achievements, daily scenario |
 
@@ -27,7 +27,7 @@ Phases 1 and 2 of 5 are in: pick any party, then spend 10 days negotiating with 
 - Portraits, when added, are original cartoons, never traced from press photos.
 - No party logos. Party names and the game's own colours only.
 - Nothing may suggest a party or leader endorses the game. The disclaimer says it is not affiliated with or endorsed by any party.
-- Policy cards stay accurate and link to a source.
+- Policy cards stay accurate and link to a source. Budget figures are labelled as either the party's own costing (with a source) or a rough game estimate.
 - The game shows only a notice on election day (7 November 2026, NZ time).
 
 ## Run it locally

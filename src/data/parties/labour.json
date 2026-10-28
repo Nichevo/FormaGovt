@@ -145,7 +145,10 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 560,
+      "fiscalBasis": "party",
+      "fiscalNote": "Labour expects $2.8bn over five years; averaged here.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/labour-fiscal-plan-2026-pay-equity-national/",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
       "bottomLineBasis": "inferred"
     },
@@ -158,7 +161,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -350,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate. Labour includes it in $15.5bn of extra health funding.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
       "bottomLineBasis": "inferred"
     },
@@ -171,7 +176,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -110,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate for removing the $5 co-payment.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -183,7 +190,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -300,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate for the state as employer and lost tax.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -195,7 +204,10 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.3,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -200,
+      "fiscalBasis": "party",
+      "fiscalNote": "Labour costs this and the write-off at about $1.56bn together; split and spread over four years here.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/labour-fiscal-plan-2026-pay-equity-national/",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -207,7 +219,10 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.3,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -190,
+      "fiscalBasis": "party",
+      "fiscalNote": "Labour costs this and the GST threshold at about $1.56bn together; split and spread over four years here.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/labour-fiscal-plan-2026-pay-equity-national/",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -219,7 +234,10 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "party",
+      "fiscalNote": "Labour says this is paid from the National Land Transport Fund, not the operating budget.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/labour-fiscal-plan-2026-pay-equity-national/",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -231,7 +249,10 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -625,
+      "fiscalBasis": "party",
+      "fiscalNote": "$2.5bn over four years for care and support workers. National cites a Treasury estimate of $11bn for full restoration.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/labour-fiscal-plan-2026-pay-equity-national/",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -243,7 +264,10 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -190,
+      "fiscalBasis": "party",
+      "fiscalNote": "$760m in rent subsidies, spread over four years here.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/labour-fiscal-plan-2026-pay-equity-national/",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -255,7 +279,10 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.4,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "party",
+      "fiscalNote": "$200m of capital, not operating spending.",
+      "fiscalSourceUrl": "https://newswire.co.nz/2026/10/labour-fiscal-plan-2026-pay-equity-national/",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     }
   ]

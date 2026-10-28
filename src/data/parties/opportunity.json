@@ -119,7 +119,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.8,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -30,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
       "bottomLineBasis": "declared"
     },
@@ -132,7 +134,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -10,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
       "bottomLineBasis": "declared"
     },
@@ -145,7 +149,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.8,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "A planning commitment; funding comes later.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
       "bottomLineBasis": "declared"
     },
@@ -158,7 +164,9 @@
       "weight": 4,
       "isBottomLine": true,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -20,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate of transition support.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
       "bottomLineBasis": "declared"
     },
@@ -171,7 +179,9 @@
       "weight": 4,
       "isBottomLine": true,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "No near-term operating cost in the game.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
       "bottomLineBasis": "declared"
     },
@@ -184,7 +194,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 4000,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate. Opportunity uses it to fund income tax cuts.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -196,7 +208,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -5000,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate of the net cost after replacing some benefits.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -208,7 +222,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.4,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -1500,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -220,7 +236,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.4,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -300,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     }
   ]

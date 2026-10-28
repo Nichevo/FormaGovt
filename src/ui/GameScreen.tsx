@@ -1,11 +1,17 @@
 import { useMemo, useState } from 'react';
 import { PARTIES, PARTY_BY_ID } from '../data/parties';
-import { ISSUE_LABELS, type Party } from '../data/schema';
+import { ISSUE_LABELS, type Party, type Policy } from '../data/schema';
 import {
   agreedPolicies,
   createGame,
   DAYS,
+  holdPress,
   makeOffer,
+  moodOf,
+  pendingPress,
+  PRESS_OPTIONS,
+  previewDeal,
+  programmeOf,
   pressureOn,
   reopenTalks,
   seatsAgreed,
@@ -14,7 +20,9 @@ import {
   waitDay,
   type DealStatus,
   type GameState,
+  type PressSpin,
 } from '../engine/game';
+import { budgetFor, formatChange, formatBalance } from '../engine/budget';
 import {
   bestPersonFor,
   compatibility,
@@ -28,6 +36,9 @@ import {
 import { leaderOf, lineFor, speakerFor } from '../engine/dialogue';
 import type { GameSetup } from './App';
 import { ComparisonView } from './ComparisonView';
+import { Explain } from './Explain';
+import { BudgetMeter, MoodMeter } from './Meters';
+import { PolicyCard } from './PolicyCard';
 
 const STATUS_LABELS: Record<DealStatus, string> = {
   open: 'Open to talks',
@@ -65,14 +76,27 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
   const partnerIds = Object.keys(game.partners).sort((a, b) => (seats[b] ?? 0) - (seats[a] ?? 0));
   const [selectedId, setSelectedId] = useState(partnerIds[0] ?? '');
   const [drafts, setDrafts] = useState<Record<string, Offer>>({});
+  const [card, setCard] = useState<Policy | null>(null);
+  const cardView = card && <PolicyCard key={card.id} policy={card} onClose={() => setCard(null)} />;
 
-  if (game.outcome !== 'playing') return <Results game={game} setup={setup} onQuit={onQuit} />;
+  if (game.outcome !== 'playing') {
+    return (
+      <>
+        <Results game={game} setup={setup} onQuit={onQuit} onCard={setCard} />
+        {cardView}
+      </>
+    );
+  }
 
   const partner = PARTY_BY_ID[selectedId];
   const draft = drafts[selectedId] ?? emptyOffer(selectedId);
   const setDraft = (offer: Offer) => setDrafts({ ...drafts, [offer.partnerId]: offer });
   const secured = seatsSecured(game);
   const agreed = seatsAgreed(game);
+  const budget = budgetFor(programmeOf(game, PARTIES));
+  const mood = moodOf(game, PARTIES);
+  const preview = partner && game.partners[partner.id]?.status === 'open' ? previewDeal(game, PARTIES, draft) : undefined;
+  const press = pendingPress(game);
 
   const send = () => {
     const next = makeOffer(game, PARTIES, draft);
@@ -98,9 +122,20 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
         <SeatBar secured={secured} agreed={agreed} majority={game.majority} total={game.totalSeats} />
         <div className="muted">
           {secured} seats signed{agreed > secured ? `, ${agreed - secured} more signing off` : ''}. You need{' '}
-          {game.majority}. Pressure {Math.round(pressureOn(game.day) * 100)}%.
+          {game.majority} <Explain topic="majority" label="majority" />. Pressure {Math.round(pressureOn(game.day) * 100)}%.
         </div>
+        <div className="meters">
+          <BudgetMeter budget={budget} preview={tab === 'negotiate' ? preview?.budget : undefined} />
+          <MoodMeter mood={mood} preview={tab === 'negotiate' ? preview?.mood : undefined} />
+        </div>
+        {preview && tab === 'negotiate' && (
+          <p className="muted small">Meters show what happens if {partner!.name} accepts the offer below.</p>
+        )}
       </section>
+
+      {press.map((id) => (
+        <PressConferencePanel key={id} partner={PARTY_BY_ID[id]!} onChoose={(spin) => setGame(holdPress(game, id, spin))} />
+      ))}
 
       <div className="tabs" role="tablist">
         <button type="button" role="tab" aria-selected={tab === 'negotiate'} onClick={() => setTab('negotiate')}>
@@ -112,7 +147,7 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
       </div>
 
       {tab === 'compare' ? (
-        <ComparisonView player={player} />
+        <ComparisonView player={player} onCard={setCard} />
       ) : (
         <div className="negotiate">
           <section className="panel partners">
@@ -155,6 +190,7 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
               setDraft={setDraft}
               onSend={send}
               onReopen={() => setGame(reopenTalks(game, partner.id))}
+              onCard={setCard}
             />
           )}
         </div>
@@ -166,6 +202,7 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
           Quit to setup
         </button>
       </div>
+      {cardView}
     </>
   );
 }
@@ -189,9 +226,27 @@ interface OfferBuilderProps {
   setDraft: (offer: Offer) => void;
   onSend: () => void;
   onReopen: () => void;
+  onCard: (policy: Policy) => void;
 }
 
-function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen }: OfferBuilderProps) {
+/** A policy title that opens its card, with its budget effect. */
+function PolicyTitle({ policy, onCard }: { policy: Policy; onCard: (policy: Policy) => void }) {
+  return (
+    <>
+      <button type="button" className="link" onClick={() => onCard(policy)}>
+        {policy.title}
+      </button>
+      {policy.fiscalImpactNZDm ? (
+        <span className={`fiscal ${policy.fiscalImpactNZDm < 0 ? 'cost' : 'gain'}`}>
+          {formatChange(policy.fiscalImpactNZDm)}
+          {policy.fiscalBasis === 'estimate' ? '*' : ''}
+        </span>
+      ) : null}
+    </>
+  );
+}
+
+function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen, onCard }: OfferBuilderProps) {
   const state = game.partners[partner.id]!;
   const programme = agreedPolicies(game, PARTIES, partner.id).filter((p) => !partner.policies.includes(p));
   const programmeClashes = programme.filter((p) => reactionTo(partner, p) === -2);
@@ -223,9 +278,14 @@ function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen
       <h2>Offer to {partner.name}</h2>
       <p className="muted">
         Led by {leaderOf(partner)}. Sign-off: {partner.ratification.body.toLowerCase()}
-        {partner.ratification.days > 0 ? `, takes ${partner.ratification.days} day${partner.ratification.days > 1 ? 's' : ''}` : ', same day'}.
+        {partner.ratification.days > 0 ? `, takes ${partner.ratification.days} day${partner.ratification.days > 1 ? 's' : ''}` : ', same day'}.{' '}
+        <Explain topic="ratification" label="sign-off" />
       </p>
 
+      <p className="muted small">
+        🔒 bottom line <Explain topic="bottom-line" label="bottom lines" /> · ★ flagship · tap a policy for its card · *
+        rough game estimate of the budget effect
+      </p>
       <fieldset>
         <legend>Their policies you will include</legend>
         {partner.policies.map((p) => (
@@ -237,7 +297,7 @@ function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen
             />
             <span>
               {p.isBottomLine ? '🔒 ' : p.weight >= 4 ? '★ ' : ''}
-              {p.title} <span className="muted small">({ISSUE_LABELS[p.issue]})</span>
+              <PolicyTitle policy={p} onCard={onCard} /> <span className="muted small">({ISSUE_LABELS[p.issue]})</span>
               <span className={`reaction r${reactionTo(player, p)}`}>{REACTION_LABELS[reactionTo(player, p)]} for you</span>
             </span>
           </label>
@@ -257,7 +317,7 @@ function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen
               />
               <span>
                 {p.isBottomLine ? '🔒 ' : p.weight >= 4 ? '★ ' : ''}
-                {p.title}
+                <PolicyTitle policy={p} onCard={onCard} />
                 <span className={`reaction r${r}`}>{REACTION_LABELS[r]}</span>
               </span>
             </label>
@@ -266,7 +326,9 @@ function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen
       </fieldset>
 
       <fieldset>
-        <legend>Arrangement</legend>
+        <legend>
+          Arrangement <Explain topic="coalition" label="coalition" />
+        </legend>
         <label className="check">
           <input
             type="radio"
@@ -281,7 +343,7 @@ function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen
             checked={draft.arrangement === 'confidence-supply'}
             onChange={() => setDraft({ ...draft, arrangement: 'confidence-supply', portfolios: [] })}
           />
-          <span>Confidence and supply: they back you on votes that keep the government in office, with no cabinet roles. Asks less of them, and is worth less to you.</span>
+          <span>Confidence and supply: they back you on votes that keep the government in office, with no cabinet roles. Asks less of them, and is worth less to you. <Explain topic="confidence-supply" label="confidence and supply" /></span>
         </label>
       </fieldset>
 
@@ -359,14 +421,43 @@ function joinNames(names: string[]): string {
   return names.length <= 1 ? (names[0] ?? '') : `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
 }
 
-function Results({ game, setup, onQuit }: { game: GameState; setup: GameSetup; onQuit: () => void }) {
+function PressConferencePanel({ partner, onChoose }: { partner: Party; onChoose: (spin: PressSpin) => void }) {
+  return (
+    <section className="panel press">
+      <h2>Press conference: deal with {partner.name}</h2>
+      <p className="muted small">The media wants your take on the signed deal. How do you frame it? This takes no time.</p>
+      <div className="press-options">
+        {(Object.keys(PRESS_OPTIONS) as PressSpin[]).map((spin) => (
+          <button key={spin} type="button" onClick={() => onChoose(spin)}>
+            <strong>{PRESS_OPTIONS[spin].label}</strong>
+            <span className="muted small">{PRESS_OPTIONS[spin].detail}</span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Results({
+  game,
+  setup,
+  onQuit,
+  onCard,
+}: {
+  game: GameState;
+  setup: GameSetup;
+  onQuit: () => void;
+  onCard: (policy: Policy) => void;
+}) {
   const summary = summarise(game, PARTIES);
   const player = PARTY_BY_ID[game.playerId]!;
   const partners = summary.partners.map((id) => PARTY_BY_ID[id]!);
+  const budget = budgetFor(programmeOf(game, PARTIES, false));
+  const won = game.outcome === 'won';
   return (
     <section className="panel results">
-      <h2>{game.outcome === 'won' ? 'Government formed' : 'No government formed'}</h2>
-      {game.outcome === 'won' ? (
+      <h2>{won ? 'Government formed' : 'No government formed'}</h2>
+      {won ? (
         <p>
           {player.name}
           {partners.length > 0 ? ` with ${joinNames(partners.map((p) => p.name))}` : ' alone'} holds{' '}
@@ -376,18 +467,40 @@ function Results({ game, setup, onQuit }: { game: GameState; setup: GameSetup; o
         <p>The deadline passed without a majority. A snap election or another party's deal would follow.</p>
       )}
       <p className="score">
-        Policy score: <strong>{summary.policyScore}</strong> / 100
+        Score: <strong>{summary.score}</strong> / 100 <Explain topic="score" label="score" />
       </p>
-      <p className="muted small">
-        The weighted share of your own policies written into signed deals. Voter mood and the budget join the score
-        in a later version. Scenario: {setup.scenarioLabel}.
-      </p>
+      {won && (
+        <table className="breakdown">
+          <tbody>
+            <tr>
+              <th scope="row">Policies won (60%)</th>
+              <td>{summary.policyScore}</td>
+            </tr>
+            <tr>
+              <th scope="row">Voter mood (30%)</th>
+              <td>
+                {summary.mood.mood}
+                {summary.mood.revolt ? ' · revolt' : ''}
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Stability (10%)</th>
+              <td>{summary.stability}</td>
+            </tr>
+          </tbody>
+        </table>
+      )}
+      <p className="muted small">Scenario: {setup.scenarioLabel}.</p>
       <div className="two-col">
         <div>
           <h3>Policies secured</h3>
           <ul>
             {summary.won.map((p) => (
-              <li key={p.id}>{p.title}</li>
+              <li key={p.id}>
+                <button type="button" className="link" onClick={() => onCard(p)}>
+                  {p.title}
+                </button>
+              </li>
             ))}
             {summary.won.length === 0 && <li className="muted">None</li>}
           </ul>
@@ -396,12 +509,43 @@ function Results({ game, setup, onQuit }: { game: GameState; setup: GameSetup; o
           <h3>Policies left out</h3>
           <ul>
             {summary.lost.map((p) => (
-              <li key={p.id}>{p.title}</li>
+              <li key={p.id}>
+                <button type="button" className="link" onClick={() => onCard(p)}>
+                  {p.title}
+                </button>
+              </li>
             ))}
             {summary.lost.length === 0 && <li className="muted">None</li>}
           </ul>
         </div>
       </div>
+      {won && (
+        <div className="two-col">
+          <div>
+            <h3>What your voters think</h3>
+            <ul className="factors">
+              {summary.mood.factors.map((f) => (
+                <li key={f.label}>
+                  <span>{f.label}</span>
+                  <span className={f.points < 0 ? 'bad' : ''}>{f.points > 0 ? `+${f.points}` : f.points}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>Budget {formatBalance(budget.balance)}</h3>
+            <p className="muted small">{formatChange(budget.change)} on Treasury's 2028/29 forecast.</p>
+            <ul className="factors">
+              {budget.lines.slice(0, 8).map((l) => (
+                <li key={l.policy.id}>
+                  <span>{l.policy.title}</span>
+                  <span className={l.impact < 0 ? 'bad' : ''}>{formatChange(l.impact)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
       <TalksLog game={game} />
       <button type="button" className="primary" onClick={onQuit}>
         Play again

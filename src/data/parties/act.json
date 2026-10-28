@@ -135,7 +135,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "No direct cost; rules out new revenue.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
       "bottomLineBasis": "inferred"
     },
@@ -148,7 +150,9 @@
       "weight": 5,
       "isBottomLine": false,
       "voterSalience": 0.8,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -2500,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -160,7 +164,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -1200,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -172,7 +178,9 @@
       "weight": 1,
       "isBottomLine": false,
       "voterSalience": 0.2,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -20,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -184,7 +192,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -60,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -196,7 +206,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -50,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate of running costs.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -208,7 +220,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Law change; little direct cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -220,7 +234,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.3,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Changes how projects are financed, not the operating budget.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -232,7 +248,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.3,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Law change; little direct cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -244,7 +262,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 3000,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate of savings.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     }
   ]

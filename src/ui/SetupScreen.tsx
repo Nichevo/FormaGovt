@@ -6,6 +6,7 @@ import { PARTIES, PARTY_BY_ID } from '../data/parties';
 import { SCENARIOS } from '../data/scenarios';
 import { Hemicycle } from './Hemicycle';
 import type { GameSetup } from './App';
+import { Explain } from './Explain';
 
 const VARIANCE_LABELS: Record<Exclude<VarianceLevel, 'custom'>, string> = {
   off: 'Off: use the scenario exactly',
@@ -78,16 +79,20 @@ export function SetupScreen({ onStart }: { onStart: (setup: GameSetup) => void }
         <Hemicycle parties={byPosition} otherSeats={result.otherElectorates} totalSeats={result.totalSeats} />
         <p className="majority">
           {result.totalSeats} seats, so a government needs <strong>{result.majority}</strong>
-          {result.overhang > 0 && ` (includes ${result.overhang} overhang)`}.
+          {result.overhang > 0 && ` (includes ${result.overhang} overhang)`}. <Explain topic="majority" label="majority" />
         </p>
 
         <table className="seats">
           <thead>
             <tr>
               <th>Party</th>
-              <th>Vote</th>
+              <th>
+                Vote <Explain topic="threshold" label="threshold" />
+              </th>
               <th>Electorates</th>
-              <th>Seats</th>
+              <th>
+                Seats <Explain topic="sainte-lague" label="seat allocation" />
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -103,7 +108,12 @@ export function SetupScreen({ onStart }: { onStart: (setup: GameSetup) => void }
                   <td>{p.electorates}</td>
                   <td>
                     {p.total}
-                    {p.overhang > 0 && <span className="muted"> (+{p.overhang} overhang)</span>}
+                    {p.overhang > 0 && (
+                      <span className="muted">
+                        {' '}
+                        (+{p.overhang} overhang <Explain topic="overhang" label="overhang" />)
+                      </span>
+                    )}
                     {!p.qualified && <span className="muted"> below 5%</span>}
                   </td>
                 </tr>

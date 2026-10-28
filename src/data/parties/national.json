@@ -145,7 +145,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "No direct cost; rules out new revenue.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
       "bottomLineBasis": "inferred"
     },
@@ -158,7 +160,10 @@
       "weight": 5,
       "isBottomLine": false,
       "voterSalience": 0.8,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -196,
+      "fiscalBasis": "party",
+      "fiscalNote": "National budgets $784m for its KiwiSaver changes; spread over four years here.",
+      "fiscalSourceUrl": "https://thespinoff.co.nz/politics/13-10-2026/nationals-fiscal-plan-no-tax-cuts-but-a-fight-over-health-spending",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -170,7 +175,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -90,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "About 60,000 births a year at $1,500 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -182,7 +189,10 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -151,
+      "fiscalBasis": "party",
+      "fiscalNote": "$604m for medicines, spread over four years here. National funds it from foreign aid.",
+      "fiscalSourceUrl": "https://thespinoff.co.nz/politics/13-10-2026/nationals-fiscal-plan-no-tax-cuts-but-a-fight-over-health-spending",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -194,7 +204,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -150,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate for four extra weeks of paid leave.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -206,7 +218,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "A loan guarantee scheme; little direct cost.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -218,7 +232,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Already in the Treasury baseline.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -230,7 +246,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "A target, not a spending line.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -242,7 +260,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.3,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Process change; little direct cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -254,7 +274,9 @@
       "weight": 2,
       "isBottomLine": false,
       "voterSalience": 0.3,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -10,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate for negotiating capacity.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     }
   ]

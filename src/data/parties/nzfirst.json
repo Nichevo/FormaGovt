@@ -134,7 +134,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -800,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -146,7 +148,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.5,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -60,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "About 60,000 births a year at $1,000 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -158,7 +162,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.8,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 200,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate; starts in 2029.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
       "bottomLineBasis": "inferred"
     },
@@ -171,7 +177,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -300,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -183,7 +191,9 @@
       "weight": 5,
       "isBottomLine": true,
       "voterSalience": 0.9,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Settings change; little direct cost.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/",
       "bottomLineBasis": "inferred"
     },
@@ -196,7 +206,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "No near-term operating cost in the game.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
     },
     {
@@ -208,7 +220,9 @@
       "weight": 3,
       "isBottomLine": false,
       "voterSalience": 0.6,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": 0,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Law change; no direct cost.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
     },
     {
@@ -220,7 +234,9 @@
       "weight": 4,
       "isBottomLine": false,
       "voterSalience": 0.7,
-      "fiscalImpactNZDm": null,
+      "fiscalImpactNZDm": -300,
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
     }
   ]
