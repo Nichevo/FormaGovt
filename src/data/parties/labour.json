@@ -1,0 +1,262 @@
+{
+  "id": "labour",
+  "name": "Labour",
+  "shortName": "LAB",
+  "colour": "#D82A20",
+  "difficulty": "medium",
+  "issueSalience": {
+    "tax": 0.8,
+    "kiwisaver-retirement": 0.6,
+    "health": 0.9,
+    "cost-of-living": 0.9,
+    "housing": 0.8,
+    "climate-environment": 0.5,
+    "immigration": 0.3,
+    "governance": 0.4,
+    "treaty-maori": 0.6,
+    "law-order": 0.5
+  },
+  "issueStance": {
+    "tax": -1,
+    "kiwisaver-retirement": -0.5,
+    "health": -1.5,
+    "cost-of-living": -1,
+    "housing": -1.5,
+    "climate-environment": -1,
+    "immigration": -0.5,
+    "governance": -0.5,
+    "treaty-maori": -1,
+    "law-order": 0
+  },
+  "personality": {
+    "patience": 6,
+    "greed": 0.4,
+    "kingmaker": false,
+    "fiscalTolerance": 2500
+  },
+  "ratification": {
+    "body": "Caucus, then the party's governing council",
+    "days": 1,
+    "threshold": 0.5,
+    "rejectionRisk": 0.1
+  },
+  "relationships": [
+    {
+      "partyId": "national",
+      "trust": 20,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "greens",
+      "trust": 80,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "act",
+      "trust": 10,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "nzfirst",
+      "trust": 25,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "tpm",
+      "trust": 50,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "opportunity",
+      "trust": 45,
+      "ruledOutBias": 0
+    }
+  ],
+  "people": [
+    {
+      "id": "lab-hipkins",
+      "name": "Chris Hipkins",
+      "role": "Leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "education"
+      ],
+      "experience": 3,
+      "pastRoles": [
+        "Prime Minister"
+      ]
+    },
+    {
+      "id": "lab-sepuloni",
+      "name": "Carmel Sepuloni",
+      "role": "Deputy leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "social-services"
+      ],
+      "experience": 3,
+      "pastRoles": [
+        "Deputy Prime Minister"
+      ]
+    },
+    {
+      "id": "lab-edmonds",
+      "name": "Barbara Edmonds",
+      "role": "Finance spokesperson",
+      "isKeyFigure": true,
+      "skills": [
+        "finance"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    },
+    {
+      "id": "lab-health",
+      "name": "Labour health spokesperson",
+      "role": "Health",
+      "isKeyFigure": false,
+      "skills": [
+        "health"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    },
+    {
+      "id": "lab-housing",
+      "name": "Labour housing spokesperson",
+      "role": "Housing",
+      "isKeyFigure": false,
+      "skills": [
+        "housing"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    }
+  ],
+  "policies": [
+    {
+      "id": "lab-cgt",
+      "title": "28% capital gains tax on investment property",
+      "summary": "Taxes gains on residential and commercial investment property sold after 1 July 2027 at 28%. The family home, farms, shares and KiwiSaver are exempt.",
+      "issue": "tax",
+      "stance": -1.5,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
+      "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "lab-gp-visits",
+      "title": "Three free GP visits a year",
+      "summary": "Gives everyone three free GP visits a year through a Medicard.",
+      "issue": "health",
+      "stance": -1.5,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
+      "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "lab-prescriptions",
+      "title": "Free prescriptions",
+      "summary": "Removes prescription charges from July 2027, costing about $74.5 million a year.",
+      "issue": "health",
+      "stance": -1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "lab-kiwisaver-employer",
+      "title": "6% compulsory employer KiwiSaver",
+      "summary": "Requires employers to contribute 6% to KiwiSaver.",
+      "issue": "kiwisaver-retirement",
+      "stance": -1,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "lab-gst-threshold",
+      "title": "GST threshold to $80,000",
+      "summary": "Raises the GST registration threshold from $60,000 to $80,000.",
+      "issue": "tax",
+      "stance": 0,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.3,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "lab-business-writeoff",
+      "title": "$10,000 equipment write-off",
+      "summary": "Replaces Investment Boost with an immediate write-off of up to $10,000 of equipment for businesses with turnover under $10 million.",
+      "issue": "tax",
+      "stance": -0.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.3,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "lab-fuel-excise",
+      "title": "No fuel excise rise",
+      "summary": "Holds fuel excise duty flat for a full term.",
+      "issue": "cost-of-living",
+      "stance": -0.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "lab-pay-equity",
+      "title": "Restore pay equity",
+      "summary": "Restores pay equity processes.",
+      "issue": "cost-of-living",
+      "stance": -1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "lab-social-housing",
+      "title": "6,000 more social homes",
+      "summary": "Funds 6,000 more social housing places.",
+      "issue": "housing",
+      "stance": -1.5,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "lab-future-fund",
+      "title": "New Zealand Future Fund",
+      "summary": "Creates an independently governed fund to invest in infrastructure and innovative local businesses.",
+      "issue": "governance",
+      "stance": -1,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.4,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    }
+  ]
+}

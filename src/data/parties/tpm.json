@@ -1,0 +1,224 @@
+{
+  "id": "tpm",
+  "name": "Te Pāti Māori",
+  "shortName": "TPM",
+  "colour": "#B2001A",
+  "difficulty": "hard",
+  "issueSalience": {
+    "tax": 0.7,
+    "kiwisaver-retirement": 0.3,
+    "health": 0.7,
+    "cost-of-living": 0.9,
+    "housing": 0.8,
+    "climate-environment": 0.7,
+    "immigration": 0.4,
+    "governance": 0.6,
+    "treaty-maori": 1.0,
+    "law-order": 0.6
+  },
+  "issueStance": {
+    "tax": -2,
+    "kiwisaver-retirement": -1,
+    "health": -1.5,
+    "cost-of-living": -2,
+    "housing": -2,
+    "climate-environment": -2,
+    "immigration": -1,
+    "governance": -1,
+    "treaty-maori": -2,
+    "law-order": -1.5
+  },
+  "personality": {
+    "patience": 5,
+    "greed": 0.5,
+    "kingmaker": false,
+    "fiscalTolerance": 4000
+  },
+  "ratification": {
+    "body": "Members and iwi at hui",
+    "days": 2,
+    "threshold": 0.5,
+    "rejectionRisk": 0.3
+  },
+  "relationships": [
+    {
+      "partyId": "national",
+      "trust": 10,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "labour",
+      "trust": 50,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "greens",
+      "trust": 60,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "act",
+      "trust": 5,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "nzfirst",
+      "trust": 5,
+      "ruledOutBias": 0
+    },
+    {
+      "partyId": "opportunity",
+      "trust": 30,
+      "ruledOutBias": 0
+    }
+  ],
+  "people": [
+    {
+      "id": "tpm-ngarewa-packer",
+      "name": "Debbie Ngarewa-Packer",
+      "role": "Co-leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "maori-development"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    },
+    {
+      "id": "tpm-waititi",
+      "name": "Rawiri Waititi",
+      "role": "Co-leader",
+      "isKeyFigure": true,
+      "skills": [
+        "leadership",
+        "maori-development"
+      ],
+      "experience": 2,
+      "pastRoles": []
+    },
+    {
+      "id": "tpm-finance",
+      "name": "Te Pāti Māori finance spokesperson",
+      "role": "Finance",
+      "isKeyFigure": false,
+      "skills": [
+        "finance"
+      ],
+      "experience": 1,
+      "pastRoles": []
+    }
+  ],
+  "policies": [
+    {
+      "id": "tpm-tax-free-30k",
+      "title": "No tax on the first $30,000",
+      "summary": "Makes the first $30,000 of income tax-free, with 15% tax from $30,001 to $60,000.",
+      "issue": "cost-of-living",
+      "stance": -2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
+      "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "tpm-wealth-tax",
+      "title": "Wealth tax over $4m",
+      "summary": "Taxes couples' wealth above $4 million.",
+      "issue": "tax",
+      "stance": -2,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "tpm-company-tax",
+      "title": "Company tax back to 33%",
+      "summary": "Raises company tax back to 33%.",
+      "issue": "tax",
+      "stance": -1.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.4,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "tpm-stamp-duty",
+      "title": "5% stamp duty on property",
+      "summary": "Adds a 5% stamp duty on property sales, with exemptions for first-home buyers under $1 million.",
+      "issue": "housing",
+      "stance": -1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "tpm-kai-credit",
+      "title": "Income Tax Kai Credit",
+      "summary": "A tax credit to help with the cost of food.",
+      "issue": "cost-of-living",
+      "stance": -1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
+    },
+    {
+      "id": "tpm-papakainga",
+      "title": "Papakāinga housing",
+      "summary": "Supports papakāinga housing on Māori land.",
+      "issue": "housing",
+      "stance": -1.5,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "tpm-foreign-land",
+      "title": "Limit foreign purchase of freehold land",
+      "summary": "Restricts sales of freehold land to overseas buyers.",
+      "issue": "treaty-maori",
+      "stance": -1,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "tpm-local-energy",
+      "title": "Locally owned renewable energy",
+      "summary": "Backs renewable energy, locally owned generation and regenerative agriculture.",
+      "issue": "climate-environment",
+      "stance": -2,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "tpm-maori-ownership",
+      "title": "More Māori business and asset ownership",
+      "summary": "More investment in Māori businesses and greater Māori ownership of assets.",
+      "issue": "treaty-maori",
+      "stance": -2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": null,
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
+      "bottomLineBasis": "inferred"
+    }
+  ]
+}
