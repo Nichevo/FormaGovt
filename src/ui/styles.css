@@ -245,6 +245,7 @@ button.link { text-align: left; }
 .tag { display: inline-block; font-size: 0.75rem; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
 .tag.holding-out { border-color: #b26a00; color: #b26a00; }
 .tag.keen { border-color: #2e7d32; color: #2e7d32; }
+.tag.unlikely { border-color: var(--muted); color: var(--muted); border-style: dashed; }
 .tag.unsettled { border-color: #c62828; color: #c62828; }
 .status.rival-signing { color: #b26a00; }
 .diff-added { color: #2e7d32; }
@@ -258,3 +259,8 @@ button.link { text-align: left; }
 .days-table { font-size: 0.85rem; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .check-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+.against-budget { margin-top: 16px; }
+.against-budget ul.plain { list-style: none; padding-left: 8px; margin: 4px 0; }
+.budget-table tr.total-row td { border-top: 2px solid var(--border); font-weight: 600; }
+.why-number { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+.why-number summary { cursor: pointer; }

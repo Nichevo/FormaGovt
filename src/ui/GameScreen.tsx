@@ -47,6 +47,7 @@ import {
   compatibility,
   compromiseOf,
   eligiblePortfolios,
+  isLikelyPartner,
   metByAlternative,
   offerPolicies,
   PORTFOLIOS,
@@ -58,7 +59,7 @@ import {
 } from '../engine/negotiation';
 import { blocProgress, dailyChange, pathsToMajority, progressText, whyTheySigned, whyTheySwitched, type WhySigned } from '../engine/explain';
 import { BudgetView } from './BudgetView';
-import { leaderOf, lineFor, speakerFor } from '../engine/dialogue';
+import { fixLine, leaderOf, lineFor, speakerFor } from '../engine/dialogue';
 import type { GameSetup } from './App';
 import { ComparisonView } from './ComparisonView';
 import { Explain } from './Explain';
@@ -174,9 +175,15 @@ export function GameScreen({
       keep = { ...draft, partnerPolicyIds: [...new Set([...draft.partnerPolicyIds, id])], compromisePolicyIds: [...compromise] };
     } else if (c?.addPortfolio) {
       keep = { ...draft, portfolios: [...draft.portfolios, c.addPortfolio] };
-    } else if (c?.cutPolicy) {
-      const id = c.cutPolicy.id;
-      keep = { ...draft, partnerPolicyIds: draft.partnerPolicyIds.filter((x) => x !== id), playerPolicyIds: draft.playerPolicyIds.filter((x) => x !== id) };
+    } else if (response?.budget?.fix?.items.length && (c?.cutPolicy || c?.softenPolicy)) {
+      // Apply every change the partner named to fix the budget.
+      keep = response.budget.fix.items.reduce<Offer>(
+        (o, f) =>
+          f.action === 'compromise'
+            ? { ...o, compromisePolicyIds: [...new Set([...(o.compromisePolicyIds ?? []), f.policy.id])] }
+            : { ...o, partnerPolicyIds: o.partnerPolicyIds.filter((x) => x !== f.policy.id), playerPolicyIds: o.playerPolicyIds.filter((x) => x !== f.policy.id) },
+        draft,
+      );
     } else if (response?.kind === 'accept') {
       keep = undefined;
     }
@@ -290,7 +297,8 @@ export function GameScreen({
               {partnerIds.map((id) => {
                 const p = PARTY_BY_ID[id]!;
                 const state = game.partners[id]!;
-                const tag = state.status === 'open' || state.status === 'rival-signing' ? partyMood(game, id) : null;
+                const tag = state.status === 'open' || state.status === 'rival-signing' ? partyMood(game, id, PARTIES) : null;
+                const unlikely = state.status === 'open' && !isLikelyPartner(p, player);
                 return (
                   <li key={id}>
                     <button
@@ -316,6 +324,7 @@ export function GameScreen({
                         </span>
                       )}
                       {tag && tag.label && <span className={`tag ${tag.mood}`}>{tag.label}</span>}
+                      {unlikely && <span className="tag unlikely">Unlikely partner: from the other side of politics</span>}
                       {state.rivalStrain && (state.status === 'rival' || state.status === 'rival-signing') && (
                         <span className="tag keen">Unhappy with the rival bloc</span>
                       )}
@@ -424,7 +433,10 @@ function PolicyTitle({ policy, onCard }: { policy: Policy; onCard: (policy: Poli
         {policy.title}
       </button>
       {policy.fiscalImpactNZDm ? (
-        <span className={`fiscal ${policy.fiscalImpactNZDm < 0 ? 'cost' : 'gain'}`}>
+        <span
+          className={`fiscal ${policy.fiscalImpactNZDm < 0 ? 'cost' : 'gain'}`}
+          title={policy.fiscalBasis === 'estimate' ? `Game estimate. ${policy.fiscalNote ?? ''}`.trim() : policy.fiscalNote}
+        >
           {formatChange(policy.fiscalImpactNZDm)}
           {policy.fiscalBasis === 'estimate' ? '*' : ''}
         </span>
@@ -457,7 +469,7 @@ function theyWanted(response: OfferResponse | undefined): string | null {
   if (c?.addPolicy && c.either?.length) return [c.addPolicy, ...c.either].map((p) => p.title).join(' or ');
   if (c?.addPolicy) return c.compromise && c.addPolicy.compromise ? `${c.addPolicy.compromise.title} (compromise)` : c.addPolicy.title;
   if (c?.addPortfolio) return PORTFOLIOS.find((p) => p.id === c.addPortfolio)?.label ?? null;
-  if (c?.cutPolicy) return `drop "${c.cutPolicy.title}" to ease the budget`;
+  if ((c?.cutPolicy || c?.softenPolicy) && response?.budget?.fix) return fixLine(response.budget.fix).replace(/ would.*$/, ' to fix the budget');
   if (response?.sticking) return `"${response.sticking.title}" left out`;
   if (response?.redLines.length) return `${response.redLines.map((p) => `"${p.title}"`).join(', ')} left out`;
   if (response?.considering) return 'time: they are weighing their options';
@@ -749,7 +761,8 @@ function OfferBuilder({
               {preview.budgetProblem.kind === 'cuts'
                 ? `${partner.name} objects to cuts to services ${formatMoney(preview.budgetProblem.over)} a year past its line.`
                 : `${partner.name} watches the deficit: this is ${formatMoney(preview.budgetProblem.over)} a year past its line.`}
-              {preview.budgetProblem.refuse ? ' Too far: it will refuse whatever the policies.' : ''}
+              {preview.budgetProblem.refuse && !preview.budgetProblem.fix?.enough ? ' Too far: it will refuse whatever the policies.' : ''}{' '}
+              {fixLine(preview.budgetProblem.fix)}
             </li>
           )}
           {newMoodHits.map((f) => (

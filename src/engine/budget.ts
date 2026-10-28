@@ -1,4 +1,5 @@
 import baseline from '../data/baseline-2026.json';
+import budget2026 from '../data/budget-2026-categories.json';
 import type { Issue, Party, Policy } from '../data/schema';
 
 export const YEARS = baseline.years as readonly string[];
@@ -173,4 +174,53 @@ export function formatMoney(nzdm: number): string {
 /** "+$1.2bn" or "-$350m" for a change to the balance. */
 export function formatChange(nzdm: number): string {
   return nzdm > 0 ? `+${formatMoney(nzdm)}` : nzdm < 0 ? formatMoney(nzdm) : '$0';
+}
+
+export const BUDGET_2026 = budget2026;
+
+/** Which Budget 2026 spending category each game issue's spending falls in, as the game groups it. */
+const ISSUE_CATEGORY: Record<Issue, string> = {
+  health: 'health',
+  'cost-of-living': 'welfare',
+  'kiwisaver-retirement': 'super',
+  'law-order': 'law-order',
+  governance: 'core-government',
+  tax: 'other',
+  housing: 'other',
+  'climate-environment': 'other',
+  immigration: 'other',
+  'treaty-maori': 'other',
+};
+
+export interface CategoryRow {
+  id: string;
+  label: string;
+  /** Budget 2026 figure for 2026/27, NZ$m. */
+  base: number;
+  /** The deal's change in the key year, NZ$m: more spending or more revenue is positive. */
+  change: number;
+  lines: BudgetLine[];
+}
+
+/**
+ * The deal against the outgoing government's Budget 2026, category by category:
+ * spending lines by the category the game puts their issue in, and tax lines
+ * against total revenue. The key year's full effect is set against 2026/27.
+ */
+export function againstBudget2026(budget: Budget): { expenses: CategoryRow[]; revenue: CategoryRow } {
+  const spending = budget.lines.filter((l) => l.policy.fiscalType !== 'revenue');
+  const expenses = BUDGET_2026.expensesNZDbn.map((c) => {
+    const lines = spending.filter((l) => ISSUE_CATEGORY[l.policy.issue as Issue] === c.id);
+    // A spending line's impact is negative when it costs money, so more spending is its negative.
+    return { id: c.id, label: c.label, base: c.value * 1000, change: -lines.reduce((s, l) => s + l.impact, 0), lines };
+  });
+  const taxLines = budget.lines.filter((l) => l.policy.fiscalType === 'revenue');
+  const revenue = {
+    id: 'revenue',
+    label: 'Total tax and other revenue',
+    base: Math.round(BUDGET_2026.revenueNZDbn.reduce((s, c) => s + c.value, 0) * 1000),
+    change: taxLines.reduce((s, l) => s + l.impact, 0),
+    lines: taxLines,
+  };
+  return { expenses, revenue };
 }

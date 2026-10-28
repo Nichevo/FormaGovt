@@ -49,6 +49,8 @@ export function About({ onClose }: { onClose: () => void }) {
         <li>Partners can come back to you asking to change a thin deal. A strong deal rarely prompts this.</li>
         <li>Small offers and changes take no time, up to two a day, while big offers take two days.</li>
         <li>Some bottom lines are an either-or: the party needs one of two of its policies, not both.</li>
+        <li>Parties far to the left or right only bargain hard with their natural side, and are marked as unlikely partners for the other.</li>
+        <li>Budget objections name the items in the deal that would fix them, and the Budget tab sets your deal against the last Budget by category.</li>
       </ul>
       <p>Tips appear above the talks during play. You can hide them and bring them back at any time.</p>
 

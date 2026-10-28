@@ -35,7 +35,7 @@ export const EXPLAINERS = {
   time:
     'Talks take time in proportion to what is on the table. A small offer or change, of three items or fewer, takes no time, and you can make two of those a day. A typical offer uses a day, and one with twelve or more policies and roles takes two days.',
   leverage:
-    'A party courted by both blocs, whose seats could decide the majority, holds out for more. When it stops being needed, or the side it prefers falls behind, it lowers its demands. Some parties, such as NZ First, hold out longer than others.',
+    'A party courted by both blocs, whose seats could decide the majority, holds out for more. When it stops being needed, or the side it prefers falls behind, it lowers its demands. Some parties, such as NZ First, hold out longer than others. Parties far to the left or right have only one natural side: they gain no bargaining power from the other bloc, are marked "Unlikely partner" when you are on the other side, and take more convincing to cross over.',
 } as const;
 export type ExplainTopic = keyof typeof EXPLAINERS;
 

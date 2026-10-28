@@ -130,7 +130,7 @@
       "fiscalImpactNZDm": -30,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $30m a year more for staff and market studies.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
       "bottomLineBasis": "declared"
     },
@@ -152,7 +152,7 @@
       "fiscalImpactNZDm": -10,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $10m a year for a register and an oversight office.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
       "bottomLineBasis": "declared"
     },
@@ -197,7 +197,7 @@
       "fiscalImpactNZDm": -20,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate of transition support.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $20m a year to help the fishing industry move to other methods.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
       "bottomLineBasis": "declared"
     },
@@ -236,7 +236,7 @@
       "fiscalImpactNZDm": 4000,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate. Opportunity uses it to fund income tax cuts.",
+      "fiscalNote": "Game estimate, not a costing. Assumes a low annual rate on land value, excluding the family home, on land worth about $1 trillion. Opportunity uses it to fund income tax cuts.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -251,7 +251,7 @@
       "fiscalImpactNZDm": -5000,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate of the net cost after replacing some benefits.",
+      "fiscalNote": "Game estimate, not a costing. Assumes a flat payment to adults, minus the benefits it replaces. The net cost depends heavily on the design, so the game takes a middle figure of $5bn.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -266,7 +266,7 @@
       "fiscalImpactNZDm": -1500,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes a new tax scale that lowers tax for most earners, partly paid for by the land value tax.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -281,7 +281,7 @@
       "fiscalImpactNZDm": -300,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes extra Crown contributions for lower earners of about $300m a year.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     }
   ]

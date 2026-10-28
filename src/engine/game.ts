@@ -17,6 +17,8 @@ import {
   type OfferResponse,
   type PortfolioId,
   bottomLineOptions,
+  budgetFixFor,
+  isLikelyPartner,
 } from './negotiation';
 import { createRng } from './random';
 import { voterMood, type VoterMood } from './voters';
@@ -405,11 +407,17 @@ export function courtedByBoth(state: GameState, partyId: string): boolean {
  * How much bargaining power a party feels, -0.5 to 1. Courted by both blocs and
  * needed by them, it holds out; needed by neither while the race tightens, it is keen.
  */
-export function leverageFor(state: GameState, partyId: string): number {
+export function leverageFor(state: GameState, partyId: string, parties: Party[] = []): number {
   if (!state.rivalId || rivalSeats(state) === 0) return 0;
-  const courted = courtedByBoth(state, partyId);
-  const forPlayer = isPivotal(state, partyId, 'player');
-  const forRival = isPivotal(state, partyId, 'rival');
+  // A side it would not realistically back gives it no bargaining power.
+  const party = parties.find((p) => p.id === partyId);
+  const likely = (leaderId: string) => {
+    const leader = parties.find((p) => p.id === leaderId);
+    return !party || !leader || isLikelyPartner(party, leader);
+  };
+  const forPlayer = isPivotal(state, partyId, 'player') && likely(state.playerId);
+  const forRival = isPivotal(state, partyId, 'rival') && likely(state.rivalId);
+  const courted = courtedByBoth(state, partyId) && likely(state.playerId) && likely(state.rivalId);
   if (forPlayer && forRival) return courted ? 1 : 0.6;
   if (forPlayer || forRival) return courted ? 0.5 : 0.25;
   const closest = Math.min(state.majority - seatsAgreed(state), state.majority - rivalSeats(state));
@@ -419,8 +427,8 @@ export function leverageFor(state: GameState, partyId: string): number {
 export type PartyMood = 'holding-out' | 'keen' | 'neutral';
 
 /** A tag for the party list. */
-export function partyMood(state: GameState, partyId: string): { mood: PartyMood; label: string } {
-  const lev = leverageFor(state, partyId);
+export function partyMood(state: GameState, partyId: string, parties: Party[] = []): { mood: PartyMood; label: string } {
+  const lev = leverageFor(state, partyId, parties);
   if (lev >= 0.5) return { mood: 'holding-out', label: courtedByBoth(state, partyId) ? 'Courted by both, holding out' : 'Needed by both, holding out' };
   if (lev > 0) return { mood: 'holding-out', label: 'Knows it is needed' };
   if (lev < 0) return { mood: 'keen', label: 'Losing options, keen to deal' };
@@ -451,7 +459,7 @@ function contextFor(state: GameState, parties: Party[], offer: Offer): Negotiati
     budget: budgetFor([...otherAgreed, ...offerPolicies(offer, player, partner)], parties),
     takenPortfolios: [...taken.keys()],
     seats: { partner: state.seats[partner.id] ?? 0, coalition: coalitionSeatsWith(state, partner.id) },
-    leverage: current.status === 'open' || current.status === 'rival-signing' ? leverageFor(state, partner.id) : 0,
+    leverage: current.status === 'open' || current.status === 'rival-signing' ? leverageFor(state, partner.id, parties) : 0,
     renegotiation: !!current.renegotiating && !current.unsettled,
     reapproach: !!current.reapproached && current.status === 'open' && !current.deal,
     currentPartners: Object.entries(state.partners)
@@ -837,6 +845,8 @@ function rivalMove(state: GameState, parties: Party[]): GameState {
   const candidates = Object.entries(state.partners)
     .filter(([id, p]) => id !== rival.id && p.status === 'open' && !p.rivalBlocked)
     .map(([id, p]) => ({ id, p, party: parties.find((x) => x.id === id)! }))
+    // Only late in talks does the rival look to a party from the other side.
+    .filter(({ party }) => isLikelyPartner(party, rival) || pressureOn(state.day, state.days) >= 0.6)
     .sort((a, b) => compatibility(rival, b.party) * (state.seats[b.id] ?? 0) - compatibility(rival, a.party) * (state.seats[a.id] ?? 0));
 
   for (const { party, p } of candidates) {
@@ -856,7 +866,7 @@ function rivalMove(state: GameState, parties: Party[]): GameState {
       otherAgreed,
       budget: budgetFor([...otherAgreed, ...offerPolicies(offer, rival, party)], parties),
       seats: { partner: state.seats[party.id] ?? 0, coalition },
-      leverage: leverageFor(state, party.id),
+      leverage: leverageFor(state, party.id, parties),
       currentPartners: rivalPartners,
     });
 
@@ -1227,7 +1237,11 @@ export function previewDeal(state: GameState, parties: Party[], offer: Offer): D
     const e = expectedCabinet(partner, state.seats[partner.id] ?? 0, coalitionSeatsWith(state, partner.id));
     cabinet = { offered: offer.portfolios.length, expected: e.expected, major: e.major };
   }
-  return { budget, mood: moodOf(trial, parties), unsettles, cabinet, budgetProblem: budgetProblemFor(partner, budget) };
+  // The partner's own view of the budget, with the agreement items that would fix it.
+  const ctx = contextFor(state, parties, offer);
+  const found = budgetProblemFor(partner, ctx.budget);
+  const budgetProblem = found && { ...found, fix: budgetFixFor(offer, ctx, found) };
+  return { budget, mood: moodOf(trial, parties), unsettles, cabinet, budgetProblem };
 }
 
 /** The previous version of a deal or offer with a party, to start the next one from. */

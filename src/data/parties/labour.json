@@ -182,7 +182,7 @@
       "fiscalImpactNZDm": -350,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate. Labour includes it in $15.5bn of extra health funding.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about 3.5 million eligible adults use an average of two of the three visits at about $50 each. Labour counts it inside $15.5bn of extra health funding.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
       "bottomLineBasis": "inferred"
     },
@@ -199,7 +199,7 @@
       "fiscalType": "spending",
       "fiscalStart": "2027/28",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate for removing the $5 co-payment.",
+      "fiscalNote": "Game estimate, not a costing. Assumes the $5 charge applies to about 22 million items a year.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -214,7 +214,7 @@
       "fiscalImpactNZDm": -300,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate for the state as employer and lost tax.",
+      "fiscalNote": "Game estimate, not a costing. Assumes extra contributions for state-sector staff, plus tax lost as businesses deduct their extra contributions.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {

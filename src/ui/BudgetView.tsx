@@ -4,6 +4,8 @@ import { ISSUE_LABELS, type Issue, type Policy } from '../data/schema';
 import {
   BASELINE,
   BASELINE_YEARS,
+  BUDGET_2026,
+  againstBudget2026,
   formatBalance,
   formatChange,
   formatMoney,
@@ -237,9 +239,16 @@ function PolicyLines({ budget, onCard }: { budget: Budget; onCard: (p: Policy) =
                   </button>
                   <div className="basis">
                     {groupLabel('party', l.ownerId ?? 'other')} · {l.policy.fiscalType === 'revenue' ? 'revenue' : 'spending'} ·{' '}
-                    {l.policy.fiscalBasis === 'party' ? 'Party costing' : 'Game estimate'}
+                    {l.policy.fiscalBasis === 'party' ? 'Party costing' : 'Game estimate, not a party costing'}
                     {l.policy.isCompromise ? ' · compromise version' : ''}
                   </div>
+                  {l.policy.fiscalNote && (
+                    <details className="why-number">
+                      <summary>{l.policy.fiscalBasis === 'party' ? 'Where this number comes from' : 'Why this number'}</summary>
+                      {l.policy.fiscalNote}
+                      {l.policy.isCompromise && l.policy.compromise ? ` The compromise keeps ${Math.round(l.policy.compromise.fiscalShare * 100)}% of it.` : ''}
+                    </details>
+                  )}
                 </td>
                 {l.years.map((v, i) => (
                   <td key={i} className={v < 0 ? 'bad' : ''}>
@@ -259,6 +268,82 @@ function PolicyLines({ budget, onCard }: { budget: Budget; onCard: (p: Policy) =
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+const pct = (change: number, base: number) => {
+  const p = (change / base) * 100;
+  return `${p > 0 ? '+' : ''}${p.toFixed(Math.abs(p) < 1 ? 1 : 0)}%`;
+};
+
+/** The deal set against the outgoing government's Budget 2026, category by category. */
+function AgainstLastBudget({ budget, onCard }: { budget: Budget; onCard: (p: Policy) => void }) {
+  const { expenses, revenue } = againstBudget2026(budget);
+  const rows = [...expenses, revenue];
+  return (
+    <div className="against-budget">
+      <h3>Against the last Budget</h3>
+      <p className="muted small">
+        What the outgoing government planned to spend and raise in 2026/27, and how your deal changes it once policies are fully running
+        ({BASELINE.year}).
+      </p>
+      <div className="grid-scroll">
+        <table className="budget-table">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Budget 2026</th>
+              <th scope="col">Your deal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.id} className={r.id === 'revenue' ? 'total-row' : ''}>
+                <td>
+                  {r.lines.length ? (
+                    <details>
+                      <summary>{r.label}</summary>
+                      <ul className="plain small">
+                        {r.lines.map((l) => (
+                          <li key={l.policy.id}>
+                            <button type="button" className="link" onClick={() => onCard(l.policy)}>
+                              {l.policy.title}
+                            </button>{' '}
+                            {formatChange(r.id === 'revenue' ? l.impact : -l.impact)}
+                            {l.policy.fiscalBasis !== 'party' ? '*' : ''}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  ) : (
+                    r.label
+                  )}
+                </td>
+                <td>${(r.base / 1000).toFixed(1)}bn</td>
+                <td>
+                  {r.change === 0 ? (
+                    '–'
+                  ) : (
+                    <>
+                      {formatChange(r.change)}
+                      <div className="muted small">{pct(r.change, r.base)}</div>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="muted small">
+        Source:{' '}
+        <a href={BUDGET_2026.sourceUrl} target="_blank" rel="noreferrer">
+          Budget 2026 at a Glance
+        </a>{' '}
+        (core Crown, 2026/27). Positive changes mean more spending or more revenue. The game puts each policy in the closest
+        Budget category by its issue, so this is a rough guide. * marks a game estimate, not a party costing.
+      </p>
     </div>
   );
 }
@@ -302,6 +387,7 @@ export function BudgetView({ budget, onCard, compact = false }: { budget: Budget
         <Groups title="By category" kind="issue" groups={budget.byIssue} onCard={onCard} />
         <Groups title="By party" kind="party" groups={budget.byParty} onCard={onCard} />
       </div>
+      <AgainstLastBudget budget={budget} onCard={onCard} />
       {!compact && <PolicyLines budget={budget} onCard={onCard} />}
       <p className="muted small">
         Measured from the{' '}

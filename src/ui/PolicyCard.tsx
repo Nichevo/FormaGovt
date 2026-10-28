@@ -77,7 +77,7 @@ export function PolicyCard({ policy, onClose }: { policy: Policy; onClose: () =>
           {policy.fiscalBasis && (
             <span className="muted small">
               {' '}
-              ({policy.fiscalBasis === 'party' ? 'party costing' : 'rough game estimate'})
+              ({policy.fiscalBasis === 'party' ? 'party costing' : 'game estimate, not a party costing'})
             </span>
           )}
           {policy.fiscalNote && <div className="muted small">{policy.fiscalNote}</div>}

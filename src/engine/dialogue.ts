@@ -1,6 +1,6 @@
 import { PARTY_BY_ID } from '../data/parties';
 import type { Party } from '../data/schema';
-import { PORTFOLIOS, type OfferResponse } from './negotiation';
+import { PORTFOLIOS, type BudgetFixPlan, type OfferResponse } from './negotiation';
 import { formatMoney } from './budget';
 import type { LogEntry } from './game';
 
@@ -42,8 +42,20 @@ function policyTitle(id: string): string {
 
 function budgetLine(r: OfferResponse): string {
   const b = r.budget!;
-  if (b.kind === 'cuts') return `The policies are workable, but this deal cuts ${formatMoney(b.over)} a year more from public services than we can accept.`;
-  return `The policies work for us, but this deal digs the deficit ${formatMoney(b.over)} a year deeper than we can defend.`;
+  const gap =
+    b.kind === 'cuts'
+      ? `The policies are workable, but this deal cuts ${formatMoney(b.over)} a year more from public services than we can accept.`
+      : `The policies work for us, but this deal digs the deficit ${formatMoney(b.over)} a year deeper than we can defend.`;
+  return `${gap} ${fixLine(b.fix)}`.trim();
+}
+
+/** "Scaling back X and dropping Y would fix it." */
+export function fixLine(fix: BudgetFixPlan | undefined): string {
+  if (!fix?.items.length) return 'None of your own policies in this deal would close that gap.';
+  const steps = fix.items.map((f) => `${f.action === 'drop' ? 'dropping' : 'scaling back'} "${f.policy.title}"`);
+  const what = list(steps);
+  const said = what.charAt(0).toUpperCase() + what.slice(1);
+  return fix.enough ? `${said} would fix that.` : `${said} would get us part of the way.`;
 }
 
 export function lineFor(entry: LogEntry, partner: Party): string {
@@ -59,8 +71,9 @@ export function lineFor(entry: LogEntry, partner: Party): string {
         : `We can support this. It now goes to our ${partner.ratification.body.toLowerCase()} for sign-off.`;
     case 'counter':
       if (r?.counter?.cutPolicy) {
-        return `${budgetLine(r)} Drop or scale back "${r.counter.cutPolicy.title}" and we can talk.`;
+        return budgetLine(r);
       }
+      if (r?.counter?.softenPolicy) return budgetLine(r);
       if (r?.counter?.addPolicy) {
         if (r.counter.compromise && r.counter.addPolicy.compromise) {
           return `We know "${r.counter.addPolicy.title}" is hard for others. We would accept "${r.counter.addPolicy.compromise.title}" instead.`;

@@ -1,0 +1,24 @@
+{
+  "label": "Budget 2026 forecast for 2026/27",
+  "note": "Core Crown expenses and revenue forecast for 2026/27 in the outgoing government's Budget 2026 (28 May 2026), NZ$ billions.",
+  "sourceUrl": "https://www.treasury.govt.nz/sites/default/files/2026-05/b26-at-a-glance.pdf",
+  "expensesNZDbn": [
+    { "id": "health", "label": "Health", "value": 34.2 },
+    { "id": "welfare", "label": "Social security and welfare (excluding NZ Super)", "value": 27.0 },
+    { "id": "super", "label": "New Zealand Superannuation", "value": 26.5 },
+    { "id": "education", "label": "Education", "value": 22.4 },
+    { "id": "finance-costs", "label": "Finance costs", "value": 10.2 },
+    { "id": "law-order", "label": "Law and order", "value": 7.6 },
+    { "id": "core-government", "label": "Core government services", "value": 6.6 },
+    { "id": "transport", "label": "Transport and communications", "value": 5.1 },
+    { "id": "other", "label": "Other", "value": 15.1 }
+  ],
+  "revenueNZDbn": [
+    { "id": "individuals", "label": "Individuals tax", "value": 67.9 },
+    { "id": "gst", "label": "GST", "value": 33.1 },
+    { "id": "corporate", "label": "Corporate tax", "value": 20.3 },
+    { "id": "other-indirect", "label": "Other indirect taxes", "value": 8.1 },
+    { "id": "other-direct", "label": "Other direct taxes", "value": 3.6 },
+    { "id": "other", "label": "Other revenue", "value": 12.6 }
+  ]
+}

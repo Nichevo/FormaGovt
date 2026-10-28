@@ -132,7 +132,7 @@
       "fiscalImpactNZDm": -13000,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate. The party says about 4.2 million people would gain about $4,000 a year on average.",
+      "fiscalNote": "Game estimate, not a costing. The party says about 4.2 million people would gain around $4,000 a year on average. That would be about $17bn, but the game assumes some is clawed back through higher rates elsewhere, so it uses $13bn.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
       "bottomLineBasis": "inferred"
     },
@@ -148,7 +148,7 @@
       "fiscalImpactNZDm": 12000,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate. The party says its whole package raises about $20bn.",
+      "fiscalNote": "Game estimate, not a costing. The party says its whole package raises about $20bn. The game puts about $12bn of that on the wealth tax over $4m.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -163,7 +163,7 @@
       "fiscalImpactNZDm": 3000,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes 5 points more on company tax of about $20bn, less some profit shifting.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -194,7 +194,7 @@
       "fiscalImpactNZDm": -3000,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate: about $1,000 each for around 3 million people.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $1,000 each for around 3 million people.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -209,7 +209,7 @@
       "fiscalImpactNZDm": -150,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $150m a year of grants and infrastructure for housing on Māori land.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -239,7 +239,7 @@
       "fiscalImpactNZDm": -100,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $100m a year of grants for community-owned renewable energy.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -260,7 +260,7 @@
       "fiscalImpactNZDm": -100,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $100m a year for development funds and procurement support.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
       "bottomLineBasis": "inferred"
     }

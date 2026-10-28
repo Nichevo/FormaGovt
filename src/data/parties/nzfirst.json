@@ -139,7 +139,7 @@
       "fiscalImpactNZDm": -800,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes a 20% rate for firms with profits under a threshold. Small firms pay about $3bn of company tax at 28%, so cutting the rate by 8 points costs roughly $800m.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -154,7 +154,7 @@
       "fiscalImpactNZDm": -60,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "About 60,000 births a year at $1,000 each.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about 60,000 births a year at $1,000 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -176,7 +176,7 @@
       "fiscalType": "spending",
       "fiscalStart": "2028/29",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate; starts in 2029.",
+      "fiscalNote": "Game estimate, not a costing. Assumes that from 2029 a few percent of new claimants, permanent residents who are not citizens, do not qualify, which saves about $200m a year as it builds.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
       "bottomLineBasis": "inferred"
     },
@@ -192,7 +192,7 @@
       "fiscalImpactNZDm": -300,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about 60,000 children a year at $5,000 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -259,7 +259,7 @@
       "fiscalImpactNZDm": -300,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes a regional fund of about $300m a year, about the size of past regional development funds.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
     }
   ]
