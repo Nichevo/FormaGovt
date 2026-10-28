@@ -2,6 +2,7 @@ import { PARTIES } from '../data/parties';
 import { POLLS } from '../data/scenarios';
 import { BASELINE } from '../engine/budget';
 import { DISCLAIMER } from './Disclaimer';
+import { VERSION_LABEL } from '../version';
 
 function hostOf(url: string): string {
   try {
@@ -36,6 +37,7 @@ export function About({ onClose }: { onClose: () => void }) {
         <li>Use "Wait for news" to skip quiet days.</li>
       </ol>
 
+      <p className="muted small">{VERSION_LABEL}</p>
       <h3>What changed in v1.1</h3>
       <ul>
         <li>A Budget tab: four years of forecasts, revenue against spending, the cost by category and by party, and every costed policy labelled as a party costing or a game estimate.</li>
