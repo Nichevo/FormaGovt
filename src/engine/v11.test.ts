@@ -270,3 +270,31 @@ describe('partners asking for a change', () => {
     expect(g.log.some((l) => l.kind === 'requested')).toBe(false);
   });
 });
+
+describe('either-or bottom lines', () => {
+  it('only point to the same party’s own policies', () => {
+    for (const p of PARTIES) {
+      for (const pol of p.policies.filter((x) => x.orPolicyIds?.length)) {
+        expect(pol.isBottomLine).toBe(true);
+        for (const id of pol.orPolicyIds!) expect(p.policies.some((x) => x.id === id), `${pol.id} → ${id}`).toBe(true);
+      }
+    }
+  });
+
+  it('accept either option and ask for the one that suits the other side', () => {
+    const ctx: NegotiationContext = { player: party('labour'), partner: party('greens'), trust: 70, pressure: 0.5 };
+    const withoutWealthTax = (ids: string[]): Offer => ({ ...fullOffer('greens'), partnerPolicyIds: ids });
+    const rest = party('greens').policies.map((p) => p.id).filter((id) => id !== 'grn-wealth-tax' && id !== 'grn-inheritance-tax');
+    expect(evaluateOffer(withoutWealthTax([...rest, 'grn-inheritance-tax']), ctx).missingBottomLines.map((p) => p.id)).not.toContain('grn-wealth-tax');
+    const neither = evaluateOffer(withoutWealthTax(rest), ctx);
+    expect(neither.kind).toBe('counter');
+    const asked = [neither.counter!.addPolicy!.id, ...neither.counter!.either!.map((p) => p.id)].sort();
+    expect(asked).toEqual(['grn-inheritance-tax', 'grn-wealth-tax']);
+  });
+
+  it('do not count as a dropped bottom line for your voters', () => {
+    let g: GameState = { ...newGame('labour'), rivalId: null };
+    g = makeOffer(g, PARTIES, fullOffer('greens', ['lab-cgt', 'lab-prescriptions']));
+    expect(moodOf(g, PARTIES).factors.some((f) => f.label.includes('Three free GP visits'))).toBe(false);
+  });
+});

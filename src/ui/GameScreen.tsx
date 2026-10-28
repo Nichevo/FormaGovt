@@ -47,6 +47,7 @@ import {
   compatibility,
   compromiseOf,
   eligiblePortfolios,
+  metByAlternative,
   offerPolicies,
   PORTFOLIOS,
   REACTION_LABELS,
@@ -453,6 +454,7 @@ function countChanges(base: Offer, draft: Offer): number {
 
 function theyWanted(response: OfferResponse | undefined): string | null {
   const c = response?.counter;
+  if (c?.addPolicy && c.either?.length) return [c.addPolicy, ...c.either].map((p) => p.title).join(' or ');
   if (c?.addPolicy) return c.compromise && c.addPolicy.compromise ? `${c.addPolicy.compromise.title} (compromise)` : c.addPolicy.title;
   if (c?.addPortfolio) return PORTFOLIOS.find((p) => p.id === c.addPortfolio)?.label ?? null;
   if (c?.cutPolicy) return `drop "${c.cutPolicy.title}" to ease the budget`;
@@ -485,7 +487,9 @@ function OfferBuilder({
   const compromised = new Set(draft.compromisePolicyIds ?? []);
   const asked = player.policies.filter((p) => draft.playerPolicyIds.includes(p.id)).map((p) => (compromised.has(p.id) && canCompromise(p) ? compromiseOf(p) : p));
   const redLines = asked.filter((p) => reactionTo(partner, p) === -2);
-  const missingBottomLines = partner.policies.filter((p) => p.isBottomLine && !draft.partnerPolicyIds.includes(p.id));
+  const missingBottomLines = partner.policies.filter(
+    (p) => p.isBottomLine && !draft.partnerPolicyIds.includes(p.id) && !metByAlternative(partner, p, draft.partnerPolicyIds, draft.compromisePolicyIds),
+  );
   const reply = lastResponse(game, partner.id);
   const wanted = theyWanted(reply);
   const unsettledNote = state.unsettled && (state.unsettled.severity === 'request' ? (
@@ -637,6 +641,7 @@ function OfferBuilder({
               <span>
                 {p.isBottomLine ? '🔒 ' : p.weight >= 4 ? '★ ' : ''}
                 <PolicyTitle policy={p} onCard={onCard} /> <span className="muted small">({ISSUE_LABELS[p.issue]})</span>
+                {eitherNote(partner, p)}
                 <span className={`reaction r${reactionTo(player, p)}`}>{REACTION_LABELS[reactionTo(player, p)]} for you</span>
               </span>
             </label>
@@ -660,6 +665,7 @@ function OfferBuilder({
                 <span>
                   {p.isBottomLine ? '🔒 ' : p.weight >= 4 ? '★ ' : ''}
                   <PolicyTitle policy={p} onCard={onCard} />
+                  {eitherNote(player, p)}
                   <span className={`reaction r${r}`}>{REACTION_LABELS[r]}</span>
                 </span>
               </label>
@@ -770,7 +776,13 @@ function OfferBuilder({
             <li key={p.id}>Already agreed with another party: "{p.title}" crosses a {partner.name} red line.</li>
           ))}
           {missingBottomLines.map((p) => (
-            <li key={p.id}>Their bottom line "{p.title}" is not included.</li>
+            <li key={p.id}>
+              Their bottom line "{p.title}" is not included
+              {p.orPolicyIds?.length
+                ? ` (or ${p.orPolicyIds.map((id) => `"${partner.policies.find((x) => x.id === id)?.title ?? id}"`).join(' or ')} instead)`
+                : ''}
+              .
+            </li>
           ))}
         </ul>
       )}
@@ -784,6 +796,13 @@ function OfferBuilder({
       </p>
     </section>
   );
+}
+
+/** "Either this or ..." beside a bottom line that another of the party's policies can stand in for. */
+function eitherNote(party: Party, p: Policy) {
+  if (!p.isBottomLine || !p.orPolicyIds?.length) return null;
+  const others = p.orPolicyIds.map((id) => `"${party.policies.find((x) => x.id === id)?.title ?? id}"`).join(' or ');
+  return <span className="muted small"> Either this or {others}</span>;
 }
 
 function policyTitle(id: string): string {

@@ -134,6 +134,7 @@
       "stance": -2,
       "weight": 5,
       "isBottomLine": true,
+      "orPolicyIds": ["grn-inheritance-tax"],
       "flex": "firm",
       "compromise": {
         "title": "Wealth tax at 1.5% over $20 million",
