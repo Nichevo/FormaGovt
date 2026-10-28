@@ -20,6 +20,10 @@ export const EXPLAINERS = {
     'Every deal changes the forecast operating balance for 2028/29, measured from Treasury\'s pre-election forecast of a $4.0bn surplus. Figures are the party\'s own costing where one was reported, and rough game estimates otherwise.',
   mood:
     'Your own voters judge the deal: how many of your policies made it, what you gave up, who you went into government with, and the budget. Below 35 they revolt, and it shows in your score.',
+  rival:
+    'The other big party is building its own majority at the same time, making one offer a day to whoever fits it best. If its bloc reaches a majority first, you lose. You can try to win its partners back, but breaking a deal takes a clearly better offer.',
+  pressure:
+    'Pressure rises each day and jumps when either bloc gets close to a majority. Under pressure, parties settle for less, and pre-election promises about who they would not work with soften. Kingmaker parties feel it less.',
   score:
     'Your score is 60% policies won (weighted by how much your party cares about each), 30% voter mood and 10% stability. You only score if you form a government.',
 } as const;
