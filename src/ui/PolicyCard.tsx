@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { PARTIES } from '../data/parties';
 import { ISSUE_LABELS, type Policy } from '../data/schema';
-import { formatChange } from '../engine/budget';
+import { formatChange, YEARS, yearlyImpact } from '../engine/budget';
 import { ownerOf } from '../engine/negotiation';
 
 const STANCE_LABELS: Record<string, string> = {
@@ -46,6 +46,20 @@ export function PolicyCard({ policy, onClose }: { policy: Policy; onClose: () =>
               : 'Yes, inferred by the game from party messaging'
             : 'No'}
         </dd>
+        {policy.isBottomLine && policy.flex && (
+          <>
+            <dt>Room to compromise (game rating)</dt>
+            <dd>
+              {policy.flex === 'fixed' ? 'Fixed: no compromise' : policy.flex === 'firm' ? 'Firm: bends late or for a strong offer' : 'Soft: bends readily'}
+              {policy.compromise && policy.flex !== 'fixed' && (
+                <div className="small">
+                  Compromise: <strong>{policy.compromise.title}</strong>. {policy.compromise.summary}{' '}
+                  <span className="muted">Game compromise, not a party proposal.</span>
+                </div>
+              )}
+            </dd>
+          </>
+        )}
         <dt>Where it sits</dt>
         <dd>{stanceLabel(policy.stance)} (game rating)</dd>
         <dt>Budget, 2028/29</dt>
@@ -58,6 +72,15 @@ export function PolicyCard({ policy, onClose }: { policy: Policy; onClose: () =>
             </span>
           )}
           {policy.fiscalNote && <div className="muted small">{policy.fiscalNote}</div>}
+          {policy.fiscalImpactNZDm ? (
+            <div className="muted small">
+              By year:{' '}
+              {yearlyImpact(policy)
+                .map((v, i) => `${YEARS[i]} ${formatChange(v)}`)
+                .join(' · ')}
+              {policy.fiscalByYear ? '' : ' (spread by the game from the yearly figure)'}
+            </div>
+          ) : null}
           {policy.fiscalSourceUrl && (
             <div className="small">
               <a href={policy.fiscalSourceUrl} target="_blank" rel="noreferrer">

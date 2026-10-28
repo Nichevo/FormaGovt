@@ -15,7 +15,16 @@ export function tipFor(game: GameState): string {
     return 'A deal is signed. Choose how to present it: it moves your voters’ mood and how other parties see you.';
   }
   if (lastEvent?.kind === 'rival-deal') {
-    return 'The rival bloc just signed a party. You can still win them back, but it takes a clearly better offer. Often it is quicker to lock in the parties still open.';
+    return 'The rival bloc just signed a party. Open its entry in the talks log to see why. You can still win them back, but it takes a clearly better offer. Often it is quicker to lock in the parties still open.';
+  }
+  if (lastEvent?.kind === 'rival-signing') {
+    return 'A party agreed terms with the rival bloc and is going through sign-off. Until it is signed, a better offer from you needs a smaller margin.';
+  }
+  if (Object.values(game.partners).some((p) => p.unsettled?.severity === 'red-line')) {
+    return 'A partner is unsettled by something in another deal. Reopen the deal that holds the policy and drop it or use its compromise before the deadline, or the partner leaves.';
+  }
+  if (Object.values(game.partners).some((p) => p.unsettled?.severity === 'request')) {
+    return 'A partner has asked to change its deal. Reopen it for free and add something it wants, or leave it: an unhappy partner lowers your stability score.';
   }
   if (last?.kind === 'counter' && last === lastEvent) {
     return 'They countered. What they asked for is already ticked in your next offer: check the meters, then send again.';

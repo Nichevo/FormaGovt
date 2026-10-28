@@ -11,6 +11,7 @@ import { Explain } from './Explain';
 import { HistoryPanel } from './HistoryPanel';
 import { AchievementsPanel } from './AchievementsPanel';
 import { dailyChallenge } from '../engine/daily';
+import { DEFAULT_DAYS, SHORT_DAYS } from '../engine/game';
 import type { Challenge } from './share';
 
 const VARIANCE_LABELS: Record<Exclude<VarianceLevel, 'custom'>, string> = {
@@ -39,6 +40,8 @@ export function SetupScreen({
   const [scenarioId, setScenarioId] = useState(known?.scenarioId ?? SCENARIOS[0]!.id);
   const [variance, setVariance] = useState<Exclude<VarianceLevel, 'custom'>>(known?.variance ?? 'off');
   const [seed, setSeed] = useState(() => known?.seed ?? randomSeed());
+  const [short, setShort] = useState(known?.days === SHORT_DAYS);
+  const days = short ? SHORT_DAYS : DEFAULT_DAYS;
   const [playerId, setPlayerId] = useState<string | null>(
     known?.playerId && PARTY_BY_ID[known.playerId] ? known.playerId : null,
   );
@@ -55,8 +58,9 @@ export function SetupScreen({
         seats: Object.fromEntries(result.parties.map((p) => [p.partyId, p.total])),
         majority: result.majority,
         totalSeats: result.totalSeats,
+        days,
       }),
-    [result],
+    [result, days],
   );
   const ordered = [...result.parties].sort((a, b) => b.total - a.total);
   const byPosition = [...result.parties].sort((a, b) => leftRight(a.partyId) - leftRight(b.partyId));
@@ -92,7 +96,7 @@ export function SetupScreen({
                   ]),
                 ),
               );
-              onReplay({ ...daily, daily: true });
+              onReplay({ ...daily, days: DEFAULT_DAYS, daily: true });
             }}
           >
             Play today's challenge
@@ -241,6 +245,10 @@ export function SetupScreen({
           })}
         </ul>
         <div className="start-row">
+          <label className="check">
+            <input type="checkbox" checked={short} onChange={() => setShort(!short)} />
+            <span>Short game ({SHORT_DAYS} days of talks instead of {DEFAULT_DAYS})</span>
+          </label>
           <button
             type="button"
             className="primary"
@@ -255,8 +263,9 @@ export function SetupScreen({
                 variance,
                 scenarioLabel: scenario.label,
                 startedAt: Date.now(),
+                days,
                 // Still the daily game only if nothing was changed.
-                daily: !!known?.daily && known.seed === seed && known.variance === variance && known.scenarioId === scenarioId && known.playerId === playerId,
+                daily: !!known?.daily && known.seed === seed && known.variance === variance && known.scenarioId === scenarioId && known.playerId === playerId && !short,
               })
             }
           >

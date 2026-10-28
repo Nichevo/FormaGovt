@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Party } from '../data/schema';
-import { DAYS, type DayPoint } from '../engine/game';
+import { DEFAULT_DAYS, type DayPoint } from '../engine/game';
 import { formatBalance } from '../engine/budget';
 import { REVOLT_BELOW } from '../engine/voters';
 
@@ -9,7 +9,7 @@ const H = 150;
 const PAD = { top: 12, right: 64, bottom: 22, left: 30 };
 const plotW = W - PAD.left - PAD.right;
 const plotH = H - PAD.top - PAD.bottom;
-const x = (day: number) => PAD.left + ((day - 1) / (DAYS - 1)) * plotW;
+const xFor = (days: number) => (day: number) => PAD.left + ((day - 1) / (days - 1)) * plotW;
 
 interface Series {
   label: string;
@@ -25,7 +25,9 @@ function LineChart({
   reference,
   hover,
   setHover,
+  days,
 }: {
+  days: number;
   title: string;
   series: Series[];
   max: number;
@@ -33,6 +35,8 @@ function LineChart({
   hover: number | null;
   setHover: (day: number | null) => void;
 }) {
+  const x = xFor(days);
+  const ticks = [1, Math.round(days / 3), Math.round((2 * days) / 3), days];
   const y = (v: number) => PAD.top + plotH - (Math.max(0, Math.min(max, v)) / max) * plotH;
   // Direct labels at each line's end, pushed apart when they would overlap.
   const labelY = series.map((s) => (s.values.length ? y(s.values.at(-1)!.value) : 0));
@@ -54,7 +58,7 @@ function LineChart({
             </text>
           </g>
         ))}
-        {[1, 4, 7, 10].map((d) => (
+        {ticks.map((d) => (
           <text key={d} className="axis" x={x(d)} y={H - 6} textAnchor="middle">
             Day {d}
           </text>
@@ -83,13 +87,13 @@ function LineChart({
             </g>
           );
         })}
-        {Array.from({ length: DAYS }, (_, i) => i + 1).map((d) => (
+        {Array.from({ length: days }, (_, i) => i + 1).map((d) => (
           <rect
             key={d}
             className="hit"
-            x={x(d) - plotW / (DAYS - 1) / 2}
+            x={x(d) - plotW / (days - 1) / 2}
             y={PAD.top}
-            width={plotW / (DAYS - 1)}
+            width={plotW / (days - 1)}
             height={plotH}
             onMouseEnter={() => setHover(d)}
             onClick={() => setHover(d)}
@@ -107,7 +111,9 @@ export function ProgressGraph({
   totalSeats,
   player,
   rival,
+  days = DEFAULT_DAYS,
 }: {
+  days?: number;
   history: DayPoint[];
   majority: number;
   totalSeats: number;
@@ -141,6 +147,7 @@ export function ProgressGraph({
           reference={{ value: majority, label: `Majority ${majority}` }}
           hover={hover}
           setHover={setHover}
+          days={days}
         />
         <LineChart
           title="Your voters' mood"
@@ -149,6 +156,7 @@ export function ProgressGraph({
           reference={{ value: REVOLT_BELOW, label: 'Revolt' }}
           hover={hover}
           setHover={setHover}
+          days={days}
         />
       </div>
       {point && (

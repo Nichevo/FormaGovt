@@ -10,7 +10,7 @@ Once GitHub Pages is switched on (below), the game is at **https://nichevo.githu
 
 ## Status
 
-All five phases are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The other big party leads a rival bloc that courts the same partners each day, pressure builds as either side nears a majority, and a graph tracks the race. Difficulty is rated for each election result by test plays. First-time players get tips as they go, the About page explains how to play and share, results show the cabinet and a policy drift compass, and you can send a challenge link, save a result image and replay past games kept in your browser. Extras: a 2017 what-if scenario, a daily challenge that is the same for everyone in New Zealand, achievements, and endings for minority governments, grand coalitions, fragile minorities and snap elections. A post-election check will compare your government with the real one once it is announced (`src/data/actual-2026.json`).
+All five phases are in: pick any party, then spend three weeks (or ten days in a short game) negotiating with the others. v1.1 adds a detailed Budget tab, fair cabinet shares, budget-minded parties, bottom lines that can bend, reopening deals, parties that hold out when courted by both blocs, and sign-off for the rival bloc's deals. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The other big party leads a rival bloc that courts the same partners each day, pressure builds as either side nears a majority, and a graph tracks the race. Difficulty is rated for each election result by test plays. First-time players get tips as they go, the About page explains how to play and share, results show the cabinet and a policy drift compass, and you can send a challenge link, save a result image and replay past games kept in your browser. Extras: a 2017 what-if scenario, a daily challenge that is the same for everyone in New Zealand, achievements, and endings for minority governments, grand coalitions, fragile minorities and snap elections. A post-election check will compare your government with the real one once it is announced (`src/data/actual-2026.json`).
 
 | Phase | What it adds |
 | --- | --- |
@@ -19,6 +19,7 @@ All five phases are in: pick any party, then spend 10 days negotiating with the 
 | 3. Scoring and voters | Weighted score, voter mood, budget tracker, policy cards, MMP explainers, press conferences |
 | 4. Polish and launch | Rival bloc and pressure, progress graph, tips, share and challenge links, result image, play history, drift compass, About page |
 | 5. Extras | 2017 what-if, daily challenge, achievements, more endings, post-election check |
+| v1.1 | Budget tab (four years, revenue vs spending, by category and party), 21-day talks with a short option, bloc progress and news, fair cabinet share, budget-minded parties, flexible bottom lines, reopening deals, unsettled partners, leverage and hold-out, rival sign-off, "Why they signed" |
 
 ## Content rules
 
@@ -49,6 +50,7 @@ npm run build   # production build into dist/
 
 - `src/data/parties/*.json`: one file per party, with policies (weights, bottom lines and sources), key people, sign-off process and relationships. Edit these to update the game; the schema in `src/data/schema.ts` checks them on start-up and in tests.
 - `src/data/polls.json`: recent polls used for the poll-average scenario.
+- `src/data/baseline-2026.json`: Treasury's PREFU 2026 operating balance and net debt for 2026/27 to 2029/30, the starting point for the budget tab.
 - `src/data/electorates-2026.json`: assumed electorate winners for poll scenarios. This is a rough assumption, not a forecast.
 
 Only each party's leaders, deputy and at most one or two other key figures appear by name. Everyone else is a placeholder named by role.

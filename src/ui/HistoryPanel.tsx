@@ -33,7 +33,7 @@ export function HistoryPanel({ onReplay }: { onReplay: (c: Challenge) => void })
                     {r.daily ? ' (daily)' : ''} · {new Date(r.at).toLocaleDateString()}
                   </span>
                 </span>
-                <button type="button" onClick={() => onReplay({ ...r, daily: false })}>
+                <button type="button" onClick={() => onReplay({ ...r, days: r.days ?? 10, daily: false })}>
                   Replay
                 </button>
               </li>

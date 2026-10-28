@@ -28,18 +28,35 @@ export function About({ onClose }: { onClose: () => void }) {
         <li>Pick a party marked easy for that result. The badge comes from test plays of the same result.</li>
         <li>
           Open talks with the party closest to you (highest % match). Include their bottom lines (🔒), ask them to back
-          a few of your policies, and send. Each offer uses one of your 10 days.
+          a few of your policies, and send. Each offer uses one of your 21 days (10 in a short game).
         </li>
         <li>Read the reply. A counter-offer is filled in for you. A red line means take that policy out.</li>
         <li>Watch the rival bloc: if it reaches a majority first, you lose.</li>
         <li>When a deal is signed, pick how to present it at the press conference.</li>
+        <li>Use "Wait for news" to skip quiet days.</li>
       </ol>
+
+      <h3>What changed in v1.1</h3>
+      <ul>
+        <li>A Budget tab: four years of forecasts, revenue against spending, the cost by category and by party, and every costed policy labelled as a party costing or a game estimate.</li>
+        <li>Talks run three weeks by default, with a ten-day short game.</li>
+        <li>Clearer progress: how many seats each bloc is short, what changed since yesterday, paths to a majority and morning news.</li>
+        <li>Partners expect a fair share of cabinet, and fiscal hawks can turn down deals on the budget alone.</li>
+        <li>Some bottom lines can bend to a compromise version, written for the game and labelled as such.</li>
+        <li>You can reopen a deal once per party, and a new deal that upsets an existing partner forces you to renegotiate.</li>
+        <li>Parties courted by both blocs hold out for more, NZ First most of all.</li>
+        <li>Deals with the rival bloc now go through each party's sign-off, and the talks log explains why a party signed with the other side.</li>
+        <li>Partners can come back to you asking to change a thin deal. A strong deal rarely prompts this.</li>
+        <li>Small offers and changes take no time, up to two a day, while big offers take two days.</li>
+      </ul>
       <p>Tips appear above the talks during play. You can hide them and bring them back at any time.</p>
 
       <h3>How the score works</h3>
       <p>
         You only score if you form a government. The score is 60% the policies you won (weighted by how much your party
-        cares about each; confidence and supply backing counts for less), 30% your own voters' mood, and 10% stability.
+        cares about each, with bottom lines counting double and compromises for less; confidence and supply backing counts
+        for less), 30% your own voters' mood, and 10% stability. Dropping your own bottom lines and flagships costs voter
+        mood, more so when you give up several.
       </p>
 
       <h3>Sharing</h3>

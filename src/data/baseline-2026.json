@@ -1,0 +1,11 @@
+{
+  "label": "Treasury PREFU 2026 forecast",
+  "published": "2026-09-29",
+  "measure": "Operating balance before gains and losses, excluding ACC (OBEGALx)",
+  "sourceUrl": "https://assets.dam.westpac.co.nz/is/content/wnzl/dist/all-of-bank/economic-reports/economic-data/Economic-Data_290926-PREFU_bulletin_29Sep26.pdf",
+  "years": ["2026/27", "2027/28", "2028/29", "2029/30"],
+  "balanceNZDm": [-6800, -800, 4000, 8100],
+  "netDebtPctGdp": [43.7, 43.9, 43.3, 41.8],
+  "gdpNote": "Rough game estimate of nominal GDP in 2029/30, used only to turn extra borrowing into a share of GDP.",
+  "gdp2029NZDm": 520000
+}

@@ -32,7 +32,9 @@
     "patience": 6,
     "greed": 0.4,
     "kingmaker": false,
-    "fiscalTolerance": 1000
+    "fiscalTolerance": 1000,
+    "holdout": 0.2,
+    "fiscalStance": "hawk"
   },
   "ratification": {
     "body": "Caucus and party board",
@@ -144,8 +146,10 @@
       "stance": 2,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "fixed",
       "voterSalience": 0.9,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "No direct cost; rules out new revenue.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
@@ -161,6 +165,8 @@
       "isBottomLine": false,
       "voterSalience": 0.8,
       "fiscalImpactNZDm": -196,
+      "fiscalType": "spending",
+      "fiscalStart": "2028/29",
       "fiscalBasis": "party",
       "fiscalNote": "National budgets $784m for its KiwiSaver changes; spread over four years here.",
       "fiscalSourceUrl": "https://thespinoff.co.nz/politics/13-10-2026/nationals-fiscal-plan-no-tax-cuts-but-a-fight-over-health-spending",
@@ -176,6 +182,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": -90,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "About 60,000 births a year at $1,500 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -190,6 +197,7 @@
       "isBottomLine": false,
       "voterSalience": 0.7,
       "fiscalImpactNZDm": -151,
+      "fiscalType": "spending",
       "fiscalBasis": "party",
       "fiscalNote": "$604m for medicines, spread over four years here. National funds it from foreign aid.",
       "fiscalSourceUrl": "https://thespinoff.co.nz/politics/13-10-2026/nationals-fiscal-plan-no-tax-cuts-but-a-fight-over-health-spending",
@@ -205,6 +213,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": -150,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate for four extra weeks of paid leave.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -219,6 +228,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "A loan guarantee scheme; little direct cost.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -233,6 +243,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Already in the Treasury baseline.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -247,6 +258,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "A target, not a spending line.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -261,6 +273,7 @@
       "isBottomLine": false,
       "voterSalience": 0.3,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Process change; little direct cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -275,6 +288,7 @@
       "isBottomLine": false,
       "voterSalience": 0.3,
       "fiscalImpactNZDm": -10,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate for negotiating capacity.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"

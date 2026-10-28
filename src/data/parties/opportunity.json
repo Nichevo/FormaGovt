@@ -32,7 +32,9 @@
     "patience": 6,
     "greed": 0.5,
     "kingmaker": true,
-    "fiscalTolerance": 2000
+    "fiscalTolerance": 2000,
+    "holdout": 0.5,
+    "fiscalStance": "balanced"
   },
   "ratification": {
     "body": "Party board",
@@ -118,8 +120,15 @@
       "stance": -1,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "soft",
+      "compromise": {
+        "title": "Market studies first, separation powers later",
+        "summary": "Strengthens the Commerce Commission’s market studies now, with structural separation powers considered later.",
+        "fiscalShare": 0.6
+      },
       "voterSalience": 0.8,
       "fiscalImpactNZDm": -30,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
@@ -133,8 +142,15 @@
       "stance": -1.5,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "soft",
+      "compromise": {
+        "title": "Lobbying register now, donations reviewed",
+        "summary": "Sets up a lobbying register now and reviews donation caps separately.",
+        "fiscalShare": 0.6
+      },
       "voterSalience": 0.7,
       "fiscalImpactNZDm": -10,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
@@ -148,8 +164,15 @@
       "stance": -1,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "soft",
+      "compromise": {
+        "title": "Cross-party inquiry into a 10-year health plan",
+        "summary": "Starts with a cross-party inquiry that would lead to a long-term health plan.",
+        "fiscalShare": 1
+      },
       "voterSalience": 0.8,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "A planning commitment; funding comes later.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
@@ -163,8 +186,15 @@
       "stance": -1.5,
       "weight": 4,
       "isBottomLine": true,
+      "flex": "soft",
+      "compromise": {
+        "title": "Bottom trawling phased out in protected areas first",
+        "summary": "Phases out bottom trawling in protected areas first, with a wider review to follow.",
+        "fiscalShare": 0.5
+      },
       "voterSalience": 0.6,
       "fiscalImpactNZDm": -20,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate of transition support.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
@@ -178,8 +208,15 @@
       "stance": -1.5,
       "weight": 4,
       "isBottomLine": true,
+      "flex": "firm",
+      "compromise": {
+        "title": "Keep Paris commitments, Commission review",
+        "summary": "Keeps the Paris commitments while the Climate Change Commission’s role is reviewed.",
+        "fiscalShare": 1
+      },
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "No near-term operating cost in the game.",
       "sourceUrl": "https://www.1news.co.nz/2026/09/29/no-land-tax-or-citizens-income-in-opportunitys-bottom-lines/",
@@ -195,6 +232,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 4000,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate. Opportunity uses it to fund income tax cuts.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -209,6 +247,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": -5000,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate of the net cost after replacing some benefits.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -223,6 +262,7 @@
       "isBottomLine": false,
       "voterSalience": 0.4,
       "fiscalImpactNZDm": -1500,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -237,6 +277,7 @@
       "isBottomLine": false,
       "voterSalience": 0.4,
       "fiscalImpactNZDm": -300,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"

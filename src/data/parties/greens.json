@@ -32,7 +32,10 @@
     "patience": 7,
     "greed": 0.3,
     "kingmaker": false,
-    "fiscalTolerance": 4000
+    "fiscalTolerance": 4000,
+    "holdout": 0.3,
+    "fiscalStance": "spender",
+    "servicesCutTolerance": 1000
   },
   "ratification": {
     "body": "Special meeting of member delegates",
@@ -131,8 +134,16 @@
       "stance": -2,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "firm",
+      "compromise": {
+        "title": "Wealth tax at 1.5% over $20 million",
+        "summary": "A smaller wealth tax on fewer people: 1.5% a year on net assets above $20 million.",
+        "fiscalShare": 0.4
+      },
       "voterSalience": 0.9,
       "fiscalImpactNZDm": 3760,
+      "fiscalType": "revenue",
+      "fiscalStart": "2027/28",
       "fiscalBasis": "party",
       "fiscalNote": "Green Party costing for 2027/28, rising to $4.14bn by 2030/31.",
       "fiscalSourceUrl": "https://newswire.co.nz/2026/10/greens-fiscal-plan-30-billion-health-wealth-tax-new-zealand-election-2026/",
@@ -149,6 +160,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 953,
+      "fiscalType": "revenue",
       "fiscalBasis": "party",
       "fiscalNote": "Green Party costing, $953m to $1.1bn a year.",
       "fiscalSourceUrl": "https://newswire.co.nz/2026/10/greens-fiscal-plan-30-billion-health-wealth-tax-new-zealand-election-2026/",
@@ -164,6 +176,7 @@
       "isBottomLine": false,
       "voterSalience": 0.8,
       "fiscalImpactNZDm": -3700,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate: about 3.5 million taxpayers saving up to $1,050 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -178,6 +191,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": 1500,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -192,6 +206,7 @@
       "isBottomLine": false,
       "voterSalience": 0.4,
       "fiscalImpactNZDm": 1200,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -206,6 +221,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": 300,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate: 0.06% on the big four banks' liabilities.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -220,6 +236,7 @@
       "isBottomLine": false,
       "voterSalience": 0.7,
       "fiscalImpactNZDm": 500,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -232,8 +249,15 @@
       "stance": -2,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "soft",
+      "compromise": {
+        "title": "A first round of public clean-energy investment",
+        "summary": "Starts with a smaller round of public investment in renewable energy, with more to follow.",
+        "fiscalShare": 0.5
+      },
       "voterSalience": 0.9,
       "fiscalImpactNZDm": -500,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",

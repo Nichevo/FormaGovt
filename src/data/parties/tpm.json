@@ -32,7 +32,10 @@
     "patience": 5,
     "greed": 0.5,
     "kingmaker": false,
-    "fiscalTolerance": 4000
+    "fiscalTolerance": 4000,
+    "holdout": 0.3,
+    "fiscalStance": "spender",
+    "servicesCutTolerance": 1000
   },
   "ratification": {
     "body": "Members and iwi at hui",
@@ -118,8 +121,15 @@
       "stance": -2,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "firm",
+      "compromise": {
+        "title": "First $15,000 tax-free, phased in",
+        "summary": "Makes the first $15,000 of income tax-free, phased in, with a path towards $30,000.",
+        "fiscalShare": 0.35
+      },
       "voterSalience": 0.9,
       "fiscalImpactNZDm": -13000,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate. The party says about 4.2 million people would gain about $4,000 a year on average.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/",
@@ -135,6 +145,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 12000,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate. The party says its whole package raises about $20bn.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -149,6 +160,7 @@
       "isBottomLine": false,
       "voterSalience": 0.4,
       "fiscalImpactNZDm": 3000,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -163,6 +175,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": 2100,
+      "fiscalType": "revenue",
       "fiscalBasis": "party",
       "fiscalNote": "Te Pāti Māori expects $2.1bn.",
       "fiscalSourceUrl": "https://thespinoff.co.nz/the-bulletin/27-08-2026/te-pati-maoris-tax-plan-30k-tax-free-a-new-stamp-duty-and-a-kai-credit",
@@ -178,6 +191,7 @@
       "isBottomLine": false,
       "voterSalience": 0.7,
       "fiscalImpactNZDm": -3000,
+      "fiscalType": "revenue",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate: about $1,000 each for around 3 million people.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
@@ -192,6 +206,7 @@
       "isBottomLine": false,
       "voterSalience": 0.7,
       "fiscalImpactNZDm": -150,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -206,6 +221,7 @@
       "isBottomLine": false,
       "voterSalience": 0.6,
       "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rule change; little direct cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -220,6 +236,7 @@
       "isBottomLine": false,
       "voterSalience": 0.5,
       "fiscalImpactNZDm": -100,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
@@ -232,8 +249,15 @@
       "stance": -2,
       "weight": 5,
       "isBottomLine": true,
+      "flex": "soft",
+      "compromise": {
+        "title": "A smaller fund for Māori business investment",
+        "summary": "Starts with a smaller fund for Māori business investment and ownership.",
+        "fiscalShare": 0.5
+      },
       "voterSalience": 0.9,
       "fiscalImpactNZDm": -100,
+      "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Rough game estimate.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",

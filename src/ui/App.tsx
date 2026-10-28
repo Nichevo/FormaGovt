@@ -61,8 +61,8 @@ export function App() {
               if (location.hash.startsWith('#play')) history.replaceState(null, '', location.pathname);
             }}
             onRematch={() => {
-              const { scenarioId, variance, seed, playerId } = setup;
-              setChallenge({ scenarioId, variance, seed, playerId });
+              const { scenarioId, variance, seed, playerId, days } = setup;
+              setChallenge({ scenarioId, variance, seed, playerId, days });
               setSetup(null);
             }}
           />

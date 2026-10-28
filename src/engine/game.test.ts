@@ -150,7 +150,7 @@ describe('rival bloc', () => {
 
   it('falls apart when its lead party signs with the player', () => {
     let g = newGame('labour');
-    g = waitDay(waitDay(g, PARTIES), PARTIES);
+    for (let i = 0; i < 6 && !Object.values(g.partners).some((p) => p.status === 'rival'); i++) g = waitDay(g, PARTIES);
     const before = Object.values(g.partners).filter((p) => p.status === 'rival').length;
     expect(before).toBeGreaterThan(0);
     g = makeOffer(g, PARTIES, { ...fullOffer('national', []), arrangement: 'coalition' });
