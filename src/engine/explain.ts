@@ -7,7 +7,7 @@ import {
   type GameState,
   type LogEntry,
 } from './game';
-import { compatibility, PORTFOLIOS, ruledOutBias, type Offer } from './negotiation';
+import { compatibility, isLikelyPartner, PORTFOLIOS, ruledOutBias, type Offer } from './negotiation';
 
 export interface BlocProgress {
   /** Seats signed. */
@@ -76,10 +76,17 @@ export function pathsToMajority(state: GameState, parties: Party[], bloc: 'playe
     if (ids.some((id) => seats - (state.seats[id] ?? 0) >= need)) continue;
     found.push(ids);
   }
+  // Paths through parties from the other side of politics come last and are marked.
+  const leader = parties.find((p) => p.id === (bloc === 'player' ? state.playerId : state.rivalId));
+  const unlikely = (id: string) => {
+    const party = parties.find((p) => p.id === id);
+    return !!party && !!leader && !isLikelyPartner(party, leader);
+  };
+  const unlikelyCount = (ids: string[]) => ids.filter(unlikely).length;
   return found
-    .sort((a, b) => a.length - b.length || a.reduce((s, id) => s + (state.seats[id] ?? 0), 0) - b.reduce((s, id) => s + (state.seats[id] ?? 0), 0))
+    .sort((a, b) => unlikelyCount(a) - unlikelyCount(b) || a.length - b.length || a.reduce((s, id) => s + (state.seats[id] ?? 0), 0) - b.reduce((s, id) => s + (state.seats[id] ?? 0), 0))
     .slice(0, limit)
-    .map((ids) => ids.map((id) => parties.find((p) => p.id === id)?.name ?? id));
+    .map((ids) => ids.map((id) => `${parties.find((p) => p.id === id)?.name ?? id}${unlikely(id) ? ' (unlikely)' : ''}`));
 }
 
 export interface WhySigned {

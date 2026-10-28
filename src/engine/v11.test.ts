@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PARTIES, PARTY_BY_ID } from '../data/parties';
-import { BASELINE, BASELINE_YEARS, budgetFor, KEY_YEAR_INDEX, yearlyImpact } from './budget';
+import { againstBudget2026, BASELINE, BASELINE_YEARS, budgetFor, KEY_YEAR_INDEX, yearlyImpact } from './budget';
+import { fixLine } from './dialogue';
 import {
   createGame,
   DEFAULT_DAYS,
@@ -8,6 +9,7 @@ import {
   moodOf,
   pressureOn,
   previewDeal,
+  leverageFor,
   reopenDeal,
   rivalSeats,
   SHORT_DAYS,
@@ -21,7 +23,10 @@ import {
 } from './game';
 import {
   acceptanceThreshold,
+  budgetFixFor,
   budgetProblemFor,
+  isLikelyPartner,
+  offerPolicies,
   compromiseOf,
   eligiblePortfolios,
   evaluateOffer,
@@ -224,7 +229,7 @@ describe('bloc feedback', () => {
     const paths = pathsToMajority(g, PARTIES, 'player');
     expect(paths.length).toBeGreaterThan(0);
     for (const path of paths) {
-      const total = 34 + path.reduce((s, name) => s + seats[PARTIES.find((x) => x.name === name)!.id as keyof typeof seats], 0);
+      const total = 34 + path.reduce((s, name) => s + seats[PARTIES.find((x) => x.name === name.replace(' (unlikely)', ''))!.id as keyof typeof seats], 0);
       expect(total).toBeGreaterThanOrEqual(62);
     }
   });
@@ -296,5 +301,53 @@ describe('either-or bottom lines', () => {
     let g: GameState = { ...newGame('labour'), rivalId: null };
     g = makeOffer(g, PARTIES, fullOffer('greens', ['lab-cgt', 'lab-prescriptions']));
     expect(moodOf(g, PARTIES).factors.some((f) => f.label.includes('Three free GP visits'))).toBe(false);
+  });
+});
+
+describe('natural sides', () => {
+  it('treats far-left and far-right parties as unlikely partners for the other side', () => {
+    expect(isLikelyPartner(party('greens'), party('national'))).toBe(false);
+    expect(isLikelyPartner(party('act'), party('labour'))).toBe(false);
+    expect(isLikelyPartner(party('tpm'), party('national'))).toBe(false);
+    expect(isLikelyPartner(party('opportunity'), party('national'))).toBe(true);
+    expect(isLikelyPartner(party('opportunity'), party('labour'))).toBe(true);
+  });
+
+  it('gives a party no hold-out power from a side it would not back', () => {
+    // Playing National with Labour as the rival: the Greens can only go one way.
+    let g = newGame('national');
+    g = { ...g, partners: { ...g.partners, greens: { ...g.partners.greens!, lastPlayerOffer: g.day, lastRivalOffer: g.day } } };
+    expect(leverageFor(g, 'greens', PARTIES)).toBeLessThanOrEqual(0.25);
+  });
+});
+
+describe('budget objections', () => {
+  it('name the agreement items that would fix the budget', () => {
+    const offer: Offer = { ...fullOffer('national'), playerPolicyIds: ['opp-citizens-income', 'opp-income-tax', 'opp-commerce-commission'] };
+    const ctx: NegotiationContext = { player: party('opportunity'), partner: party('national'), trust: 50, pressure: 0.5 };
+    ctx.budget = budgetFor(offerPolicies(offer, ctx.player, ctx.partner));
+    const problem = budgetProblemFor(ctx.partner, ctx.budget)!;
+    expect(problem).not.toBeNull();
+    const plan = budgetFixFor(offer, ctx, problem);
+    expect(plan.items.length).toBeGreaterThan(0);
+    expect(plan.items.every((f) => offer.playerPolicyIds.includes(f.policy.id))).toBe(true);
+    expect(fixLine(plan)).toContain(plan.items[0]!.policy.title);
+    const r = evaluateOffer(offer, ctx);
+    expect(r.budget?.fix?.items.length).toBeGreaterThan(0);
+  });
+});
+
+describe('against the last Budget', () => {
+  it('puts every costed line in one Budget 2026 category', () => {
+    const b = budgetFor(PARTIES.flatMap((p) => p.policies));
+    const { expenses, revenue } = againstBudget2026(b);
+    expect(expenses.reduce((s, r) => s + r.lines.length, 0) + revenue.lines.length).toBe(b.lines.length);
+    expect(revenue.base).toBe(145600);
+  });
+
+  it('explains every game estimate', () => {
+    for (const pol of PARTIES.flatMap((p) => p.policies).filter((p) => p.fiscalBasis !== 'party' && p.fiscalImpactNZDm)) {
+      expect(pol.fiscalNote, pol.id).toMatch(/^Game estimate, not a costing\. /);
+    }
   });
 });

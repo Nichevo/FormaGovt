@@ -1,5 +1,5 @@
 import type { Party, Policy, Person } from '../data/schema';
-import type { Budget } from './budget';
+import { budgetFor, type Budget } from './budget';
 
 /**
  * How a party feels about a policy:
@@ -170,6 +170,64 @@ export interface BudgetProblem {
   over: number;
   /** So far past the line that no policy makes up for it. */
   refuse: boolean;
+  /** The agreement items whose change would bring the budget back within the line. */
+  fix?: BudgetFixPlan;
+}
+
+export interface BudgetFix {
+  policy: Policy;
+  /** Take it out, or swap in its compromise version. */
+  action: 'drop' | 'compromise';
+  /** NZ$m a year this change takes off the problem. */
+  saving: number;
+}
+
+export interface BudgetFixPlan {
+  items: BudgetFix[];
+  /** True when these changes together clear the problem. */
+  enough: boolean;
+}
+
+function withChange(offer: Offer, fix: BudgetFix): Offer {
+  if (fix.action === 'compromise') return { ...offer, compromisePolicyIds: [...new Set([...(offer.compromisePolicyIds ?? []), fix.policy.id])] };
+  const out = (ids: string[]) => ids.filter((id) => id !== fix.policy.id);
+  return { ...offer, partnerPolicyIds: out(offer.partnerPolicyIds), playerPolicyIds: out(offer.playerPolicyIds) };
+}
+
+/**
+ * Up to three changes to the offer that would bring its budget back within the
+ * partner's line: the gentlest change that clears it, else the one that helps most,
+ * repeated. The partner never asks to cut its own policies.
+ */
+export function budgetFixFor(offer: Offer, ctx: NegotiationContext, problem: BudgetProblem): BudgetFixPlan {
+  const { partner, player } = ctx;
+  const own = new Set(partner.policies.map((p) => p.id));
+  const overFor = (o: Offer) => budgetProblemFor(partner, budgetFor([...(ctx.otherAgreed ?? []), ...offerPolicies(o, player, partner)]))?.over ?? 0;
+  const items: BudgetFix[] = [];
+  let current = offer;
+  let over = problem.over;
+  while (over > 0 && items.length < 3) {
+    const compromised = new Set(current.compromisePolicyIds ?? []);
+    const options: BudgetFix[] = [...player.policies]
+      .filter((p) => current.playerPolicyIds.includes(p.id) && !own.has(p.id) && p.fiscalImpactNZDm)
+      .flatMap((p) => {
+        const changes: BudgetFix[] = [{ policy: p, action: 'drop', saving: 0 }];
+        if (canCompromise(p) && !compromised.has(p.id)) changes.unshift({ policy: p, action: 'compromise', saving: 0 });
+        return changes;
+      })
+      .map((f) => ({ ...f, saving: over - overFor(withChange(current, f)) }))
+      .filter((f) => f.saving > 0);
+    if (options.length === 0) break;
+    const clears = options.filter((f) => f.saving >= over);
+    // Prefer softening to dropping, and giving up the least important policy.
+    const gentlest = (a: BudgetFix, b: BudgetFix) =>
+      Number(a.action === 'drop') - Number(b.action === 'drop') || a.policy.weight - b.policy.weight || b.saving - a.saving;
+    const pick = clears.length ? [...clears].sort(gentlest)[0]! : [...options].sort((a, b) => b.saving - a.saving)[0]!;
+    items.push(pick);
+    current = withChange(current, pick);
+    over -= pick.saving;
+  }
+  return { items, enough: items.length > 0 && over <= 0 };
 }
 
 export interface OfferResponse {
@@ -188,7 +246,10 @@ export interface OfferResponse {
     /** Other policies the party would take instead of addPolicy. */
     either?: Policy[];
     addPortfolio?: PortfolioId;
+    /** Take this policy out to fix the budget. */
     cutPolicy?: Policy;
+    /** Use this policy's compromise version to fix the budget. */
+    softenPolicy?: Policy;
   };
   /** The budget is past the party's line. */
   budget?: BudgetProblem;
@@ -273,6 +334,19 @@ function askedPolicies(offer: Offer, ctx: NegotiationContext): Policy[] {
   return [...fromPlayer, ...(ctx.otherAgreed ?? []).filter((p) => !own.has(p.id))];
 }
 
+/** Below this policy fit a party is not a natural partner. */
+export const LIKELY_PARTNER_FIT = 40;
+
+/**
+ * Whether a party could realistically back a government led by this one: close
+ * enough on policy and not ruled out. Parties on the far left or right have only
+ * one natural side. It is a soft judgement: an unlikely partner can still be won.
+ */
+export function isLikelyPartner(party: Party, leader: Party): boolean {
+  if (party.id === leader.id) return true;
+  return compatibility(leader, party) >= LIKELY_PARTNER_FIT && ruledOutBias(party, leader.id) < 0.6;
+}
+
 export function ruledOutBias(partner: Party, otherId: string): number {
   return partner.relationships.find((r) => r.partyId === otherId)?.ruledOutBias ?? 0;
 }
@@ -291,6 +365,8 @@ export function acceptanceThreshold(ctx: NegotiationContext, arrangement: Arrang
   else base += leverage * 0.12;
   if (ctx.renegotiation) base += 0.05;
   if (ctx.reapproach) base += 0.08;
+  // Backing a government from the other side of politics takes more convincing.
+  if (!isLikelyPartner(ctx.partner, ctx.player)) base += 0.08 * (1 - 0.5 * ctx.pressure);
   return arrangement === 'confidence-supply' ? base - 0.12 : base;
 }
 
@@ -353,20 +429,18 @@ export function evaluateOffer(offer: Offer, ctx: NegotiationContext): OfferRespo
     return { kind: 'counter', ...base, cabinet, counter: { addPolicy: wanted, compromise, either } };
   }
 
-  const problem = budgetProblemFor(partner, ctx.budget);
+  const found = budgetProblemFor(partner, ctx.budget);
+  // It always names the agreement items that would fix the budget, not just the gap.
+  const problem: BudgetProblem | null = found && { ...found, fix: budgetFixFor(offer, ctx, found) };
   if (problem && partner.personality.fiscalStance !== 'balanced') {
-    if (problem.refuse) return { kind: 'hold', ...base, cabinet, budget: problem };
-    if (utility < threshold + 0.1) {
-      // It asks to trim what others want before anything of its own.
-      const own = new Set(partner.policies.map((p) => p.id));
-      const policies = offerPolicies(offer, player, partner).filter((p) => !own.has(p.id));
-      const cut =
-        problem.kind === 'cuts'
-          ? policies.filter((p) => p.fiscalType === 'spending' && (p.fiscalImpactNZDm ?? 0) > 0).sort((a, b) => b.fiscalImpactNZDm! - a.fiscalImpactNZDm!)[0]
-          : policies.filter((p) => (p.fiscalImpactNZDm ?? 0) < 0).sort((a, b) => a.fiscalImpactNZDm! - b.fiscalImpactNZDm!)[0];
-      // Only worth asking for if dropping it would make a real dent.
-      const dent = cut ? Math.abs(cut.fiscalImpactNZDm ?? 0) >= problem.over * 0.25 : false;
-      if (cut && dent) return { kind: 'counter', ...base, cabinet, budget: problem, counter: { cutPolicy: cut } };
+    const first = problem.fix!.items[0];
+    if (problem.refuse && !problem.fix!.enough) return { kind: 'hold', ...base, cabinet, budget: problem };
+    if (problem.refuse || utility < threshold + 0.1) {
+      if (first) {
+        const counter = first.action === 'drop' ? { cutPolicy: first.policy } : { softenPolicy: first.policy };
+        return { kind: 'counter', ...base, cabinet, budget: problem, counter };
+      }
+      if (problem.refuse) return { kind: 'hold', ...base, cabinet, budget: problem };
     }
   }
 

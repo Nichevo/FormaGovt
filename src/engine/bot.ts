@@ -116,6 +116,7 @@ export function playBot(
       if (r.counter.compromise) draft.compromisePolicyIds = [...(draft.compromisePolicyIds ?? []), r.counter.addPolicy.id];
       else draft.compromisePolicyIds = (draft.compromisePolicyIds ?? []).filter((x) => x !== r.counter!.addPolicy!.id);
     } else if (r?.counter?.addPortfolio) draft.portfolios.push(r.counter.addPortfolio);
+    else if (r?.counter?.softenPolicy) draft.compromisePolicyIds = [...(draft.compromisePolicyIds ?? []), r.counter.softenPolicy.id];
     else if (r?.counter?.cutPolicy) {
       const cut = r.counter.cutPolicy.id;
       draft.playerPolicyIds = draft.playerPolicyIds.filter((p) => p !== cut);

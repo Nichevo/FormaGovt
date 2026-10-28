@@ -179,7 +179,7 @@
       "fiscalImpactNZDm": -3700,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate: about 3.5 million taxpayers saving up to $1,050 each.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about 3.5 million taxpayers each save up to $1,050 a year.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -194,7 +194,7 @@
       "fiscalImpactNZDm": 1500,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes a new 45% rate on income over about $180,000, paid by around 3% of taxpayers, raises about $1.5bn after they change how they earn and report income.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -209,7 +209,7 @@
       "fiscalImpactNZDm": 1200,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes 5 points more on the profits of the largest firms, which pay roughly a third of company tax.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -224,7 +224,7 @@
       "fiscalImpactNZDm": 300,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate: 0.06% on the big four banks' liabilities.",
+      "fiscalNote": "Game estimate, not a costing. Assumes 0.06% a year on about $500bn of the big four banks' liabilities.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -239,7 +239,7 @@
       "fiscalImpactNZDm": 500,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes removing interest deductions on rental property adds back roughly the amount restoring them cost.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     },
     {
@@ -260,7 +260,7 @@
       "fiscalImpactNZDm": -500,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $500m a year of operating support, with the larger capital spend kept off the operating balance.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
       "bottomLineBasis": "inferred"
     }

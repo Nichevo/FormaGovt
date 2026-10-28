@@ -184,7 +184,7 @@
       "fiscalImpactNZDm": -90,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "About 60,000 births a year at $1,500 each.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about 60,000 births a year at $1,500 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -215,7 +215,7 @@
       "fiscalImpactNZDm": -150,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate for four extra weeks of paid leave.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about 60,000 births a year, most families taking the extra four weeks, at about $700 a week.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -290,7 +290,7 @@
       "fiscalImpactNZDm": -10,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate for negotiating capacity.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $10m a year for more negotiators and offshore posts.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     }
   ]

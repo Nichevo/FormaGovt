@@ -12,7 +12,7 @@ describe('achievements', () => {
       partnerId: 'labour',
       partnerPolicyIds: PARTY_BY_ID.labour!.policies.map((p) => p.id),
       playerPolicyIds: [],
-      portfolios: eligiblePortfolios(PARTY_BY_ID.labour!).slice(0, 3),
+      portfolios: eligiblePortfolios(PARTY_BY_ID.labour!).slice(0, 5),
       arrangement: 'coalition',
     });
     for (let i = 0; i < 3 && g.outcome === 'playing'; i++) g = waitDay(g, PARTIES);

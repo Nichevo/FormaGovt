@@ -157,7 +157,7 @@
       "fiscalImpactNZDm": -2500,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes the cut mostly reaches the roughly one in four taxpayers earning over $70,000, at an average of about $2,500 each.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -172,7 +172,7 @@
       "fiscalImpactNZDm": -1200,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes around $100bn in KiwiSaver funds earning about 6% a year, taxed at an average of about 20%. That is roughly $1.2bn of tax given up each year.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -187,7 +187,7 @@
       "fiscalImpactNZDm": -20,
       "fiscalType": "revenue",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Little crypto gain tax is collected today, so the game assumes a small loss of about $20m a year.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -202,7 +202,7 @@
       "fiscalImpactNZDm": -60,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate.",
+      "fiscalNote": "Game estimate, not a costing. Assumes 1% more of Pharmac's budget of about $1.6bn, about $16m, added each year. That averages around $60m a year over the four years.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -217,7 +217,7 @@
       "fiscalImpactNZDm": -50,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate of running costs.",
+      "fiscalNote": "Game estimate, not a costing. Assumes a national children's cancer service costs about $50m a year to run once it opens. Building costs sit outside the operating balance.",
       "sourceUrl": "https://nztimes.nz/nz-party-policies-2026/"
     },
     {
@@ -277,7 +277,7 @@
       "fiscalImpactNZDm": 3000,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
-      "fiscalNote": "Rough game estimate of savings.",
+      "fiscalNote": "Game estimate, not a costing. Assumes about 2% savings on roughly $150bn of core Crown spending, after protecting front-line services.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
     }
   ]
