@@ -1,3 +1,4 @@
+import { PARTY_BY_ID } from '../data/parties';
 import type { Party } from '../data/schema';
 import { PORTFOLIOS } from './negotiation';
 import type { LogEntry } from './game';
@@ -32,6 +33,7 @@ function pick(options: string[], key: number): string {
 
 export function lineFor(entry: LogEntry, partner: Party): string {
   const r = entry.response;
+  const other = (entry.otherId && PARTY_BY_ID[entry.otherId]?.name) || 'the other side';
   const key = entry.day + partner.name.length;
   switch (entry.kind) {
     case 'accept':
@@ -62,5 +64,11 @@ export function lineFor(entry: LogEntry, partner: Party): string {
       return `The deal was voted down (${partner.ratification.body.toLowerCase()}). Too much of what we stood for was left out.`;
     case 'ratifying':
       return 'Sign-off is under way.';
+    case 'rival-deal':
+      return `We have reached an agreement with ${other}.`;
+    case 'poached':
+      return `We are leaving our arrangement with ${other}. Your offer is the better one.`;
+    case 'rival-collapse':
+      return 'With this deal signed, the other bloc has no path to a majority.';
   }
 }

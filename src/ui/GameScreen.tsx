@@ -12,8 +12,10 @@ import {
   PRESS_OPTIONS,
   previewDeal,
   programmeOf,
-  pressureOn,
+  POACH_PREMIUM,
+  pressureFor,
   reopenTalks,
+  rivalSeats,
   seatsAgreed,
   seatsSecured,
   summarise,
@@ -39,6 +41,7 @@ import { ComparisonView } from './ComparisonView';
 import { Explain } from './Explain';
 import { BudgetMeter, MoodMeter } from './Meters';
 import { PolicyCard } from './PolicyCard';
+import { ProgressGraph } from './ProgressGraph';
 
 const STATUS_LABELS: Record<DealStatus, string> = {
   open: 'Open to talks',
@@ -46,6 +49,7 @@ const STATUS_LABELS: Record<DealStatus, string> = {
   signed: 'Signed',
   rejected: 'Deal voted down',
   walked: 'Walked away',
+  rival: 'Signed with the other side',
 };
 
 function emptyOffer(partnerId: string): Offer {
@@ -97,6 +101,7 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
   const mood = moodOf(game, PARTIES);
   const preview = partner && game.partners[partner.id]?.status === 'open' ? previewDeal(game, PARTIES, draft) : undefined;
   const press = pendingPress(game);
+  const rival = game.rivalId && rivalSeats(game) > 0 ? PARTY_BY_ID[game.rivalId] : undefined;
 
   const send = () => {
     const next = makeOffer(game, PARTIES, draft);
@@ -122,8 +127,20 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
         <SeatBar secured={secured} agreed={agreed} majority={game.majority} total={game.totalSeats} />
         <div className="muted">
           {secured} seats signed{agreed > secured ? `, ${agreed - secured} more signing off` : ''}. You need{' '}
-          {game.majority} <Explain topic="majority" label="majority" />. Pressure {Math.round(pressureOn(game.day) * 100)}%.
+          {game.majority} <Explain topic="majority" label="majority" />. Pressure on everyone{' '}
+          {Math.round(pressureFor(game, PARTIES) * 100)}% <Explain topic="pressure" label="pressure" />
         </div>
+        {rival && (
+          <>
+            <div className="rival-row">
+              <span>
+                Rival bloc led by <strong>{rival.name}</strong> <Explain topic="rival" label="rival bloc" />
+              </span>
+              <span>{rivalSeats(game)} seats</span>
+            </div>
+            <SeatBar secured={rivalSeats(game)} agreed={rivalSeats(game)} majority={game.majority} total={game.totalSeats} rival />
+          </>
+        )}
         <div className="meters">
           <BudgetMeter budget={budget} preview={tab === 'negotiate' ? preview?.budget : undefined} />
           <MoodMeter mood={mood} preview={tab === 'negotiate' ? preview?.mood : undefined} />
@@ -196,6 +213,7 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
         </div>
       )}
 
+      <ProgressGraph history={game.history} majority={game.majority} totalSeats={game.totalSeats} player={player} rival={rival} />
       <TalksLog game={game} />
       <div className="start-row">
         <button type="button" onClick={onQuit}>
@@ -207,10 +225,22 @@ export function GameScreen({ setup, onQuit }: { setup: GameSetup; onQuit: () => 
   );
 }
 
-function SeatBar({ secured, agreed, majority, total }: { secured: number; agreed: number; majority: number; total: number }) {
+function SeatBar({
+  secured,
+  agreed,
+  majority,
+  total,
+  rival,
+}: {
+  secured: number;
+  agreed: number;
+  majority: number;
+  total: number;
+  rival?: boolean;
+}) {
   const pct = (n: number) => `${Math.min(100, (n / total) * 100)}%`;
   return (
-    <div className="seat-bar" role="img" aria-label={`${secured} of ${majority} seats needed`}>
+    <div className={`seat-bar ${rival ? 'rival' : ''}`} role="img" aria-label={`${secured} of ${majority} seats needed`}>
       <div className="seat-bar-agreed" style={{ width: pct(agreed) }} />
       <div className="seat-bar-secured" style={{ width: pct(secured) }} />
       <div className="seat-bar-majority" style={{ left: pct(majority) }} />
@@ -254,7 +284,7 @@ function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen
   const redLines = asked.filter((p) => reactionTo(partner, p) === -2);
   const missingBottomLines = partner.policies.filter((p) => p.isBottomLine && !draft.partnerPolicyIds.includes(p.id));
 
-  if (state.status !== 'open') {
+  if (state.status !== 'open' && state.status !== 'rival') {
     return (
       <section className="panel offer">
         <h2>{partner.name}</h2>
@@ -276,6 +306,12 @@ function OfferBuilder({ game, player, partner, draft, setDraft, onSend, onReopen
   return (
     <section className="panel offer">
       <h2>Offer to {partner.name}</h2>
+      {state.status === 'rival' && (
+        <p className="poach-note small">
+          {partner.name} has signed with the rival bloc. To win them over, your offer must beat a fresh deal by a clear
+          margin ({Math.round(POACH_PREMIUM * 100)} points), and talks that fail leave them where they are.
+        </p>
+      )}
       <p className="muted">
         Led by {leaderOf(partner)}. Sign-off: {partner.ratification.body.toLowerCase()}
         {partner.ratification.days > 0 ? `, takes ${partner.ratification.days} day${partner.ratification.days > 1 ? 's' : ''}` : ', same day'}.{' '}
@@ -464,7 +500,11 @@ function Results({
           {seatsSecured(game)} of {game.totalSeats} seats on day {Math.min(game.day, DAYS)}.
         </p>
       ) : (
-        <p>The deadline passed without a majority. A snap election or another party's deal would follow.</p>
+        <p>
+          {game.lostTo === 'rival' && game.rivalId
+            ? `The rival bloc led by ${PARTY_BY_ID[game.rivalId]!.name} reached ${game.majority} seats first and will form the government.`
+            : "The deadline passed without a majority. A snap election or another party's deal would follow."}
+        </p>
       )}
       <p className="score">
         Score: <strong>{summary.score}</strong> / 100 <Explain topic="score" label="score" />
@@ -546,6 +586,13 @@ function Results({
           </div>
         </div>
       )}
+      <ProgressGraph
+        history={game.history}
+        majority={game.majority}
+        totalSeats={game.totalSeats}
+        player={player}
+        rival={game.rivalId ? PARTY_BY_ID[game.rivalId] : undefined}
+      />
       <TalksLog game={game} />
       <button type="button" className="primary" onClick={onQuit}>
         Play again

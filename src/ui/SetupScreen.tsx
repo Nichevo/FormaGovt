@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { allocateSeats } from '../engine/seats';
 import { applyVariance, type VarianceLevel } from '../engine/variance';
 import { randomSeed } from '../engine/random';
+import { rateDifficulty } from '../engine/bot';
 import { PARTIES, PARTY_BY_ID } from '../data/parties';
 import { SCENARIOS } from '../data/scenarios';
 import { Hemicycle } from './Hemicycle';
@@ -30,6 +31,16 @@ export function SetupScreen({ onStart }: { onStart: (setup: GameSetup) => void }
   const result = useMemo(
     () => allocateSeats(applyVariance(scenario, { level: variance, seed })),
     [scenario, variance, seed],
+  );
+  // Difficulty depends on the result, so rate it from test plays of this one.
+  const difficulty = useMemo(
+    () =>
+      rateDifficulty(PARTIES, {
+        seats: Object.fromEntries(result.parties.map((p) => [p.partyId, p.total])),
+        majority: result.majority,
+        totalSeats: result.totalSeats,
+      }),
+    [result],
   );
   const ordered = [...result.parties].sort((a, b) => b.total - a.total);
   const byPosition = [...result.parties].sort((a, b) => leftRight(a.partyId) - leftRight(b.partyId));
@@ -136,6 +147,10 @@ export function SetupScreen({ onStart }: { onStart: (setup: GameSetup) => void }
 
       <section className="panel">
         <h2>2. Choose your party</h2>
+        <p className="muted small">
+          Difficulty is rated for this result by test plays: easy if a simple strategy usually forms a government, hard if
+          it never does.
+        </p>
         <ul className="party-grid">
           {PARTIES.map((party) => {
             const seats = seatsOf(party.id);
@@ -152,7 +167,9 @@ export function SetupScreen({ onStart }: { onStart: (setup: GameSetup) => void }
                 >
                   <div className="party-head">
                     <strong>{party.name}</strong>
-                    <span className={`badge ${party.difficulty}`}>{party.difficulty}</span>
+                    {difficulty[party.id] && (
+                      <span className={`badge ${difficulty[party.id]}`}>{difficulty[party.id]}</span>
+                    )}
                   </div>
                   <div className="muted">
                     {seats} seats · {party.people.filter((p) => p.isKeyFigure).map((p) => p.name).join(', ')}

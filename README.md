@@ -10,7 +10,7 @@ Once GitHub Pages is switched on (below), the game is at **https://nichevo.githu
 
 ## Status
 
-Phases 1 to 3 of 5 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The rival bloc, tutorial and sharing arrive in phase 4.
+Phases 1 to 3 of 5 and the first half of phase 4 are in: pick any party, then spend 10 days negotiating with the others. Each party judges your offers on its own policies, bottom lines and red lines, the whole programme you have agreed so far, and what it does to the budget. Your score combines the policies you won, your own voters' mood and the stability of the arrangement. The other big party leads a rival bloc that courts the same partners each day, pressure builds as either side nears a majority, and a graph tracks the race. Difficulty is rated for each election result by test plays. The tutorial, sharing and play history arrive next.
 
 | Phase | What it adds |
 | --- | --- |

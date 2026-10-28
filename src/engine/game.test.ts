@@ -13,6 +13,7 @@ import {
   seatsSecured,
   summarise,
   waitDay,
+  type GameState,
 } from './game';
 
 const seats = { national: 35, labour: 34, greens: 18, act: 12, nzfirst: 12, opportunity: 7, tpm: 4 };
@@ -77,7 +78,8 @@ describe('game flow', () => {
   });
 
   it('stops talking after too many failed offers', () => {
-    let g = newGame('labour');
+    // Without a rival bloc, so ACT stays available.
+    let g: GameState = { ...newGame('labour'), rivalId: null };
     const insulting: Offer = { ...fullOffer('act', ['lab-cgt']) };
     for (let i = 0; i < PARTY_BY_ID.act!.personality.patience; i++) g = makeOffer(g, PARTIES, insulting);
     expect(g.partners.act!.status).toBe('walked');
@@ -117,5 +119,44 @@ describe('scoring and press conferences', () => {
     expect(many.mood.mood).toBeGreaterThan(few.mood.mood);
     // Nothing changes until the offer is actually sent.
     expect(g.partners.greens!.status).toBe('open');
+  });
+});
+
+describe('rival bloc', () => {
+  it('is led by the other big party', () => {
+    expect(newGame('labour').rivalId).toBe('national');
+    expect(newGame('national').rivalId).toBe('labour');
+    expect(newGame('nzfirst').rivalId).toBe('labour');
+    expect(newGame('greens').rivalId).toBe('national');
+  });
+
+  it('signs up partners while the player waits, and can win', () => {
+    let g = newGame('national');
+    for (let i = 0; i < DAYS && g.outcome === 'playing'; i++) g = waitDay(g, PARTIES);
+    expect(Object.values(g.partners).some((p) => p.status === 'rival')).toBe(true);
+    expect(g.history.length).toBeGreaterThan(1);
+    expect(g.history.at(-1)!.rivalSeats).toBeGreaterThan(seats.labour);
+    if (g.outcome === 'lost') expect(['rival', 'deadline']).toContain(g.lostTo);
+  });
+
+  it('needs a clearly better offer to poach a rival partner', () => {
+    let g = newGame('national');
+    while (g.partners.greens!.status !== 'rival' && g.day < DAYS) g = waitDay(g, PARTIES);
+    expect(g.partners.greens!.status).toBe('rival');
+    const thin: Offer = { ...fullOffer('greens'), partnerPolicyIds: [], portfolios: [] };
+    g = makeOffer(g, PARTIES, thin);
+    expect(g.partners.greens!.status).toBe('rival');
+  });
+
+  it('falls apart when its lead party signs with the player', () => {
+    let g = newGame('labour');
+    g = waitDay(waitDay(g, PARTIES), PARTIES);
+    const before = Object.values(g.partners).filter((p) => p.status === 'rival').length;
+    expect(before).toBeGreaterThan(0);
+    g = makeOffer(g, PARTIES, { ...fullOffer('national', []), arrangement: 'coalition' });
+    for (let i = 0; i < 3 && g.partners.national!.status === 'ratifying'; i++) g = waitDay(g, PARTIES);
+    expect(g.partners.national!.status).toBe('signed');
+    expect(Object.values(g.partners).some((p) => p.status === 'rival')).toBe(false);
+    expect(g.log.some((l) => l.kind === 'rival-collapse')).toBe(true);
   });
 });
