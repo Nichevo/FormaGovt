@@ -170,6 +170,12 @@ function openings(state: GameState, player: Party, partner: Party, arrangement: 
     variants[`${name}-compromise`] = { ...variants[name]!, compromisePolicyIds: bottom.filter(canCompromise).map((p) => p.id) };
   }
   Object.assign(offers, variants);
+  // An abstention: the partner's two policies you mind least, and your whole programme.
+  if (arrangement === 'coalition') {
+    const easiest = [...partner.policies].sort((a, b) => reactionTo(player, b) - reactionTo(player, a) || b.weight - a.weight).slice(0, 2);
+    offers.abstain = { ...base, arrangement: 'abstain', portfolios: [], playerPolicyIds: player.policies.map((p) => p.id), partnerPolicyIds: easiest.map((p) => p.id) };
+    offers['abstain-flagships'] = { ...offers.abstain, partnerPolicyIds: [...partner.policies].sort((a, b) => b.weight - a.weight).slice(0, 2).map((p) => p.id) };
+  }
   // Agree to disagree: on a partner bottom line you cannot accept, or on one of your bottom lines it cannot accept.
   const asideOptions = [
     ...bottom.filter((p) => reactionTo(player, p) < 0),
@@ -205,7 +211,6 @@ export function searchPair(player: Party, partner: Party, parties: Party[], setu
     for (const arrangement of ['coalition', 'confidence-supply'] as Arrangement[]) {
       for (const [strategy, start] of Object.entries(openings(state, player, partner, arrangement, v12))) {
         const offer = negotiate(state, parties, player, partner, start);
-        if (process.env.SIM_DEBUG && !offer) console.log('no deal', player.id, partner.id, day, arrangement, strategy);
         if (!offer) continue;
         const trial: GameState = {
           ...state,
@@ -223,7 +228,6 @@ export function searchPair(player: Party, partner: Party, parties: Party[], setu
           csHalfCost: v12,
         });
         const deal: PairDeal = { playerMood, partnerMood, day, arrangement, strategy, offer };
-        if (process.env.SIM_DEBUG) console.log('deal', player.id, partner.id, day, arrangement, strategy, playerMood, partnerMood, JSON.stringify({p: offer.partnerPolicyIds, m: offer.playerPolicyIds, c: offer.compromisePolicyIds, s: offer.commitments, a: offer.setAsideIds}));
         const score = (d: PairDeal) => Math.min(d.playerMood, d.partnerMood);
         if (!best || score(deal) > score(best)) best = deal;
       }

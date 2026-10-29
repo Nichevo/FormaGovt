@@ -12,6 +12,8 @@ export const EXPLAINERS = {
     'A coalition partner joins cabinet and shares collective responsibility for government decisions. It counts fully towards stability in the game.',
   'confidence-supply':
     'A confidence and supply partner promises to back the government on confidence votes and the Budget, and decides other votes case by case. It asks less of you, and the policies it backs count for less. Under v1.2 rules it votes against a policy of yours it cannot accept rather than walking out, and each side\'s voters weigh the other\'s policies at half.',
+  abstain:
+    'A party can agree to abstain on confidence votes instead of backing the government. Its seats then count for neither side, so you need fewer votes for a majority (with 122 seats and 12 abstaining, 56 of the remaining 110). It asks for at most two policies and no cabinet roles, so it is the easiest deal for its voters to accept, but your policies that pass only with its abstention count for half in your score, and it adds nothing to stability. v1.2 rules only.',
   ratification:
     'Each party approves a deal its own way. Some leaders decide on the spot; others need caucus, a board or a members\' vote, which takes time and can fail if too much was given up.',
   'bottom-line':

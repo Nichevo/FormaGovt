@@ -78,7 +78,13 @@ export function eligiblePortfolios(party: Party): PortfolioId[] {
   return PORTFOLIOS.filter((p) => bestPersonFor(party, p.id)).map((p) => p.id);
 }
 
-export type Arrangement = 'coalition' | 'confidence-supply';
+/** abstain (v1.2): the partner lets the government stand by abstaining on confidence votes. */
+export type Arrangement = 'coalition' | 'confidence-supply' | 'abstain';
+
+/** An abstention deal asks for at most this many of the partner's policies. */
+export const ABSTAIN_POLICY_LIMIT = 2;
+/** An abstaining party, outside government, only needs its voters short of revolt. */
+export const ABSTAIN_FLOOR = 35;
 
 export interface Offer {
   partnerId: string;
@@ -351,6 +357,7 @@ export function budgetProblemFor(partner: Party, budget: Budget | undefined): Bu
  */
 export function scoreOffer(offer: Offer, ctx: NegotiationContext): number {
   const { partner, player } = ctx;
+  if (offer.arrangement === 'abstain') return scoreAbstention(offer, ctx);
   const compromised = new Set(offer.compromisePolicyIds ?? []);
   const soft = offer.commitments ?? {};
   const ownTotal = partner.policies.reduce((s, p) => s + p.weight, 0);
@@ -402,6 +409,26 @@ export function scoreOffer(offer: Offer, ctx: NegotiationContext): number {
   return utility;
 }
 
+/**
+ * v1.2: an abstaining party backs nothing and joins nothing. It weighs the policies it
+ * gets, its trust in you, and how much it dislikes letting your programme through.
+ */
+function scoreAbstention(offer: Offer, ctx: NegotiationContext): number {
+  const { partner, player } = ctx;
+  const soft = offer.commitments ?? {};
+  const ownTotal = partner.policies.reduce((s, p) => s + p.weight, 0);
+  const own = partner.policies
+    .filter((p) => offer.partnerPolicyIds.includes(p.id))
+    .reduce((s, p) => s + p.weight * (soft[p.id] ? COMMITMENT_VALUE[soft[p.id]!] : 1), 0);
+  let utility = own / ownTotal + 0.15 * ((ctx.trust - 50) / 50);
+  for (const policy of offerPolicies(offer, player, partner).filter((p) => offer.playerPolicyIds.includes(p.id))) {
+    const r = reactionTo(partner, policy);
+    if (r === -2) utility -= 0.04 * concernFor(partner, policy);
+    if (r === -1) utility -= 0.015 * concernFor(partner, policy);
+  }
+  return utility - ruledOutBias(partner, player.id) * 0.2 * (1 - 0.6 * ctx.pressure);
+}
+
 /** v1.2: a confidence and supply partner judges the government's policies case by case. */
 function isCaseByCase(offer: Offer, ctx: NegotiationContext): boolean {
   return !!ctx.rules?.csHalfCost && offer.arrangement === 'confidence-supply';
@@ -447,7 +474,7 @@ export function acceptanceThreshold(ctx: NegotiationContext, arrangement: Arrang
   if (ctx.reapproach) base += 0.08;
   // Backing a government from the other side of politics takes more convincing.
   if (!isLikelyPartner(ctx.partner, ctx.player)) base += 0.08 * (1 - 0.5 * ctx.pressure);
-  return arrangement === 'confidence-supply' ? base - 0.12 : base;
+  return arrangement === 'confidence-supply' ? base - 0.12 : arrangement === 'abstain' ? base - 0.25 : base;
 }
 
 /** A bottom line and the policies that can stand in for it: the party needs any one of them. */
@@ -520,6 +547,7 @@ function caucusFix(offer: Offer, ctx: NegotiationContext): { counter: NonNullabl
 
 export function evaluateOffer(offer: Offer, ctx: NegotiationContext): OfferResponse {
   const { partner, player } = ctx;
+  if (offer.arrangement === 'abstain') return evaluateAbstention(offer, ctx);
   const asked = askedPolicies(offer, ctx);
   // v1.2: in confidence and supply it votes against your policy rather than walking out.
   const caseByCase = isCaseByCase(offer, ctx);
@@ -640,6 +668,32 @@ export function evaluateOffer(offer: Offer, ctx: NegotiationContext): OfferRespo
     .filter((p) => reactionTo(partner, p) === -1)
     .sort((a, b) => concernFor(partner, b) - concernFor(partner, a))[0];
   return { kind: 'hold', ...base, cabinet, sticking, budget: problem ?? undefined };
+}
+
+/**
+ * v1.2 abstention: no red lines or bottom lines to meet, since the party neither joins
+ * nor backs the government. It wants enough for its abstention, and its own voters must
+ * be able to live with it.
+ */
+function evaluateAbstention(offer: Offer, ctx: NegotiationContext): OfferResponse {
+  const { partner } = ctx;
+  const utility = scoreOffer(offer, ctx);
+  const threshold = acceptanceThreshold(ctx, 'abstain');
+  const partnerMood = ctx.rules?.caucusFloor && ctx.partnerMoodOf ? ctx.partnerMoodOf(offer) : undefined;
+  const base = { utility, threshold, redLines: [], missingBottomLines: [], partnerMood };
+  const room = offer.partnerPolicyIds.length < ABSTAIN_POLICY_LIMIT;
+  const next = partner.policies
+    .filter((p) => !offer.partnerPolicyIds.includes(p.id) && !(offer.setAsideIds ?? []).includes(p.id))
+    .sort((a, b) => b.weight - a.weight)[0];
+  // Not being in government, it only needs its own voters short of revolt.
+  if (partnerMood !== undefined && partnerMood < ABSTAIN_FLOOR) {
+    return room && next
+      ? { kind: 'counter', ...base, caucus: true, counter: { addPolicy: next, caucus: true } }
+      : { kind: 'hold', ...base, caucus: true };
+  }
+  if (utility >= threshold) return { kind: 'accept', ...base };
+  if (room && next && utility >= threshold - 0.25) return { kind: 'counter', ...base, counter: { addPolicy: next } };
+  return { kind: 'hold', ...base };
 }
 
 /** 0 to 100: how close two parties are across all the policies they care about. */

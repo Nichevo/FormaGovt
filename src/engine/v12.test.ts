@@ -3,6 +3,7 @@ import { PARTIES, PARTY_BY_ID } from '../data/parties';
 import { budgetFor } from './budget';
 import { playBot } from './bot';
 import {
+  abstainCredit,
   allowedOffer,
   canSetAside,
   challengeLossChance,
@@ -50,8 +51,8 @@ describe('rules versions', () => {
   it('turns every v1.2 rule off for games without a version', () => {
     const r = rulesFor(undefined);
     expect(r.version).toBe('1.1');
-    expect([r.caucusFloor, r.softening, r.softCommitments, r.agreeToDisagree, r.csHalfCost]).toEqual([false, false, false, false, false]);
-    expect(Object.values(rulesFor('1.2')).filter((v) => v === true)).toHaveLength(5);
+    expect([r.caucusFloor, r.softening, r.softCommitments, r.agreeToDisagree, r.csHalfCost, r.abstention]).toEqual([false, false, false, false, false, false]);
+    expect(Object.values(rulesFor('1.2')).filter((v) => v === true)).toHaveLength(6);
   });
 
   it('keeps v1.1 games free of v1.2 state', () => {
@@ -164,6 +165,22 @@ describe('confidence and supply case by case', () => {
   });
 });
 
+describe('abstaining on confidence', () => {
+  it('lowers the majority needed by taking the abstainers out of the vote', () => {
+    expect(abstainCredit(setup, 0)).toBe(0);
+    // 122 seats, 12 abstain: 56 of the remaining 110 is a majority, 6 fewer than 62.
+    expect(abstainCredit(setup, 12)).toBe(6);
+  });
+
+  it('asks for at most two policies and no cabinet roles, and is v1.2 only', () => {
+    const o = offer('act', { partnerPolicyIds: party('act').policies.map((p) => p.id), arrangement: 'abstain' });
+    const now = allowedOffer(game('labour', '1.2'), o);
+    expect(now.partnerPolicyIds).toHaveLength(2);
+    expect(now.portfolios).toHaveLength(0);
+    expect(allowedOffer(game('labour', '1.1'), o).arrangement).toBe('confidence-supply');
+  });
+});
+
 describe('leadership challenges', () => {
   it('scales the chance of losing with how far voters are below the line', () => {
     expect(challengeLossChance(40)).toBe(0);
@@ -220,7 +237,7 @@ describe('every pairing', () => {
         else if (workable(after[a]![b]!)) gained++;
       }
     }
-    expect(gained).toBeGreaterThanOrEqual(6);
+    expect(gained).toBeGreaterThanOrEqual(18);
   }, 120_000);
 
   it('keeps the voter mood the same for a game with no deals', () => {

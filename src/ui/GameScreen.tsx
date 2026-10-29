@@ -28,6 +28,8 @@ import {
   rivalSeats,
   takenPortfolios,
   seatsSecured,
+  abstainCredit,
+  abstainingSeats,
   summarise,
   waitDay,
   waitForNews,
@@ -45,7 +47,7 @@ import {
   hintFor,
   rulesOf,
 } from '../engine/game';
-import { CAUCUS_FLOOR, COMMITMENT_LABELS, MAX_SOFT_COMMITMENTS, type Commitment } from '../engine/negotiation';
+import { ABSTAIN_POLICY_LIMIT, CAUCUS_FLOOR, COMMITMENT_LABELS, MAX_SOFT_COMMITMENTS, type Commitment } from '../engine/negotiation';
 import { REVOLT_BELOW } from '../engine/voters';
 import { RULES_LABELS } from '../engine/rules';
 import { budgetFor, formatChange, formatMoney, hardestYear } from '../engine/budget';
@@ -240,6 +242,13 @@ export function GameScreen({
         <div>
           <span className="progress-text">You: {progressText(progress.player, game.majority)}</span>
           {progress.player.signing > 0 && <span className="muted small"> ({progress.player.signing} still signing off)</span>}
+          {abstainingSeats(game) > 0 && (
+            <span className="muted small">
+              {' '}
+              (counts {abstainingSeats(game)} abstaining MPs as the {abstainCredit(game, abstainingSeats(game))} seats they take off the majority{' '}
+              <Explain topic="abstain" label="abstaining" />)
+            </span>
+          )}
         </div>
         <SeatBar secured={progress.player.secured} agreed={progress.player.secured + progress.player.signing} majority={game.majority} total={game.totalSeats} />
         <div className="muted">
@@ -610,7 +619,9 @@ function OfferBuilder({
               .join(', ') || 'no policies'}
             {deal.arrangement === 'coalition'
               ? `; ${deal.portfolios.length} cabinet role${deal.portfolios.length === 1 ? '' : 's'}`
-              : '; confidence and supply'}
+              : deal.arrangement === 'abstain'
+                ? '; they abstain on confidence'
+                : '; confidence and supply'}
             .
           </div>
         )}
@@ -877,6 +888,22 @@ function OfferBuilder({
           />
           <span>Confidence and supply: they back you on votes that keep the government in office, with no cabinet roles. Asks less of them, and is worth less to you. <Explain topic="confidence-supply" label="confidence and supply" /></span>
         </label>
+        {rules.abstention && (
+          <label className="check">
+            <input
+              type="radio"
+              checked={draft.arrangement === 'abstain'}
+              onChange={() => setDraft({ ...draft, arrangement: 'abstain', portfolios: [] })}
+            />
+            <span>
+              Abstain on confidence: they stay on the cross benches and abstain, so you need fewer votes. At most {ABSTAIN_POLICY_LIMIT} of
+              their policies, the easiest deal to sell to their voters and the weakest for you. <Explain topic="abstain" label="abstaining" />
+            </span>
+          </label>
+        )}
+        {draft.arrangement === 'abstain' && draft.partnerPolicyIds.length > ABSTAIN_POLICY_LIMIT && (
+          <p className="warnings">Only the first {ABSTAIN_POLICY_LIMIT} of their policies you picked go into an abstention deal. Untick the rest.</p>
+        )}
       </fieldset>
 
       {draft.arrangement === 'coalition' && (
@@ -1070,7 +1097,7 @@ function WhyCard({ why }: { why: WhySigned }) {
         <strong>What the rival gave them:</strong> {why.policies.length} of their policies
         {why.bottomLines.length > 0 &&
           ` (bottom lines: ${why.bottomLines.map((b) => `${b.policy.title}${b.compromise ? ', as a compromise' : ''}`).join('; ')})`}
-        , {why.arrangement === 'coalition' ? `a coalition with ${why.portfolios.length > 0 ? why.portfolios.join(', ') : 'no cabinet roles'}` : 'confidence and supply'}.
+        , {why.arrangement === 'coalition' ? `a coalition with ${why.portfolios.length > 0 ? why.portfolios.join(', ') : 'no cabinet roles'}` : why.arrangement === 'abstain' ? 'an agreement to abstain on confidence' : 'confidence and supply'}.
       </p>
       {why.comparison && <p>{why.comparison}</p>}
       <ul>

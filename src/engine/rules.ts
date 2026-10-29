@@ -33,11 +33,13 @@ export interface Rules {
    * than walking out.
    */
   csHalfCost: boolean;
+  /** A party can agree to abstain on confidence votes, lowering the majority needed. */
+  abstention: boolean;
 }
 
 export function rulesFor(version: RulesVersion | undefined): Rules {
   const v12 = version === '1.2';
-  return { version: version ?? '1.1', caucusFloor: v12, softening: v12, softCommitments: v12, agreeToDisagree: v12, csHalfCost: v12 };
+  return { version: version ?? '1.1', caucusFloor: v12, softening: v12, softCommitments: v12, agreeToDisagree: v12, csHalfCost: v12, abstention: v12 };
 }
 
 export function isRulesVersion(v: unknown): v is RulesVersion {

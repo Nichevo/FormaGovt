@@ -22,6 +22,7 @@ import {
   bottomLineFirmness,
   deliveryValue,
   MAX_SOFT_COMMITMENTS,
+  ABSTAIN_POLICY_LIMIT,
 } from './negotiation';
 import { createRng } from './random';
 import { rulesFor, type Rules, type RulesVersion } from './rules';
@@ -359,16 +360,35 @@ const REQUEST_CHANCE = 0.35;
 export const REAPPROACH_AFTER_DAYS = 3;
 
 export function seatsSecured(state: GameState): number {
-  return Object.entries(state.partners)
-    .filter(([, p]) => p.status === 'signed')
-    .reduce((sum, [id]) => sum + (state.seats[id] ?? 0), state.seats[state.playerId] ?? 0);
+  return blocCount(state, ['signed']);
 }
 
 /** Seats from signed partners plus those still going through sign-off. */
 export function seatsAgreed(state: GameState): number {
+  return blocCount(state, ['signed', 'ratifying']);
+}
+
+/**
+ * The player's seats, with any abstaining partners counted as the seats they take off
+ * the majority: with them out of the vote, the government needs a majority of the rest.
+ */
+function blocCount(state: GameState, statuses: DealStatus[]): number {
+  const deals = Object.entries(state.partners).filter(([, p]) => statuses.includes(p.status));
+  const abstaining = deals.filter(([, p]) => p.deal?.arrangement === 'abstain').reduce((s, [id]) => s + (state.seats[id] ?? 0), 0);
+  const voting = deals.filter(([, p]) => p.deal?.arrangement !== 'abstain').reduce((s, [id]) => s + (state.seats[id] ?? 0), state.seats[state.playerId] ?? 0);
+  return voting + abstainCredit(state, abstaining);
+}
+
+/** How many fewer seats the government needs when this many MPs abstain. */
+export function abstainCredit(state: Pick<GameState, 'majority' | 'totalSeats'>, abstaining: number): number {
+  return abstaining > 0 ? state.majority - (Math.floor((state.totalSeats - abstaining) / 2) + 1) : 0;
+}
+
+/** Seats of partners abstaining for the player, signed or signing. */
+export function abstainingSeats(state: GameState): number {
   return Object.entries(state.partners)
-    .filter(([, p]) => p.status === 'ratifying')
-    .reduce((sum, [id]) => sum + (state.seats[id] ?? 0), seatsSecured(state));
+    .filter(([, p]) => (p.status === 'signed' || p.status === 'ratifying') && p.deal?.arrangement === 'abstain')
+    .reduce((s, [id]) => s + (state.seats[id] ?? 0), 0);
 }
 
 /** Seats with the rival bloc still going through sign-off. */
@@ -553,11 +573,13 @@ export function partnerVoterMood({
   /** v1.2 rule; off only for sims reporting on v1.1 games. */
   csHalfCost?: boolean;
 }): number {
-  const programme = [...otherAgreed, ...offerPolicies(offer, leader, party)];
+  const abstain = offer.arrangement === 'abstain';
+  // An abstaining party is not in the government: its voters judge only what it won.
+  const programme = abstain ? offerPolicies(offer, leader, party).filter((p) => party.policies.includes(p)) : [...otherAgreed, ...offerPolicies(offer, leader, party)];
   return voterMood({
     player: party,
     programme,
-    partners: [leader, ...others],
+    partners: abstain ? [] : [leader, ...others],
     spin: 0,
     seatShare: coalition > 0 ? (seats[party.id] ?? 0) / coalition : 0,
     csPolicyIds: csHalfCost && offer.arrangement === 'confidence-supply' ? new Set(offer.playerPolicyIds) : undefined,
@@ -584,6 +606,11 @@ export function allowedOffer(state: GameState, offer: Offer): Offer {
   const rules = rulesOf(state);
   const { commitments, setAsideIds, ...rest } = offer;
   const out: Offer = { ...rest };
+  if (out.arrangement === 'abstain') {
+    if (!rules.abstention) out.arrangement = 'confidence-supply';
+    else out.partnerPolicyIds = out.partnerPolicyIds.slice(0, ABSTAIN_POLICY_LIMIT);
+    out.portfolios = [];
+  }
   if (rules.softCommitments && commitments) {
     const inOffer = new Set([...offer.partnerPolicyIds, ...offer.playerPolicyIds]);
     const kept = Object.entries(commitments).filter(([id]) => inOffer.has(id)).slice(0, MAX_SOFT_COMMITMENTS);
@@ -1131,7 +1158,9 @@ function rejectionRisk(party: Party, deal: Offer | undefined, unsettled: boolean
       s + (!deal?.partnerPolicyIds.includes(pol.id) || soft[pol.id] || deal.setAsideIds?.includes(pol.id) ? 1 : compromised.has(pol.id) ? 0.4 : 0),
     0,
   );
-  const base = party.ratification.rejectionRisk * (flagships.length ? lost / flagships.length : 0);
+  // An abstention asks little of the party, so members rarely object to what it left out.
+  const share = deal?.arrangement === 'abstain' ? 0.3 : 1;
+  const base = party.ratification.rejectionRisk * (flagships.length ? lost / flagships.length : 0) * share;
   // v1.2: members are warier of a deal their voters dislike.
   const thin = mood === undefined ? 0 : Math.min(0.15, Math.max(0, (55 - mood) * 0.015));
   return Math.min(0.95, base + thin + (unsettled ? 0.3 : 0));
@@ -1324,7 +1353,7 @@ function v12MoodInputs(state: GameState, deals: [string, PartnerState][], includ
   if (rules.version === '1.1') return {};
   const dealOf = (p: PartnerState) => (includeRatifying ? liveDeal(p) : p.deal);
   const coalitionIds = new Set(deals.filter(([, p]) => dealOf(p)?.arrangement === 'coalition').flatMap(([, p]) => dealOf(p)!.partnerPolicyIds));
-  const csDeals = deals.filter(([, p]) => dealOf(p)?.arrangement === 'confidence-supply');
+  const csDeals = deals.filter(([, p]) => dealOf(p)?.arrangement === 'confidence-supply' || dealOf(p)?.arrangement === 'abstain');
   const cs = csDeals.flatMap(([, p]) => dealOf(p)!.partnerPolicyIds).filter((id) => !coalitionIds.has(id));
   return {
     csPolicyIds: rules.csHalfCost ? new Set(cs) : undefined,
@@ -1356,6 +1385,8 @@ export function holdPress(state: GameState, partnerId: string, spin: PressSpin):
 
 /** Policies backed only through confidence and supply count for this much: the partner votes case by case. */
 export const CONFIDENCE_SUPPLY_FACTOR = 0.75;
+/** Policies let through only by an abstaining party count for this much. */
+export const ABSTAIN_FACTOR = 0.5;
 
 export interface GameSummary {
   won: Policy[];
@@ -1383,6 +1414,10 @@ export function summarise(state: GameState, parties: Party[]): GameSummary {
   const coalitionBacked = new Set(
     signed.filter(([, p]) => p.deal?.arrangement === 'coalition').flatMap(([, p]) => p.deal?.playerPolicyIds ?? []),
   );
+  // Policies only an abstaining party let through count for least: they pass vote by vote.
+  const backedByVotes = new Set(
+    signed.filter(([, p]) => p.deal?.arrangement !== 'abstain').flatMap(([, p]) => p.deal?.playerPolicyIds ?? []),
+  );
   const soloMajority = signed.length === 0 && state.outcome === 'won';
   const won = player.policies.filter((p) => programme.has(p.id)).map((p) => programme.get(p.id)!);
   const lost = player.policies.filter((p) => !programme.has(p.id));
@@ -1392,14 +1427,14 @@ export function summarise(state: GameState, parties: Party[]): GameSummary {
       s +
       scoreWeight(p) *
         deliveryValue(p) *
-        (soloMajority || coalitionBacked.has(p.id) ? 1 : CONFIDENCE_SUPPLY_FACTOR),
+        (soloMajority || coalitionBacked.has(p.id) ? 1 : backedByVotes.has(p.id) ? CONFIDENCE_SUPPLY_FACTOR : ABSTAIN_FACTOR),
     0,
   );
   const mood = moodOf(state, parties, false);
 
   const ownSeats = state.seats[player.id] ?? 0;
   const seatWeight = signed.reduce(
-    (s, [id, p]) => s + (state.seats[id] ?? 0) * (p.deal?.arrangement === 'coalition' ? 1 : 0.5),
+    (s, [id, p]) => s + (state.seats[id] ?? 0) * (p.deal?.arrangement === 'coalition' ? 1 : p.deal?.arrangement === 'abstain' ? 0 : 0.5),
     ownSeats,
   );
   const seatTotal = signed.reduce((s, [id]) => s + (state.seats[id] ?? 0), ownSeats);
