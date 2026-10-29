@@ -312,6 +312,36 @@
       "fiscalNote": "$200m of capital, not operating spending.",
       "fiscalSourceUrl": "https://newswire.co.nz/2026/10/labour-fiscal-plan-2026-pay-equity-national/",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "lab-offshore-ban",
+      "title": "Restore the offshore oil and gas ban",
+      "summary": "Reinstates the ban on new offshore oil and gas exploration and stops the planned LNG import terminal.",
+      "issue": "climate-environment",
+      "stance": -1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "No direct cost in the game; forgone royalties are uncertain and years away.",
+      "sourceUrl": "https://www.odt.co.nz/news/national/cost-of-living-no-1-priority-labour-releases-manifesto-tgxe8giu"
+    },
+    {
+      "id": "lab-fare-cap",
+      "title": "Cap public transport fares",
+      "summary": "Caps public transport fares to cut the cost of getting around.",
+      "issue": "cost-of-living",
+      "stance": -1,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": -150,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Game estimate, not a costing. Assumes about $150m a year to councils to make up lost fare revenue.",
+      "sourceUrl": "https://www.odt.co.nz/news/national/cost-of-living-no-1-priority-labour-releases-manifesto-tgxe8giu"
     }
   ]
 }

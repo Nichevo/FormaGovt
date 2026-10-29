@@ -37,7 +37,9 @@ describe('game flow', () => {
 
   it('uses one day per offer and makes a party sign off before its seats count', () => {
     let g = newGame('labour');
-    g = makeOffer(g, PARTIES, fullOffer('greens', ['lab-cgt']));
+    // Eight of their policies, one of ours and two roles: under the 12-item mark for a two-day offer.
+    const offer = fullOffer('greens', ['lab-cgt']);
+    g = makeOffer(g, PARTIES, { ...offer, partnerPolicyIds: offer.partnerPolicyIds.slice(0, 8) });
     expect(g.day).toBe(2);
     expect(g.partners.greens!.status).toBe('ratifying');
     expect(seatsSecured(g)).toBe(34);

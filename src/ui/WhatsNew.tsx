@@ -23,6 +23,9 @@ export function WhatsNew() {
         <li>Agree to disagree: set one policy aside in a deal, from the middle of talks.</li>
         <li>Optional leadership challenges: keep your own voters happy or your caucus may replace you.</li>
         <li>A negotiator's hint, folded away above the Send button.</li>
+        <li>A new arrangement: a party can agree to abstain on confidence votes, lowering the majority you need.</li>
+        <li>"Who votes?": change enrolment and turnout by age and see how the seats would shift.</li>
+        <li>Thirteen policies from the campaign, including Te Pāti Māori's Te Tiriti bottom line.</li>
       </ul>
       <p className="muted small">Prefer the old rules? Pick "v1.1 (classic)" under Rules before you start. Shared links keep the rules they were made with.</p>
       <button type="button" className="primary" onClick={close}>

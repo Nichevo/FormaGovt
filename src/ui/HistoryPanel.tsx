@@ -35,7 +35,7 @@ export function HistoryPanel({ onReplay }: { onReplay: (c: Challenge) => void })
                     {r.daily ? ' (daily)' : ''} · v{r.rules ?? '1.1'} rules · {new Date(r.at).toLocaleDateString()}
                   </span>
                 </span>
-                <button type="button" onClick={() => onReplay({ ...r, days: r.days ?? 10, rules: r.rules ?? '1.1', challenges: !!r.challenges, daily: false })}>
+                <button type="button" onClick={() => onReplay({ ...r, days: r.days ?? 10, rules: r.rules ?? '1.1', challenges: !!r.challenges, turnout: r.turnout ?? null, daily: false })}>
                   Replay
                 </button>
               </li>

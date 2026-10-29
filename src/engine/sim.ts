@@ -2,6 +2,7 @@ import type { Party } from '../data/schema';
 import { playBot, type BotStrategy } from './bot';
 import { allowedOffer, contextFor, createGame, moodOf, partnerVoterMood, agreedPolicies, type GameState } from './game';
 import {
+  ABSTAIN_POLICY_LIMIT,
   canCompromise,
   eligiblePortfolios,
   evaluateOffer,
@@ -120,7 +121,9 @@ function negotiate(state: GameState, parties: Party[], player: Party, partner: P
       const next = partner.policies
         .filter((p) => !o.partnerPolicyIds.includes(p.id) && reactionTo(player, p) > -2)
         .sort((a, b) => b.weight - a.weight)[0];
-      if (next) o = { ...o, partnerPolicyIds: [...o.partnerPolicyIds, next.id] };
+      // An abstention has room for only two of theirs, so give up one of yours instead.
+      const full = o.arrangement === 'abstain' && o.partnerPolicyIds.length >= ABSTAIN_POLICY_LIMIT;
+      if (next && !full) o = { ...o, partnerPolicyIds: [...o.partnerPolicyIds, next.id] };
       else if (o.playerPolicyIds.length) o = { ...o, playerPolicyIds: o.playerPolicyIds.slice(0, -1) };
       else return null;
     }

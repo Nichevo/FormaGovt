@@ -1184,6 +1184,7 @@ function Results({
       daily: setup.daily,
       rules: setup.rules,
       challenges: setup.challenges,
+      turnout: setup.turnout,
       hintUsed,
     });
     const partiesWon = records.filter((r) => r.outcome === 'won').map((r) => r.playerId);

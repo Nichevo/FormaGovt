@@ -249,20 +249,37 @@
       "issue": "treaty-maori",
       "stance": -2,
       "weight": 5,
-      "isBottomLine": true,
-      "flex": "soft",
-      "compromise": {
-        "title": "A smaller fund for Māori business investment",
-        "summary": "Starts with a smaller fund for Māori business investment and ownership.",
-        "fiscalShare": 0.5
-      },
+      "isBottomLine": false,
       "voterSalience": 0.9,
       "fiscalImpactNZDm": -100,
       "fiscalType": "spending",
       "fiscalBasis": "estimate",
       "fiscalNote": "Game estimate, not a costing. Assumes about $100m a year for development funds and procurement support.",
-      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
-      "bottomLineBasis": "inferred"
+      "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "tpm-te-tiriti",
+      "title": "Entrench Te Tiriti, binding Tribunal findings",
+      "summary": "Entrenches Te Tiriti o Waitangi, makes Waitangi Tribunal recommendations binding on the Crown, sets up a Te Tiriti Commission and funds Māori-led constitutional change by 2040.",
+      "issue": "treaty-maori",
+      "stance": -2,
+      "weight": 5,
+      "isBottomLine": true,
+      "voterSalience": 0.9,
+      "fiscalImpactNZDm": -55,
+      "fiscalType": "spending",
+      "fiscalBasis": "party",
+      "fiscalNote": "The party's $220m over four years for the Mātike Mai Fund.",
+      "fiscalSourceUrl": "https://waateanews.com/?p=167371",
+      "sourceUrl": "https://waateanews.com/?p=167371",
+      "flex": "firm",
+      "bottomLineBasis": "declared",
+      "fiscalStart": "2026/27",
+      "compromise": {
+        "title": "A Te Tiriti constitutional review",
+        "summary": "Funds Māori-led constitutional talks and a review of Te Tiriti's place in law, without binding Tribunal findings.",
+        "fiscalShare": 0.6
+      }
     }
   ]
 }

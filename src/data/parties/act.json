@@ -279,6 +279,44 @@
       "fiscalBasis": "estimate",
       "fiscalNote": "Game estimate, not a costing. Assumes about 2% savings on roughly $150bn of core Crown spending, after protecting front-line services.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "act-super-age",
+      "title": "Raise the super age by 3 months a year",
+      "summary": "Lifts the age of eligibility for NZ Super by three months every year, with compassionate access for people who did hard physical work.",
+      "issue": "kiwisaver-retirement",
+      "stance": 2,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": 150,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Game estimate, not a costing. Savings grow as each year's rise takes effect; ACT did not publish a separate figure.",
+      "sourceUrl": "https://www.1news.co.nz/2026/10/11/act-sets-out-plan-to-raise-retirement-age-cut-debt-and-spending/",
+      "fiscalStart": "2027/28",
+      "fiscalByYear": [
+        0,
+        60,
+        150,
+        250
+      ]
+    },
+    {
+      "id": "act-wind-up-tribunal",
+      "title": "Wind up the Waitangi Tribunal",
+      "summary": "Sets a timetable to close the Waitangi Tribunal once historical claims are settled.",
+      "issue": "treaty-maori",
+      "stance": 2,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": 15,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Game estimate, not a costing. Assumes the Tribunal's running costs of roughly $15m a year are saved.",
+      "sourceUrl": "https://www.rnz.co.nz/news/politics_election-2026/1321444/act-sets-out-plan-to-wind-up-waitangi-tribunal",
+      "fiscalStart": "2028/29"
     }
   ]
 }

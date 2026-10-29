@@ -263,6 +263,37 @@
       "fiscalNote": "Game estimate, not a costing. Assumes about $500m a year of operating support, with the larger capital spend kept off the operating balance.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/",
       "bottomLineBasis": "inferred"
+    },
+    {
+      "id": "grn-public-service",
+      "title": "Reverse the public service cuts",
+      "summary": "Cancels the planned public service savings and restores roles.",
+      "issue": "governance",
+      "stance": -1.5,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.6,
+      "fiscalImpactNZDm": -600,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Game estimate, not a costing. The Government's cuts save about $2.4bn over four years, so reversing them costs about $600m a year.",
+      "sourceUrl": "https://www.interest.co.nz/public-policy/140691/greens-promise-cancellation-luxon%E2%80%99s-public-service-cuts-intended-save-24"
+    },
+    {
+      "id": "grn-health-boost",
+      "title": "$3bn a year more for health",
+      "summary": "Adds $3bn a year to health for staff, primary and community care and a long-term workforce plan.",
+      "issue": "health",
+      "stance": -1.5,
+      "weight": 4,
+      "isBottomLine": false,
+      "voterSalience": 0.8,
+      "fiscalImpactNZDm": -3000,
+      "fiscalType": "spending",
+      "fiscalBasis": "party",
+      "fiscalNote": "The party's fiscal plan: $3bn a year over four years.",
+      "sourceUrl": "https://www.1news.co.nz/2026/10/23/full-video-green-party-releases-fiscal-plan/",
+      "fiscalSourceUrl": "https://www.1news.co.nz/2026/10/23/full-video-green-party-releases-fiscal-plan/"
     }
   ]
 }

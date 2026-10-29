@@ -292,6 +292,36 @@
       "fiscalBasis": "estimate",
       "fiscalNote": "Game estimate, not a costing. Assumes about $10m a year for more negotiators and offshore posts.",
       "sourceUrl": "https://informedinvestor.co.nz/election-in-the-spotlight-key-party-policies/"
+    },
+    {
+      "id": "nat-rates-cap",
+      "title": "Cap council rates rises at 2–4%",
+      "summary": "Passes a law keeping council rates increases within a 2–4% band.",
+      "issue": "cost-of-living",
+      "stance": 1,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.7,
+      "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "No direct cost to the Crown; councils carry the effect.",
+      "sourceUrl": "https://www.national.org.nz/news/20261025-100-day-plan"
+    },
+    {
+      "id": "nat-student-loan",
+      "title": "Student loan repayments to 10c",
+      "summary": "Cuts student loan repayments from 12 to 10 cents in each dollar earned over the threshold.",
+      "issue": "cost-of-living",
+      "stance": 0.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": -60,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Game estimate, not a costing. Slower repayments raise the cost of lending, assumed at about $60m a year.",
+      "sourceUrl": "https://www.national.org.nz/news/20261025-100-day-plan"
     }
   ]
 }

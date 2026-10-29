@@ -1,5 +1,7 @@
 import type { VarianceLevel } from '../engine/variance';
 import { isRulesVersion, type RulesVersion } from '../engine/rules';
+import { decodeTurnout, encodeTurnout, isDefaultTurnout, type TurnoutSettings } from '../engine/turnout';
+import { PARTIES } from '../data/parties';
 
 /** Everything needed to replay the same election result and party. */
 export interface Challenge {
@@ -13,6 +15,8 @@ export interface Challenge {
   rules?: RulesVersion;
   /** v1.2 leadership challenges setting. */
   challenges?: boolean;
+  /** "Who votes?" changes to enrolment and turnout; null or missing plays the scenario as is. */
+  turnout?: TurnoutSettings | null;
   /** Set when this is today's daily challenge; never part of a link. */
   daily?: boolean;
 }
@@ -28,6 +32,7 @@ export function challengeHash(c: Challenge): string {
   if (c.days) params.set('d', String(c.days));
   if (c.rules && c.rules !== '1.1') params.set('r', c.rules);
   if (c.rules === '1.2' && c.challenges) params.set('c', '1');
+  if (c.turnout && !isDefaultTurnout(c.turnout)) params.set('w', encodeTurnout(c.turnout));
   return `#play?${params.toString()}`;
 }
 
@@ -47,7 +52,8 @@ export function parseChallenge(hash: string): Challenge | null {
   const days = Number.isInteger(d) && d >= 5 && d <= 30 ? d : LEGACY_DAYS;
   const r = params.get('r');
   const rules: RulesVersion = isRulesVersion(r) ? r : '1.1';
-  return { scenarioId, variance, seed, playerId: params.get('p') ?? undefined, days, rules, challenges: rules === '1.2' && params.get('c') === '1' };
+  const turnout = decodeTurnout(params.get('w'), PARTIES.map((p) => p.id)) ?? null;
+  return { scenarioId, variance, seed, playerId: params.get('p') ?? undefined, days, rules, challenges: rules === '1.2' && params.get('c') === '1', turnout };
 }
 
 /** Uses the phone's share sheet where there is one, otherwise copies the link. */
