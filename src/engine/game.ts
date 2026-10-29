@@ -11,6 +11,7 @@ import {
   offerPolicies,
   reactionTo,
   SENIOR_PORTFOLIOS,
+  PORTFOLIOS,
   type NegotiationContext,
   type Offer,
   type OfferResponse,
@@ -1460,7 +1461,7 @@ export function hintFor(state: GameState, parties: Party[], offer: Offer): Negot
             ? `Offer "${c.addPolicy.compromise.title}".`
             : `Include "${c.addPolicy.title}" in full.`
           : c?.addPortfolio
-            ? `Offer ${c.addPortfolio.replace(/-/g, ' ')} in cabinet.`
+            ? `Offer them ${PORTFOLIOS.find((p) => p.id === c.addPortfolio)?.label ?? c.addPortfolio} in cabinet.`
             : c?.cutPolicy
               ? `Drop "${c.cutPolicy.title}" to ease the budget.`
               : c?.softenPolicy

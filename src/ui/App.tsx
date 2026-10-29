@@ -6,6 +6,7 @@ import { GameScreen } from './GameScreen';
 import { About } from './About';
 import { parseChallenge, type Challenge } from './share';
 import { APP_VERSION } from '../version';
+import { WhatsNew } from './WhatsNew';
 
 export interface GameSetup extends Required<Omit<Challenge, 'daily'>> {
   daily: boolean;
@@ -64,13 +65,16 @@ export function App() {
               if (location.hash.startsWith('#play')) history.replaceState(null, '', location.pathname);
             }}
             onRematch={() => {
-              const { scenarioId, variance, seed, playerId, days } = setup;
-              setChallenge({ scenarioId, variance, seed, playerId, days });
+              const { scenarioId, variance, seed, playerId, days, rules, challenges } = setup;
+              setChallenge({ scenarioId, variance, seed, playerId, days, rules, challenges });
               setSetup(null);
             }}
           />
         ) : (
-          <SetupScreen key={JSON.stringify(challenge)} initial={challenge} onStart={setSetup} onReplay={setChallenge} />
+          <>
+            <WhatsNew />
+            <SetupScreen key={JSON.stringify(challenge)} initial={challenge} onStart={setSetup} onReplay={setChallenge} />
+          </>
         )}
       </div>
       <DisclaimerFooter />
