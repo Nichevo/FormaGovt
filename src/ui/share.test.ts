@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { defaultTurnout } from '../engine/turnout';
 import { challengeHash, parseChallenge } from './share';
 
 describe('challenge links', () => {
@@ -11,8 +12,16 @@ describe('challenge links', () => {
       days: 21,
       rules: '1.2' as const,
       challenges: true,
+      turnout: null,
     };
     expect(parseChallenge(challengeHash(c))).toEqual(c);
+  });
+
+  it('carries "Who votes?" changes in the link', () => {
+    const turnout = { ...defaultTurnout(), enrol: [100, 100, 100, 100, 100], newAllVote: true, newVoters: { party: 'greens', share: 0.5 } };
+    const hash = challengeHash({ scenarioId: 'poll-average', variance: 'off', seed: 1, turnout });
+    expect(parseChallenge(hash)?.turnout).toEqual(turnout);
+    expect(challengeHash({ scenarioId: 'poll-average', variance: 'off', seed: 1, turnout: defaultTurnout() })).not.toContain('w=');
   });
 
   it('plays links from before v1.2 on the v1.1 rules', () => {

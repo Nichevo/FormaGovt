@@ -1,0 +1,196 @@
+{
+  "_about": "Who is eligible, enrolled and voting, by age band and sex, and how each group leans. Update enrolment from the Electoral Commission and the leans from new Roy Morgan polls; the game always reproduces the chosen poll until the player edits turnout.",
+  "asOf": "2026-10-21",
+  "eligibleTotal": 4051640,
+  "enrolledTotal": 3729667,
+  "sources": {
+    "enrolment": {
+      "note": "Electoral Commission, 21 October 2026: 3,729,667 enrolled (92.1%), 321,973 not enrolled, 18-24s 68.6% enrolled. Other age bands follow the 31 July 2026 pattern by age, scaled to the October total.",
+      "url": "https://waateanews.com/2026/10/24/election-2026-more-than-320000-kiwis-still-not-enrolled-final-countdown-as-voting-deadline-looms/",
+      "byAgeUrl": "https://enroltovote.nz/nz-enrolment-statistics-leaderboards/by-age-group-july2026"
+    },
+    "population": {
+      "note": "Split by age and sex from UN World Population Prospects 2024 projections for 2026, scaled to the Electoral Commission's eligible total.",
+      "url": "https://www.populationpyramids.org/new-zealand"
+    },
+    "turnout": {
+      "note": "2023 general election turnout of enrolled voters by age, Electoral Commission.",
+      "url": "https://figure.nz/chart/6ACnvqDRrdTZmnIl"
+    },
+    "leans": {
+      "note": "Roy Morgan party vote by sex for under-50s and over-50s, May and September 2026 polls averaged. Each group's lean is its share divided by the overall share, softened by one point so small parties' small samples do not swing wildly.",
+      "url": "https://www.roymorgan.com/findings/10351-nz-national-voting-intention-september-2026"
+    }
+  },
+  "groups": [
+    {
+      "band": "18-24",
+      "sex": "female",
+      "eligible": 214622,
+      "enrolledPct": 68.6,
+      "turnoutPct": 74.2
+    },
+    {
+      "band": "18-24",
+      "sex": "male",
+      "eligible": 225560,
+      "enrolledPct": 68.6,
+      "turnoutPct": 74.2
+    },
+    {
+      "band": "25-34",
+      "sex": "female",
+      "eligible": 343305,
+      "enrolledPct": 88.7,
+      "turnoutPct": 69.6
+    },
+    {
+      "band": "25-34",
+      "sex": "male",
+      "eligible": 364044,
+      "enrolledPct": 88.7,
+      "turnoutPct": 69.6
+    },
+    {
+      "band": "35-49",
+      "sex": "female",
+      "eligible": 513228,
+      "enrolledPct": 93.6,
+      "turnoutPct": 73.6
+    },
+    {
+      "band": "35-49",
+      "sex": "male",
+      "eligible": 506948,
+      "enrolledPct": 93.6,
+      "turnoutPct": 73.6
+    },
+    {
+      "band": "50-64",
+      "sex": "female",
+      "eligible": 485720,
+      "enrolledPct": 96.6,
+      "turnoutPct": 81.0
+    },
+    {
+      "band": "50-64",
+      "sex": "male",
+      "eligible": 460653,
+      "enrolledPct": 96.6,
+      "turnoutPct": 80.9
+    },
+    {
+      "band": "65+",
+      "sex": "female",
+      "eligible": 498733,
+      "enrolledPct": 99.3,
+      "turnoutPct": 85.0
+    },
+    {
+      "band": "65+",
+      "sex": "male",
+      "eligible": 438827,
+      "enrolledPct": 99.3,
+      "turnoutPct": 85.0
+    }
+  ],
+  "leanPolls": [
+    {
+      "poll": "Roy Morgan, 31 Aug - 27 Sep 2026",
+      "url": "https://www.roymorgan.com/findings/10351-nz-national-voting-intention-september-2026",
+      "overall": {
+        "national": 31,
+        "act": 11,
+        "nzfirst": 10,
+        "labour": 23.5,
+        "greens": 16,
+        "tpm": 2,
+        "opportunity": 6.5
+      },
+      "cells": {
+        "female-18-49": {
+          "national": 23.5,
+          "act": 6,
+          "nzfirst": 5.5,
+          "labour": 25,
+          "greens": 30.5,
+          "tpm": 7,
+          "opportunity": 2.5
+        },
+        "female-50+": {
+          "national": 32,
+          "act": 7.5,
+          "nzfirst": 12.5,
+          "labour": 33,
+          "greens": 11,
+          "tpm": 0.5,
+          "opportunity": 3.5
+        },
+        "male-18-49": {
+          "national": 25,
+          "act": 13.5,
+          "nzfirst": 11,
+          "labour": 20.5,
+          "greens": 16,
+          "tpm": 1,
+          "opportunity": 13
+        },
+        "male-50+": {
+          "national": 42,
+          "act": 17.5,
+          "nzfirst": 11.5,
+          "labour": 14.5,
+          "greens": 7,
+          "tpm": 1,
+          "opportunity": 6.5
+        }
+      }
+    },
+    {
+      "poll": "Roy Morgan, 27 Apr - 24 May 2026",
+      "url": "https://roymorgan-cms-prod.s3.ap-southeast-2.amazonaws.com/wp-content/uploads/2026/06/02020809/10241-NZ-National-Voting-Intention-May-2026-002.pdf",
+      "overall": {
+        "national": 30.5,
+        "act": 10,
+        "nzfirst": 11,
+        "labour": 26.5,
+        "greens": 12.5,
+        "tpm": 2.5
+      },
+      "cells": {
+        "female-18-49": {
+          "national": 19,
+          "act": 7.5,
+          "nzfirst": 7,
+          "labour": 30,
+          "greens": 24.5,
+          "tpm": 7
+        },
+        "female-50+": {
+          "national": 43,
+          "act": 7,
+          "nzfirst": 11,
+          "labour": 27,
+          "greens": 8,
+          "tpm": 0.5
+        },
+        "male-18-49": {
+          "national": 21.5,
+          "act": 14.5,
+          "nzfirst": 10.5,
+          "labour": 30,
+          "greens": 9.5,
+          "tpm": 3.5
+        },
+        "male-50+": {
+          "national": 36.5,
+          "act": 11,
+          "nzfirst": 16,
+          "labour": 18.5,
+          "greens": 8.5,
+          "tpm": 0.5
+        }
+      }
+    }
+  ]
+}

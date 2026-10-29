@@ -14,6 +14,8 @@ import { dailyChallenge } from '../engine/daily';
 import { DEFAULT_DAYS, SHORT_DAYS } from '../engine/game';
 import type { Challenge } from './share';
 import { LATEST_RULES, RULES_LABELS, RULES_VERSIONS, type RulesVersion } from '../engine/rules';
+import { applyTurnout, defaultTurnout, isDefaultTurnout, type TurnoutSettings } from '../engine/turnout';
+import { WhoVotes } from './WhoVotes';
 
 const VARIANCE_LABELS: Record<Exclude<VarianceLevel, 'custom'>, string> = {
   off: 'Off: use the scenario exactly',
@@ -45,14 +47,20 @@ export function SetupScreen({
   const days = short ? SHORT_DAYS : DEFAULT_DAYS;
   const [rules, setRules] = useState<RulesVersion>(known?.rules ?? LATEST_RULES);
   const [challenges, setChallenges] = useState(known ? !!known.challenges : true);
+  const [turnout, setTurnout] = useState<TurnoutSettings>(() => known?.turnout ?? defaultTurnout());
   const [playerId, setPlayerId] = useState<string | null>(
     known?.playerId && PARTY_BY_ID[known.playerId] ? known.playerId : null,
   );
 
   const scenario = SCENARIOS.find((s) => s.id === scenarioId)!;
-  const result = useMemo(
+  const unchanged = useMemo(
     () => allocateSeats(applyVariance(scenario, { level: variance, seed })),
     [scenario, variance, seed],
+  );
+  // Turnout changes come first, then the same variance, so the seed still means the same swing.
+  const result = useMemo(
+    () => (isDefaultTurnout(turnout) ? unchanged : allocateSeats(applyVariance(applyTurnout(scenario, turnout), { level: variance, seed }))),
+    [unchanged, scenario, turnout, variance, seed],
   );
   // Difficulty depends on the result, so rate it from test plays of this one.
   const difficulty = useMemo(
@@ -144,6 +152,8 @@ export function SetupScreen({
             </a>
           )}
         </p>
+
+        <WhoVotes value={turnout} onChange={setTurnout} before={unchanged} after={result} />
 
         <Hemicycle parties={byPosition} otherSeats={result.otherElectorates} totalSeats={result.totalSeats} />
         <p className="majority">
@@ -291,6 +301,7 @@ export function SetupScreen({
                 days,
                 rules,
                 challenges: rules === '1.2' && challenges,
+                turnout: isDefaultTurnout(turnout) ? null : turnout,
                 // Still the daily game only if nothing was changed.
                 daily:
                   !!known?.daily &&
@@ -300,7 +311,8 @@ export function SetupScreen({
                   known.playerId === playerId &&
                   !short &&
                   rules === LATEST_RULES &&
-                  challenges,
+                  challenges &&
+                  isDefaultTurnout(turnout),
               })
             }
           >
