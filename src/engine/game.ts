@@ -3,7 +3,6 @@ import { budgetFor, type Budget } from './budget';
 import {
   budgetProblemFor,
   canCompromise,
-  COMPROMISE_VALUE,
   compatibility,
   concernFor,
   eligiblePortfolios,
@@ -19,9 +18,13 @@ import {
   bottomLineOptions,
   budgetFixFor,
   isLikelyPartner,
+  bottomLineFirmness,
+  deliveryValue,
+  MAX_SOFT_COMMITMENTS,
 } from './negotiation';
 import { createRng } from './random';
-import { voterMood, type VoterMood } from './voters';
+import { rulesFor, type Rules, type RulesVersion } from './rules';
+import { REVOLT_BELOW, voterMood, type VoterMood } from './voters';
 
 /** Three weeks of talks by default; a short game keeps the original ten days. */
 export const DEFAULT_DAYS = 21;
@@ -71,6 +74,8 @@ export interface PartnerState {
   /** Came back once after walking out. */
   reapproached?: boolean;
   walkedOnDay?: number;
+  /** v1.2: the partner's own voters' mood when it agreed, which its members weigh at sign-off. */
+  agreedMood?: number;
   /** The programme's policy ids when this partner last agreed, to spot new clashes. */
   agreedWith?: string[];
   unsettled?: Unsettled;
@@ -151,7 +156,7 @@ export interface GameState {
   history: DayPoint[];
   outcome: 'playing' | 'won' | 'lost';
   /** Why the game was lost: the rival got there first, or nobody could govern (a snap election). */
-  lostTo?: 'deadline' | 'rival';
+  lostTo?: 'deadline' | 'rival' | 'caucus';
   /** What kind of government the player formed. */
   govType?: GovType;
   /** Partners whose deals the player chose to reopen, which voters notice. */
@@ -162,6 +167,38 @@ export interface GameState {
   rivalBusyUntil?: number;
   /** Short morning news lines about the race. */
   news: NewsItem[];
+  /** The rules this game is played under; games from before v1.2 have none and play v1.1. */
+  rules?: RulesVersion;
+  /** v1.2 setting: the player's caucus can vote them out when voters stay unhappy. */
+  leadershipChallenges?: boolean;
+  caucus?: CaucusState;
+}
+
+/** v1.2 leadership challenges: how restless the player's caucus is. */
+export interface CaucusState {
+  /** First day of unrest, while it lasts. */
+  unrestSince?: number;
+  /** No new challenge until after this day. */
+  safeUntil?: number;
+  /** Mood points from surviving challenges. */
+  rally?: number;
+  challenges?: number;
+}
+
+/** Days of unrest before the caucus votes. */
+export const CHALLENGE_AFTER_DAYS = 2;
+/** Mood this low after a warning brings the vote on at once. */
+export const CHALLENGE_NOW_BELOW = 20;
+/** Leadership checks start on this day. */
+const CHALLENGE_FROM_DAY = 4;
+
+/** The chance the caucus votes the leader out at a given voter mood. */
+export function challengeLossChance(mood: number): number {
+  return Math.min(0.85, Math.max(0, (REVOLT_BELOW - mood) * 0.03));
+}
+
+export function rulesOf(state: Pick<GameState, 'rules'>): Rules {
+  return rulesFor(state.rules);
 }
 
 /**
@@ -215,9 +252,22 @@ export interface NewGame {
   seed: number;
   /** Length of talks; three weeks unless set. */
   days?: number;
+  /** Rules version; v1.1 unless set. */
+  rules?: RulesVersion;
+  leadershipChallenges?: boolean;
 }
 
-export function createGame({ player, parties, seats, majority, totalSeats, seed, days = DEFAULT_DAYS }: NewGame): GameState {
+export function createGame({
+  player,
+  parties,
+  seats,
+  majority,
+  totalSeats,
+  seed,
+  days = DEFAULT_DAYS,
+  rules,
+  leadershipChallenges,
+}: NewGame): GameState {
   const partners: Record<string, PartnerState> = {};
   for (const party of parties) {
     if (party.id === player.id || (seats[party.id] ?? 0) === 0) continue;
@@ -240,6 +290,8 @@ export function createGame({ player, parties, seats, majority, totalSeats, seed,
     outcome: 'playing',
     reopens: [],
     news: [],
+    ...(rules && rules !== '1.1' ? { rules } : {}),
+    ...(rules === '1.2' && leadershipChallenges ? { leadershipChallenges: true } : {}),
   };
   // A party that already holds a majority on its own wins straight away.
   return recordDay(checkOutcome(state), parties);
@@ -346,7 +398,7 @@ export function agreedPolicies(state: GameState, parties: Party[], exceptPartner
     for (const pol of offerPolicies(deal, player, partner)) {
       // A compromise in one deal and the full version in another: the full version stands.
       const existing = byId.get(pol.id);
-      if (!existing || existing.isCompromise) byId.set(pol.id, pol);
+      if (!existing || deliveryValue(existing) < deliveryValue(pol)) byId.set(pol.id, pol);
     }
   }
   return [...byId.values()];
@@ -443,14 +495,24 @@ function coalitionSeatsWith(state: GameState, partnerId: string): number {
   return (state.seats[state.playerId] ?? 0) + others + (state.seats[partnerId] ?? 0);
 }
 
-/** Who the player's offer goes to and how it is judged; shared by offers and previews. */
-function contextFor(state: GameState, parties: Party[], offer: Offer): NegotiationContext {
+/** Who the player's offer goes to and how it is judged; shared by offers, previews and the balance sims. */
+export function contextFor(state: GameState, parties: Party[], offer: Offer): NegotiationContext {
   const player = parties.find((p) => p.id === state.playerId)!;
   const partner = parties.find((p) => p.id === offer.partnerId)!;
   const current = state.partners[offer.partnerId]!;
   const otherAgreed = agreedPolicies(state, parties, partner.id);
   const taken = takenPortfolios(state, partner.id);
+  const rules = rulesOf(state);
+  const currentPartners = Object.entries(state.partners)
+    .filter(([id, p]) => id !== partner.id && inGovernment(p))
+    .map(([id]) => parties.find((x) => x.id === id)!);
+  const coalition = coalitionSeatsWith(state, partner.id);
   return {
+    rules,
+    partnerMoodOf: rules.caucusFloor
+      ? (o: Offer) =>
+          partnerVoterMood({ party: partner, leader: player, offer: o, otherAgreed, others: currentPartners, seats: state.seats, coalition })
+      : undefined,
     player,
     partner,
     trust: current.trust,
@@ -462,10 +524,72 @@ function contextFor(state: GameState, parties: Party[], offer: Offer): Negotiati
     leverage: current.status === 'open' || current.status === 'rival-signing' ? leverageFor(state, partner.id, parties) : 0,
     renegotiation: !!current.renegotiating && !current.unsettled,
     reapproach: !!current.reapproached && current.status === 'open' && !current.deal,
-    currentPartners: Object.entries(state.partners)
-      .filter(([id, p]) => id !== partner.id && inGovernment(p))
-      .map(([id]) => parties.find((x) => x.id === id)!),
+    currentPartners,
   };
+}
+
+/**
+ * v1.2: how a partner's own voters would feel about a deal, judged the same way as the
+ * player's: its policies in the programme, what it gave up and what it has to back.
+ */
+export function partnerVoterMood({
+  party,
+  leader,
+  offer,
+  otherAgreed,
+  others,
+  seats,
+  coalition,
+  csHalfCost = true,
+}: {
+  party: Party;
+  leader: Party;
+  offer: Offer;
+  otherAgreed: Policy[];
+  others: Party[];
+  seats: Record<string, number>;
+  coalition: number;
+  /** v1.2 rule; off only for sims reporting on v1.1 games. */
+  csHalfCost?: boolean;
+}): number {
+  const programme = [...otherAgreed, ...offerPolicies(offer, leader, party)];
+  return voterMood({
+    player: party,
+    programme,
+    partners: [leader, ...others],
+    spin: 0,
+    seatShare: coalition > 0 ? (seats[party.id] ?? 0) / coalition : 0,
+    csPolicyIds: csHalfCost && offer.arrangement === 'confidence-supply' ? new Set(offer.playerPolicyIds) : undefined,
+    csPartnerIds: csHalfCost && offer.arrangement === 'confidence-supply' ? new Set([leader.id]) : undefined,
+    setAsideIds: new Set(offer.setAsideIds ?? []),
+  }).mood;
+}
+
+/** v1.2: how firmly a party holds its bottom lines today, 0.8 to 1. Always 1 under v1.1 rules. */
+export function firmnessFor(state: GameState, parties: Party[], partyId: string): number {
+  if (!rulesOf(state).softening) return 1;
+  const party = parties.find((p) => p.id === partyId);
+  if (!party) return 1;
+  return bottomLineFirmness(party, state.seats[partyId], pressureFor(state, parties, partyId));
+}
+
+/** Whether agree to disagree can be used today: v1.2 rules, from the middle of talks. */
+export function canSetAside(state: GameState): boolean {
+  return rulesOf(state).agreeToDisagree && pressureOn(state.day, state.days) >= 0.5;
+}
+
+/** Strips what the rules do not allow from an offer: lesser commitments past the limit, an early set-aside. */
+export function allowedOffer(state: GameState, offer: Offer): Offer {
+  const rules = rulesOf(state);
+  const { commitments, setAsideIds, ...rest } = offer;
+  const out: Offer = { ...rest };
+  if (rules.softCommitments && commitments) {
+    const inOffer = new Set([...offer.partnerPolicyIds, ...offer.playerPolicyIds]);
+    const kept = Object.entries(commitments).filter(([id]) => inOffer.has(id)).slice(0, MAX_SOFT_COMMITMENTS);
+    if (kept.length) out.commitments = Object.fromEntries(kept);
+  }
+  if (canSetAside(state) && setAsideIds?.length) out.setAsideIds = setAsideIds.slice(0, 1);
+  return out;
 }
 
 /** Can the player send an offer to this partner now? */
@@ -491,10 +615,16 @@ export function offerSize(offer: Offer, base?: Offer): number {
       diff(base.playerPolicyIds, offer.playerPolicyIds) +
       diff(base.compromisePolicyIds, offer.compromisePolicyIds) +
       diff(base.portfolios, offer.portfolios) +
+      diff(softKeys(base), softKeys(offer)) +
+      diff(base.setAsideIds, offer.setAsideIds) +
       (base.arrangement === offer.arrangement ? 0 : 1)
     );
   }
-  return offer.partnerPolicyIds.length + offer.playerPolicyIds.length + offer.portfolios.length;
+  return offer.partnerPolicyIds.length + offer.playerPolicyIds.length + offer.portfolios.length + (offer.setAsideIds?.length ?? 0);
+}
+
+function softKeys(offer: Offer): string[] {
+  return Object.entries(offer.commitments ?? {}).map(([id, c]) => `${id}:${c}`);
 }
 
 /** Days an offer takes: none for a small one (a couple a day), two for a big one. */
@@ -513,6 +643,7 @@ export function makeOffer(state: GameState, parties: Party[], offer: Offer): Gam
   const current = state.partners[offer.partnerId];
   if (!canOffer(current)) return state;
   const prior = current!;
+  offer = allowedOffer(state, offer);
   const days = offerDays(state, offer);
   const renegotiation = inGovernment(prior);
   const poaching = prior.status === 'rival' || prior.status === 'rival-signing';
@@ -576,7 +707,10 @@ export function makeOffer(state: GameState, parties: Party[], offer: Offer): Gam
     next.status = 'walked';
     next.walkedOnDay = state.day;
   }
-  if (response.kind === 'accept') next.agreedWith = undefined;
+  if (response.kind === 'accept') {
+    next.agreedWith = undefined;
+    next.agreedMood = response.partnerMood;
+  }
 
   let after: GameState = {
     ...state,
@@ -587,10 +721,10 @@ export function makeOffer(state: GameState, parties: Party[], offer: Offer): Gam
   after = reviewPartners(after, parties);
   // A party whose leader decides on the spot signs the same day.
   const signedToday = processSignOffs(after, parties, state.day);
-  if (days === 0) return checkOutcome(recordDay({ ...signedToday, quickOffers: (state.quickOffers ?? 0) + 1 }, parties));
+  if (days === 0) return settle(recordDay({ ...signedToday, quickOffers: (state.quickOffers ?? 0) + 1 }, parties), parties);
   let g = endDay(signedToday, parties);
-  if (days === 2 && g.outcome === 'playing') g = checkOutcome(endDay(checkOutcome(g), parties));
-  return checkOutcome(g);
+  if (days === 2 && g.outcome === 'playing') g = checkOutcome(endDay(settle(g, parties), parties));
+  return settle(g, parties);
 }
 
 /** Records the programme a partner agreed to, so later additions can be spotted. */
@@ -764,7 +898,7 @@ export function reapproach(state: GameState, parties: Party[], partnerId: string
 /** Spends a day without making an offer, letting sign-offs run. */
 export function waitDay(state: GameState, parties: Party[]): GameState {
   if (state.outcome !== 'playing') return state;
-  return checkOutcome(endDay(state, parties));
+  return settle(endDay(state, parties), parties);
 }
 
 /** Skips quiet days until something happens: a deal, a sign-off, news or the end. */
@@ -784,7 +918,48 @@ function endDay(state: GameState, parties: Party[]): GameState {
   const advanced = { ...afterRival, day: nextDay, quickOffers: 0 };
   const day = Math.min(nextDay, state.days);
   const signed = processSignOffs(advanced, parties, day);
-  return recordDay(partnerRequests(enforceDeadlines(reviewPartners(signed, parties), day), parties), parties);
+  return caucusCheck(recordDay(partnerRequests(enforceDeadlines(reviewPartners(signed, parties), day), parties), parties), parties);
+}
+
+/**
+ * v1.2 leadership challenges, when the setting is on. Voters below the revolt line at the
+ * end of a day unsettle the caucus; still there two days later, or far lower, it votes.
+ * Losing ends the game; surviving lifts mood a little and buys a few quiet days.
+ */
+function caucusCheck(state: GameState, parties: Party[]): GameState {
+  if (!state.leadershipChallenges || !rulesOf(state).caucusFloor || state.outcome !== 'playing') return state;
+  const day = Math.min(state.day, state.days);
+  if (day < CHALLENGE_FROM_DAY || dealPartners(state, true).length === 0) return state;
+  const caucus = state.caucus ?? {};
+  if ((caucus.safeUntil ?? 0) >= day) return state;
+  const { mood } = moodOf(state, parties);
+  const news = (text: string) => [...state.news, { day, text }];
+  if (mood >= REVOLT_BELOW) {
+    if (caucus.unrestSince === undefined) return state;
+    return { ...state, caucus: { ...caucus, unrestSince: undefined }, news: news('Your caucus settles down as voters warm to the deal.') };
+  }
+  if (caucus.unrestSince === undefined) {
+    return { ...state, caucus: { ...caucus, unrestSince: day }, news: news('Caucus unrest over the deal: MPs say voters feel let down.') };
+  }
+  const due = day - caucus.unrestSince >= CHALLENGE_AFTER_DAYS || (mood < CHALLENGE_NOW_BELOW && day > caucus.unrestSince);
+  if (!due) return state;
+  const roll = createRng(state.seed + day * 71 + 13)();
+  const challenges = (caucus.challenges ?? 0) + 1;
+  if (roll < challengeLossChance(mood)) {
+    return {
+      ...state,
+      caucus: { ...caucus, challenges, unrestSince: undefined },
+      outcome: 'lost',
+      lostTo: 'caucus',
+      day,
+      news: news('Your caucus has voted to replace you as leader.'),
+    };
+  }
+  return {
+    ...state,
+    caucus: { ...caucus, challenges, unrestSince: undefined, safeUntil: day + 5, rally: (caucus.rally ?? 0) + 5 },
+    news: news('You survive a leadership challenge. Your caucus gives you time to win voters back.'),
+  };
 }
 
 function recordDay(state: GameState, parties: Party[]): GameState {
@@ -858,7 +1033,13 @@ function rivalMove(state: GameState, parties: Party[]): GameState {
       rivalPartners.reduce((s, x) => s + (state.seats[x.id] ?? 0), 0) +
       (state.seats[party.id] ?? 0);
     const trust = party.relationships.find((r) => r.partyId === rival.id)?.trust ?? 30;
+    const rules = rulesOf(state);
     const response = evaluateOffer(offer, {
+      rules,
+      partnerMoodOf: rules.caucusFloor
+        ? (o: Offer) =>
+            partnerVoterMood({ party, leader: rival, offer: o, otherAgreed, others: rivalPartners, seats: state.seats, coalition })
+        : undefined,
       player: rival,
       partner: party,
       trust,
@@ -940,15 +1121,19 @@ function rivalOfferFor(state: GameState, rival: Party, party: Party, p: PartnerS
 }
 
 /** The chance a party's members vote a deal down, from how many of its flagships were dropped or watered down. */
-function rejectionRisk(party: Party, deal: Offer | undefined, unsettled: boolean): number {
+function rejectionRisk(party: Party, deal: Offer | undefined, unsettled: boolean, mood?: number): number {
   const flagships = party.policies.filter((pol) => pol.weight >= 4);
   const compromised = new Set(deal?.compromisePolicyIds ?? []);
+  const soft = deal?.commitments ?? {};
   const lost = flagships.reduce(
-    (s, pol) => s + (!deal?.partnerPolicyIds.includes(pol.id) ? 1 : compromised.has(pol.id) ? 0.4 : 0),
+    (s, pol) =>
+      s + (!deal?.partnerPolicyIds.includes(pol.id) || soft[pol.id] || deal.setAsideIds?.includes(pol.id) ? 1 : compromised.has(pol.id) ? 0.4 : 0),
     0,
   );
   const base = party.ratification.rejectionRisk * (flagships.length ? lost / flagships.length : 0);
-  return Math.min(0.95, base + (unsettled ? 0.3 : 0));
+  // v1.2: members are warier of a deal their voters dislike.
+  const thin = mood === undefined ? 0 : Math.min(0.15, Math.max(0, (55 - mood) * 0.015));
+  return Math.min(0.95, base + thin + (unsettled ? 0.3 : 0));
 }
 
 /** Finishes rival deals whose sign-off is due. Members can vote them down too. */
@@ -959,7 +1144,7 @@ function processRivalSignOffs(state: GameState, parties: Party[], day: number): 
     if (p.status !== 'rival-signing' || (p.rivalRatifyOnDay ?? 0) > day) return;
     const party = parties.find((x) => x.id === id)!;
     const roll = createRng(state.seed + day * 37 + index + 101)();
-    if (roll < rejectionRisk(party, p.rivalDeal?.offer, false)) {
+    if (roll < rejectionRisk(party, p.rivalDeal?.offer, false, p.rivalDeal?.response.partnerMood)) {
       partners[id] = { ...p, status: 'open', rivalDeal: undefined, rivalRatifyOnDay: undefined };
       log.push({ day, partnerId: id, kind: 'rival-rejected', otherId: state.rivalId ?? undefined });
     } else {
@@ -989,7 +1174,7 @@ function processSignOffs(state: GameState, parties: Party[], day: number): GameS
     const roll = () => createRng(state.seed + day * 31 + index)();
     // A changed version of a signed deal: if it fails, the signed deal stands.
     if (p.status === 'signed' && p.pendingDeal && (p.ratifyOnDay ?? 0) <= day) {
-      if (roll() < rejectionRisk(party, p.pendingDeal, !!p.unsettled)) {
+      if (roll() < rejectionRisk(party, p.pendingDeal, !!p.unsettled, p.agreedMood)) {
         partners[id] = { ...p, pendingDeal: undefined, trust: Math.max(0, p.trust - 10) };
         log.push({ day, partnerId: id, kind: 'rejected' });
       } else {
@@ -999,7 +1184,7 @@ function processSignOffs(state: GameState, parties: Party[], day: number): GameS
       return;
     }
     if (p.status !== 'ratifying' || (p.ratifyOnDay ?? 0) > day) return;
-    if (roll() < rejectionRisk(party, p.deal, !!p.unsettled)) {
+    if (roll() < rejectionRisk(party, p.deal, !!p.unsettled, p.agreedMood)) {
       partners[id] = { ...p, status: 'rejected', renegotiating: false, unsettled: undefined, trust: Math.max(0, p.trust - 10) };
       log.push({ day, partnerId: id, kind: 'rejected' });
     } else {
@@ -1017,6 +1202,25 @@ function processSignOffs(state: GameState, parties: Party[], day: number): GameS
     }
   });
   return processRivalSignOffs({ ...state, partners, log }, parties, day);
+}
+
+/**
+ * Checks for the end of talks. With leadership challenges on, a leader who forms a
+ * government their own voters revolt against faces a caucus vote before being sworn in.
+ */
+function settle(state: GameState, parties: Party[]): GameState {
+  const was = state.outcome;
+  const g = checkOutcome(state);
+  if (was !== 'playing' || g.outcome !== 'won' || !g.leadershipChallenges || !rulesOf(g).caucusFloor) return g;
+  if (dealPartners(g, false).length === 0) return g;
+  const { mood } = moodOf(g, parties, false);
+  if (mood >= REVOLT_BELOW) return g;
+  const day = Math.min(g.day, g.days);
+  const caucus = { ...(g.caucus ?? {}), challenges: (g.caucus?.challenges ?? 0) + 1 };
+  if (createRng(g.seed + day * 71 + 29)() < challengeLossChance(mood)) {
+    return { ...g, caucus, outcome: 'lost', lostTo: 'caucus', govType: undefined, news: [...g.news, { day, text: 'Before the government is sworn in, your caucus votes to replace you as leader.' }] };
+  }
+  return { ...g, caucus, news: [...g.news, { day, text: 'You survive a caucus vote before the government is sworn in.' }] };
 }
 
 function checkOutcome(state: GameState): GameState {
@@ -1074,7 +1278,7 @@ export function programmeOf(state: GameState, parties: Party[], includeRatifying
     const partner = parties.find((x) => x.id === id)!;
     for (const pol of offerPolicies(deal, player, partner)) {
       const existing = byId.get(pol.id);
-      if (!existing || existing.isCompromise) byId.set(pol.id, pol);
+      if (!existing || deliveryValue(existing) < deliveryValue(pol)) byId.set(pol.id, pol);
     }
   }
   return [...byId.values()];
@@ -1109,7 +1313,24 @@ export function moodOf(state: GameState, parties: Party[], includeRatifying = tr
     seatShare: governmentSeats ? ownSeats / governmentSeats : 1,
     reopened: state.reopens.map((id) => parties.find((p) => p.id === id)!.name),
     cabinet: cabinetBalance(state, includeRatifying),
+    ...v12MoodInputs(state, deals, includeRatifying),
   });
+}
+
+/** v1.2 mood inputs: C&S partners' policies weigh half, set-aside policies, challenge rallies. */
+function v12MoodInputs(state: GameState, deals: [string, PartnerState][], includeRatifying: boolean) {
+  const rules = rulesOf(state);
+  if (rules.version === '1.1') return {};
+  const dealOf = (p: PartnerState) => (includeRatifying ? liveDeal(p) : p.deal);
+  const coalitionIds = new Set(deals.filter(([, p]) => dealOf(p)?.arrangement === 'coalition').flatMap(([, p]) => dealOf(p)!.partnerPolicyIds));
+  const csDeals = deals.filter(([, p]) => dealOf(p)?.arrangement === 'confidence-supply');
+  const cs = csDeals.flatMap(([, p]) => dealOf(p)!.partnerPolicyIds).filter((id) => !coalitionIds.has(id));
+  return {
+    csPolicyIds: rules.csHalfCost ? new Set(cs) : undefined,
+    csPartnerIds: rules.csHalfCost ? new Set(csDeals.map(([id]) => id)) : undefined,
+    setAsideIds: new Set(deals.flatMap(([, p]) => dealOf(p)?.setAsideIds ?? [])),
+    rally: state.caucus?.rally,
+  };
 }
 
 /** Signed deals still waiting for their press conference. */
@@ -1169,7 +1390,7 @@ export function summarise(state: GameState, parties: Party[]): GameSummary {
     (s, p) =>
       s +
       scoreWeight(p) *
-        (p.isCompromise ? COMPROMISE_VALUE : 1) *
+        deliveryValue(p) *
         (soloMajority || coalitionBacked.has(p.id) ? 1 : CONFIDENCE_SUPPLY_FACTOR),
     0,
   );
@@ -1205,6 +1426,54 @@ export interface DealPreview {
   cabinet?: { offered: number; expected: number; major: boolean };
   /** The partner's view of the budget. */
   budgetProblem: ReturnType<typeof budgetProblemFor>;
+  /** v1.2: the partner's own voters' mood if it agreed. */
+  partnerMood?: number;
+}
+
+export type HintVerdict = 'yes' | 'close' | 'no';
+
+export interface NegotiatorHint {
+  verdict: HintVerdict;
+  /** The one change most likely to win them over, in plain words. */
+  tip?: string;
+}
+
+/** The negotiator's hint: how the partner would likely answer this offer now, without sending it. */
+export function hintFor(state: GameState, parties: Party[], offer: Offer): NegotiatorHint | null {
+  const current = state.partners[offer.partnerId];
+  if (!canOffer(current) || state.outcome !== 'playing') return null;
+  const allowed = allowedOffer(state, offer);
+  const taken = takenPortfolios(state, offer.partnerId);
+  const clean = { ...allowed, portfolios: allowed.portfolios.filter((p) => !taken.has(p)) };
+  const r = evaluateOffer(clean, contextFor(state, parties, clean));
+  const poaching = current!.status === 'rival' || current!.status === 'rival-signing';
+  const premium = !poaching || current!.rivalStrain ? 0 : current!.status === 'rival-signing' ? POACH_PREMIUM / 2 : POACH_PREMIUM;
+  if (r.kind === 'accept' && r.utility >= r.threshold + premium) return { verdict: 'yes' };
+  const c = r.counter;
+  const tip =
+    r.kind === 'walk' && r.redLines.length
+      ? `Take out "${r.redLines[0]!.title}": it crosses their red line.`
+      : c?.dropPolicy
+        ? `Take out "${c.dropPolicy.title}": their voters would not accept it.`
+        : c?.addPolicy
+          ? c.compromise && c.addPolicy.compromise
+            ? `Offer "${c.addPolicy.compromise.title}".`
+            : `Include "${c.addPolicy.title}" in full.`
+          : c?.addPortfolio
+            ? `Offer ${c.addPortfolio.replace(/-/g, ' ')} in cabinet.`
+            : c?.cutPolicy
+              ? `Drop "${c.cutPolicy.title}" to ease the budget.`
+              : c?.softenPolicy
+                ? `Scale back "${c.softenPolicy.title}" to ease the budget.`
+                : r.sticking
+                  ? `"${r.sticking.title}" is their biggest problem.`
+                  : r.kind === 'accept'
+                    ? 'Breaking their deal with the other bloc needs a little more.'
+                    : r.considering
+                      ? 'They want to keep their options open a little longer.'
+                      : 'Give them more of what they campaigned on.';
+  const close = r.kind === 'counter' || (r.kind === 'hold' && (r.considering || r.utility >= r.threshold - 0.1)) || r.kind === 'accept';
+  return { verdict: close ? 'close' : 'no', tip };
 }
 
 /** The budget, voter mood and knock-on effects if the partner agreed to this offer now. */
@@ -1241,7 +1510,8 @@ export function previewDeal(state: GameState, parties: Party[], offer: Offer): D
   const ctx = contextFor(state, parties, offer);
   const found = budgetProblemFor(partner, ctx.budget);
   const budgetProblem = found && { ...found, fix: budgetFixFor(offer, ctx, found) };
-  return { budget, mood: moodOf(trial, parties), unsettles, cabinet, budgetProblem };
+  const partnerMood = ctx.partnerMoodOf?.(offer);
+  return { budget, mood: moodOf(trial, parties), unsettles, cabinet, budgetProblem, partnerMood };
 }
 
 /** The previous version of a deal or offer with a party, to start the next one from. */

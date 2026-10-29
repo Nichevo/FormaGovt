@@ -1,5 +1,6 @@
 import type { Party, Policy, Person } from '../data/schema';
 import { budgetFor, type Budget } from './budget';
+import type { Rules } from './rules';
 
 /**
  * How a party feels about a policy:
@@ -90,7 +91,25 @@ export interface Offer {
   /** Portfolios offered to the partner (coalition only). */
   portfolios: PortfolioId[];
   arrangement: Arrangement;
+  /** v1.2: policies agreed only as a select committee referral or a members' bill. */
+  commitments?: Record<string, Commitment>;
+  /** v1.2 agree to disagree: one policy, from either side, set aside from the deal. */
+  setAsideIds?: string[];
 }
+
+/** A lesser promise than putting a policy in the agreement. */
+export type Commitment = 'committee' | 'members-bill';
+
+/** How much of a policy's value a lesser commitment keeps, for the party that wanted it and for the side backing it. */
+export const COMMITMENT_VALUE: Record<Commitment, number> = { committee: 0.25, 'members-bill': 0.15 };
+
+export const COMMITMENT_LABELS: Record<Commitment, string> = {
+  committee: 'Send to select committee',
+  'members-bill': "Support a members' bill",
+};
+
+/** Lesser commitments allowed in one deal, both sides together. */
+export const MAX_SOFT_COMMITMENTS = 3;
 
 /** A compromise keeps this much of a policy's value to the party that wanted it. */
 export const COMPROMISE_VALUE = 0.6;
@@ -113,12 +132,24 @@ export function canCompromise(policy: Policy): boolean {
   return !!policy.compromise && policy.flex !== 'fixed';
 }
 
-/** The policies an offer puts in the programme, with compromises applied. */
+/** A policy only sent to select committee or backed as a members' bill: nothing is enacted or funded. */
+export function softOf(policy: Policy, commitment: Commitment): Policy {
+  return { ...policy, commitment, isCompromise: undefined, fiscalImpactNZDm: 0, fiscalByYear: undefined };
+}
+
+/** The share of a policy's value delivered by the version in the programme. */
+export function deliveryValue(policy: Policy): number {
+  if (policy.commitment) return COMMITMENT_VALUE[policy.commitment];
+  return policy.isCompromise ? COMPROMISE_VALUE : 1;
+}
+
+/** The policies an offer puts in the programme, with compromises and lesser commitments applied. */
 export function offerPolicies(offer: Offer, player: Party, partner: Party): Policy[] {
   const compromised = new Set(offer.compromisePolicyIds ?? []);
+  const soft = offer.commitments ?? {};
   return [...partner.policies, ...player.policies]
-    .filter((p) => offer.partnerPolicyIds.includes(p.id) || offer.playerPolicyIds.includes(p.id))
-    .map((p) => (compromised.has(p.id) && canCompromise(p) ? compromiseOf(p) : p));
+    .filter((p) => (offer.partnerPolicyIds.includes(p.id) || offer.playerPolicyIds.includes(p.id)) && !(offer.setAsideIds ?? []).includes(p.id))
+    .map((p) => (soft[p.id] ? softOf(p, soft[p.id]!) : compromised.has(p.id) && canCompromise(p) ? compromiseOf(p) : p));
 }
 
 /**
@@ -160,6 +191,33 @@ export interface NegotiationContext {
   reapproach?: boolean;
   /** Parties already in the government, whose red lines a bottom line might cross. */
   currentPartners?: Party[];
+  /** The rules the game is played under; v1.1 when absent. */
+  rules?: Rules;
+  /** v1.2: the partner's own voters' mood if this offer went ahead. */
+  partnerMoodOf?: (offer: Offer) => number;
+}
+
+/** v1.2: a partner will not sign a deal that leaves its own voters' mood below this. */
+export const CAUCUS_FLOOR = 45;
+
+/**
+ * v1.2: how firmly a party holds its bottom lines, 1 on day 1. A party with 13 or more
+ * seats never softens; 8 to 12 seats softens to 0.9 and 7 or fewer to 0.8 by the
+ * deadline. A party that likes to hold out softens half as fast.
+ */
+export function bottomLineFirmness(partner: Party, seats: number | undefined, pressure: number): number {
+  const s = seats ?? 99;
+  const drop = s >= 13 ? 0 : s >= 8 ? 0.1 : 0.2;
+  return 1 - drop * Math.min(1, pressure) * (1 - 0.5 * partner.personality.holdout);
+}
+
+/** How far past its usual bar an offer must be for a party this firm to sign without a bottom line. */
+export function firmnessMargin(firmness: number): number {
+  return firmness >= 0.999 ? Infinity : 0.08 + (firmness - 0.8) * 0.7;
+}
+
+function firmnessOf(ctx: NegotiationContext): number {
+  return ctx.rules?.softening ? bottomLineFirmness(ctx.partner, ctx.seats?.partner, ctx.pressure) : 1;
 }
 
 export type ResponseKind = 'accept' | 'counter' | 'hold' | 'walk';
@@ -250,7 +308,17 @@ export interface OfferResponse {
     cutPolicy?: Policy;
     /** Use this policy's compromise version to fix the budget. */
     softenPolicy?: Policy;
+    /** v1.2: take this policy of yours out, because the partner's voters will not accept it. */
+    dropPolicy?: Policy;
+    /** v1.2: the change is asked for to keep the partner's own voters on side. */
+    caucus?: boolean;
   };
+  /** v1.2: the partner's own voters' mood if this offer went ahead. */
+  partnerMood?: number;
+  /** v1.2: refused because the partner's voters would not accept it. */
+  caucus?: boolean;
+  /** v1.2: bottom lines the partner signs without, as small parties may late in talks. */
+  waivedBottomLines?: Policy[];
   /** The budget is past the party's line. */
   budget?: BudgetProblem;
   /** A party holding out early, while it still has options. */
@@ -284,18 +352,28 @@ export function budgetProblemFor(partner: Party, budget: Budget | undefined): Bu
 export function scoreOffer(offer: Offer, ctx: NegotiationContext): number {
   const { partner, player } = ctx;
   const compromised = new Set(offer.compromisePolicyIds ?? []);
+  const soft = offer.commitments ?? {};
   const ownTotal = partner.policies.reduce((s, p) => s + p.weight, 0);
   const ownIncluded = partner.policies
-    .filter((p) => offer.partnerPolicyIds.includes(p.id))
-    .reduce((s, p) => s + p.weight * (compromised.has(p.id) && canCompromise(p) ? COMPROMISE_VALUE : 1), 0);
+    .filter((p) => offer.partnerPolicyIds.includes(p.id) && !(offer.setAsideIds ?? []).includes(p.id))
+    .reduce(
+      (s, p) =>
+        s + p.weight * (soft[p.id] ? COMMITMENT_VALUE[soft[p.id]!] : compromised.has(p.id) && canCompromise(p) ? COMPROMISE_VALUE : 1),
+      0,
+    );
   let utility = ownIncluded / ownTotal;
 
+  const caseByCase = isCaseByCase(offer, ctx);
   for (const policy of askedPolicies(offer, ctx)) {
     const r = reactionTo(partner, policy);
-    if (r === 1) utility += 0.03;
+    // A lesser commitment costs the side backing it less; so does a C&S partner's case-by-case vote.
+    const scale =
+      (policy.commitment ? COMMITMENT_VALUE[policy.commitment] : 1) * (caseByCase && offer.playerPolicyIds.includes(policy.id) ? 0.5 : 1);
+    if (r === -2 && caseByCase) utility -= 0.2 * concernFor(partner, policy) * scale;
+    if (r === 1) utility += 0.03 * scale;
     // Even a policy it can live with costs something to back.
-    if (r === 0) utility -= 0.1 * concernFor(partner, policy);
-    if (r === -1) utility -= 0.12 * concernFor(partner, policy);
+    if (r === 0) utility -= 0.1 * concernFor(partner, policy) * scale;
+    if (r === -1) utility -= 0.12 * concernFor(partner, policy) * scale;
   }
 
   if (offer.arrangement === 'coalition') {
@@ -324,13 +402,15 @@ export function scoreOffer(offer: Offer, ctx: NegotiationContext): number {
   return utility;
 }
 
+/** v1.2: a confidence and supply partner judges the government's policies case by case. */
+function isCaseByCase(offer: Offer, ctx: NegotiationContext): boolean {
+  return !!ctx.rules?.csHalfCost && offer.arrangement === 'confidence-supply';
+}
+
 /** Everything the partner is asked to live with: the player's requests plus other partners' agreed policies. */
 function askedPolicies(offer: Offer, ctx: NegotiationContext): Policy[] {
   const own = new Set(ctx.partner.policies.map((p) => p.id));
-  const compromised = new Set(offer.compromisePolicyIds ?? []);
-  const fromPlayer = ctx.player.policies
-    .filter((p) => offer.playerPolicyIds.includes(p.id))
-    .map((p) => (compromised.has(p.id) && canCompromise(p) ? compromiseOf(p) : p));
+  const fromPlayer = offerPolicies(offer, ctx.player, ctx.partner).filter((p) => !own.has(p.id));
   return [...fromPlayer, ...(ctx.otherAgreed ?? []).filter((p) => !own.has(p.id))];
 }
 
@@ -376,34 +456,101 @@ export function bottomLineOptions(party: Party, policy: Policy): Policy[] {
 }
 
 /** True when one of a bottom line's stand-ins is in the offer in full. */
-export function metByAlternative(party: Party, policy: Policy, policyIds: string[], compromiseIds: string[] = []): boolean {
+export function metByAlternative(
+  party: Party,
+  policy: Policy,
+  policyIds: string[],
+  compromiseIds: string[] = [],
+  commitments: Record<string, Commitment> = {},
+): boolean {
   return bottomLineOptions(party, policy)
     .slice(1)
-    .some((alt) => policyIds.includes(alt.id) && !compromiseIds.includes(alt.id));
+    .some((alt) => policyIds.includes(alt.id) && !compromiseIds.includes(alt.id) && !commitments[alt.id]);
 }
 
 /** Whether a partner takes the compromise version of its own bottom line in this offer. */
 function acceptsCompromise(policy: Policy, ctx: NegotiationContext, utility: number, threshold: number): boolean {
   if (!canCompromise(policy)) return false;
   if (policy.flex === 'soft') return true;
+  // v1.2: a small party softening late in talks takes the compromise sooner.
+  if (firmnessOf(ctx) < 0.95) return true;
   return ctx.pressure >= 0.4 || (ctx.leverage ?? 0) < 0 || utility >= threshold + 0.05;
+}
+
+/**
+ * v1.2: the change that would lift the partner's own voters' mood most: one more of its
+ * policies, a full version of one it has only partly, or dropping one of yours its voters oppose.
+ */
+function caucusFix(offer: Offer, ctx: NegotiationContext): { counter: NonNullable<OfferResponse['counter']>; mood: number } | null {
+  const { partner, player } = ctx;
+  const moodOf = ctx.partnerMoodOf!;
+  const others = [player, ...(ctx.currentPartners ?? [])];
+  const options: { counter: NonNullable<OfferResponse['counter']>; offer: Offer }[] = [];
+  const soft = offer.commitments ?? {};
+  for (const pol of partner.policies) {
+    if (others.some((p) => reactionTo(p, pol) === -2) || (offer.setAsideIds ?? []).includes(pol.id)) continue;
+    const included = offer.partnerPolicyIds.includes(pol.id);
+    const partial = included && (!!soft[pol.id] || (offer.compromisePolicyIds ?? []).includes(pol.id));
+    if (included && !partial) continue;
+    const { [pol.id]: _, ...restSoft } = soft;
+    options.push({
+      counter: { addPolicy: pol, caucus: true },
+      offer: {
+        ...offer,
+        partnerPolicyIds: [...new Set([...offer.partnerPolicyIds, pol.id])],
+        compromisePolicyIds: (offer.compromisePolicyIds ?? []).filter((id) => id !== pol.id),
+        commitments: restSoft,
+      },
+    });
+  }
+  for (const pol of player.policies) {
+    if (!offer.playerPolicyIds.includes(pol.id) || reactionTo(partner, pol) >= 0) continue;
+    options.push({
+      counter: { dropPolicy: pol, caucus: true },
+      offer: { ...offer, playerPolicyIds: offer.playerPolicyIds.filter((id) => id !== pol.id) },
+    });
+  }
+  const now = moodOf(offer);
+  const best = options
+    .map((o) => ({ ...o, mood: moodOf(o.offer) }))
+    .filter((o) => o.mood > now)
+    .sort((a, b) => b.mood - a.mood)[0];
+  return best ? { counter: best.counter, mood: best.mood } : null;
 }
 
 export function evaluateOffer(offer: Offer, ctx: NegotiationContext): OfferResponse {
   const { partner, player } = ctx;
   const asked = askedPolicies(offer, ctx);
-  const redLines = asked.filter((p) => reactionTo(partner, p) === -2);
+  // v1.2: in confidence and supply it votes against your policy rather than walking out.
+  const caseByCase = isCaseByCase(offer, ctx);
+  const redLines = asked.filter((p) => reactionTo(partner, p) === -2 && !(caseByCase && offer.playerPolicyIds.includes(p.id)));
   const utility = scoreOffer(offer, ctx);
   const threshold = acceptanceThreshold(ctx, offer.arrangement);
   const compromised = new Set(offer.compromisePolicyIds ?? []);
-  const missingBottomLines = partner.policies.filter(
+  const soft = offer.commitments ?? {};
+  const aside = new Set(ctx.rules?.agreeToDisagree ? (offer.setAsideIds ?? []) : []);
+  const unmet = partner.policies.filter(
     (p) =>
       p.isBottomLine &&
-      !metByAlternative(partner, p, offer.partnerPolicyIds, offer.compromisePolicyIds) &&
+      !aside.has(p.id) &&
+      !metByAlternative(partner, p, offer.partnerPolicyIds, offer.compromisePolicyIds, soft) &&
       (!offer.partnerPolicyIds.includes(p.id) ||
+        !!soft[p.id] ||
         (compromised.has(p.id) && !acceptsCompromise(p, ctx, utility, threshold))),
   );
-  const base = { utility, threshold, redLines, missingBottomLines };
+  // v1.2: a small party late in talks can sign without a bottom line if the rest of the offer is strong.
+  const firmness = firmnessOf(ctx);
+  const waive = unmet.length > 0 && utility >= threshold + firmnessMargin(firmness);
+  const missingBottomLines = waive ? [] : unmet;
+  const partnerMood = ctx.rules?.caucusFloor && ctx.partnerMoodOf ? ctx.partnerMoodOf(offer) : undefined;
+  const base = {
+    utility,
+    threshold,
+    redLines,
+    missingBottomLines,
+    partnerMood,
+    ...(waive ? { waivedBottomLines: unmet } : {}),
+  };
 
   let cabinet: OfferResponse['cabinet'];
   if (offer.arrangement === 'coalition' && ctx.seats) {
@@ -454,6 +601,13 @@ export function evaluateOffer(offer: Offer, ctx: NegotiationContext): OfferRespo
       const any = eligiblePortfolios(partner).find(free);
       if (any) return { kind: 'counter', ...base, cabinet, counter: { addPortfolio: any } };
     }
+  }
+
+  if (utility >= threshold && partnerMood !== undefined && partnerMood < CAUCUS_FLOOR) {
+    // v1.2: its leader will not sign a deal its own voters would not wear.
+    const fix = caucusFix(offer, ctx);
+    if (fix) return { kind: 'counter', ...base, cabinet, caucus: true, counter: fix.counter };
+    return { kind: 'hold', ...base, cabinet, caucus: true };
   }
 
   if (utility >= threshold) {

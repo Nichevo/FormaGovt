@@ -9,9 +9,15 @@ import {
   waitDay,
   type GameState,
 } from './game';
-import { canCompromise, compatibility, eligiblePortfolios, reactionTo, type Offer } from './negotiation';
+import type { RulesVersion } from './rules';
+import { canCompromise, compatibility, eligiblePortfolios, MAX_SOFT_COMMITMENTS, reactionTo, type Offer } from './negotiation';
 
-export type BotStrategy = 'closest' | 'seats';
+/**
+ * closest and seats are the normal players used to rate difficulty. The others test
+ * balance: giveaway offers all of the partner's policies and asks for none of its own;
+ * padding adds up to three of the partner's other policies as select committee referrals.
+ */
+export type BotStrategy = 'closest' | 'seats' | 'giveaway' | 'padding';
 
 export interface BotRun {
   won: boolean;
@@ -27,7 +33,15 @@ export interface BotRun {
 export function playBot(
   player: Party,
   parties: Party[],
-  setup: { seats: Record<string, number>; majority: number; totalSeats: number; seed: number; days?: number },
+  setup: {
+    seats: Record<string, number>;
+    majority: number;
+    totalSeats: number;
+    seed: number;
+    days?: number;
+    rules?: RulesVersion;
+    leadershipChallenges?: boolean;
+  },
   strategy: BotStrategy = 'closest',
 ): BotRun {
   let g = createGame({ player, parties, ...setup });
@@ -35,17 +49,26 @@ export function playBot(
   // "closest" courts the best fits first; "seats" weights fit by the seats a party brings.
   const value = (id: string) =>
     compatibility(player, byId.get(id)!) * (strategy === 'seats' ? Math.sqrt(setup.seats[id] ?? 0) : 1);
+  const giveaway = strategy === 'giveaway';
   const order = Object.keys(g.partners).sort((a, b) => value(b) - value(a));
   const drafts: Record<string, Offer> = {};
   for (const id of order) {
     const partner = byId.get(id)!;
     drafts[id] = {
       partnerId: id,
-      partnerPolicyIds: partner.policies.filter((p) => p.isBottomLine || reactionTo(player, p) >= 0).map((p) => p.id),
-      playerPolicyIds: player.policies.filter((p) => reactionTo(partner, p) >= 0).map((p) => p.id),
+      partnerPolicyIds: partner.policies.filter((p) => giveaway || p.isBottomLine || reactionTo(player, p) >= 0).map((p) => p.id),
+      playerPolicyIds: giveaway ? [] : player.policies.filter((p) => reactionTo(partner, p) >= 0).map((p) => p.id),
       portfolios: eligiblePortfolios(partner).slice(0, 1),
       arrangement: 'coalition',
     };
+    if (strategy === 'padding') {
+      const extra = partner.policies
+        .filter((p) => !p.isBottomLine && reactionTo(player, p) === -1)
+        .sort((a, b) => b.weight - a.weight)
+        .slice(0, MAX_SOFT_COMMITMENTS);
+      drafts[id]!.partnerPolicyIds.push(...extra.map((p) => p.id));
+      drafts[id]!.commitments = Object.fromEntries(extra.map((p) => [p.id, 'committee' as const]));
+    }
   }
   const tries: Record<string, number> = {};
   // Parties already in the government, whose red lines the next offer should respect.
@@ -113,9 +136,11 @@ export function playBot(
     const r = g.log.filter((l) => l.offer && l.partnerId === id).at(-1)?.response;
     if (r?.counter?.addPolicy) {
       draft.partnerPolicyIds = [...new Set([...draft.partnerPolicyIds, r.counter.addPolicy.id])];
+      if (draft.commitments) delete draft.commitments[r.counter.addPolicy.id];
       if (r.counter.compromise) draft.compromisePolicyIds = [...(draft.compromisePolicyIds ?? []), r.counter.addPolicy.id];
       else draft.compromisePolicyIds = (draft.compromisePolicyIds ?? []).filter((x) => x !== r.counter!.addPolicy!.id);
     } else if (r?.counter?.addPortfolio) draft.portfolios.push(r.counter.addPortfolio);
+    else if (r?.counter?.dropPolicy) draft.playerPolicyIds = draft.playerPolicyIds.filter((p) => p !== r.counter!.dropPolicy!.id);
     else if (r?.counter?.softenPolicy) draft.compromisePolicyIds = [...(draft.compromisePolicyIds ?? []), r.counter.softenPolicy.id];
     else if (r?.counter?.cutPolicy) {
       const cut = r.counter.cutPolicy.id;
@@ -146,7 +171,7 @@ export type Difficulty = 'easy' | 'medium' | 'hard';
  */
 export function rateDifficulty(
   parties: Party[],
-  setup: { seats: Record<string, number>; majority: number; totalSeats: number; days?: number },
+  setup: { seats: Record<string, number>; majority: number; totalSeats: number; days?: number; rules?: RulesVersion },
   seeds: number[] = [11, 22, 33],
 ): Record<string, Difficulty> {
   const ratings: Record<string, Difficulty> = {};
