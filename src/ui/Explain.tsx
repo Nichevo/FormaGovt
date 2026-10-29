@@ -11,7 +11,9 @@ export const EXPLAINERS = {
   coalition:
     'A coalition partner joins cabinet and shares collective responsibility for government decisions. It counts fully towards stability in the game.',
   'confidence-supply':
-    'A confidence and supply partner promises to back the government on confidence votes and the Budget, and decides other votes case by case. It asks less of you, and the policies it backs count for less.',
+    'A confidence and supply partner promises to back the government on confidence votes and the Budget, and decides other votes case by case. It asks less of you, and the policies it backs count for less. Under v1.2 rules it votes against a policy of yours it cannot accept rather than walking out, and each side\'s voters weigh the other\'s policies at half.',
+  abstain:
+    'A party can agree to abstain on confidence votes instead of backing the government. Its seats then count for neither side, so you need fewer votes for a majority (with 122 seats and 12 abstaining, 56 of the remaining 110). It asks for at most two policies and no cabinet roles, so it is the easiest deal for its voters to accept, but your policies that pass only with its abstention count for half in your score, and it adds nothing to stability. v1.2 rules only.',
   ratification:
     'Each party approves a deal its own way. Some leaders decide on the spot; others need caucus, a board or a members\' vote, which takes time and can fail if too much was given up.',
   'bottom-line':
@@ -36,6 +38,18 @@ export const EXPLAINERS = {
     'Talks take time in proportion to what is on the table. A small offer or change, of three items or fewer, takes no time, and you can make two of those a day. A typical offer uses a day, and one with twelve or more policies and roles takes two days.',
   leverage:
     'A party courted by both blocs, whose seats could decide the majority, holds out for more. When it stops being needed, or the side it prefers falls behind, it lowers its demands. Some parties, such as NZ First, hold out longer than others. Parties far to the left or right have only one natural side: they gain no bargaining power from the other bloc, are marked "Unlikely partner" when you are on the other side, and take more convincing to cross over.',
+  rules:
+    'Each game keeps the rules it started with, so shared links replay the same way. v1.2 adds: parties guard their own voters\' mood, small parties soften their bottom lines as talks go on, select committee and members\' bill commitments, agree to disagree, case-by-case confidence and supply, and optional leadership challenges. v1.1 plays as the game did before.',
+  leadership:
+    'With this on, voters below 35 at the end of a day unsettle your caucus (from day 4, once you have a deal). If mood is still below 35 two days later, or falls below 20, the caucus votes: 3% chance of losing for each point below 35, at most 85%. Losing ends the game. Surviving lifts mood by 5 and buys five quiet days. A leader who forms a government their voters revolt against also faces a vote before being sworn in.',
+  commitments:
+    'Instead of putting a policy in the agreement, you can agree to send it to a select committee inquiry (worth 25% of the policy) or to back it as a members\' bill (15%). Nothing is enacted or funded, so the budget is unchanged, and the side backing it pays only that share of the usual cost. They never meet a bottom line, red lines still count, and a deal can hold at most three. A game simplification of how Parliament works.',
+  'agree-to-disagree':
+    'From the middle of talks, a deal can set aside one policy, from either side. It stays out of the programme, and a partner bottom line set aside this way counts as met. Each side\'s voters still feel half the usual hit for a dropped policy. Real coalition agreements have used "agree to disagree" provisions; this is a simplification.',
+  firmness:
+    'Every party starts talks fully firm on its bottom lines. Parties with 8 to 12 seats soften to 90% by the deadline, and those with 7 or fewer to 80%, half as fast if they like to hold out. A less firm party takes a compromise sooner, and late on may sign without a bottom line if the rest of the offer is strong. v1.2 rules.',
+  'their-voters':
+    'Under v1.2 rules each party judges a deal by its own voters\' mood, worked out the same way as yours. A party will not sign a deal that leaves its voters below 45: it asks for the change that would lift their mood most. Thin deals are also likelier to be voted down at sign-off.',
 } as const;
 export type ExplainTopic = keyof typeof EXPLAINERS;
 

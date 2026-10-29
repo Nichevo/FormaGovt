@@ -70,6 +70,12 @@ export function lineFor(entry: LogEntry, partner: Party): string {
         ? pick(['We have a deal.', 'That works for us. Consider it agreed.'], key)
         : `We can support this. It now goes to our ${partner.ratification.body.toLowerCase()} for sign-off.`;
     case 'counter':
+      if (r?.counter?.dropPolicy) {
+        return `Our voters would not wear "${r.counter.dropPolicy.title}". Take it out and we can sign.`;
+      }
+      if (r?.counter?.caucus && r.counter.addPolicy) {
+        return `Our members need to see more of what we campaigned on. "${r.counter.addPolicy.title}" in full would do it.`;
+      }
       if (r?.counter?.cutPolicy) {
         return budgetLine(r);
       }
@@ -95,6 +101,7 @@ export function lineFor(entry: LogEntry, partner: Party): string {
     case 'hold':
       if (r?.considering) return pick(['We are still considering our options.', 'We are talking to everyone. We will not be rushed.'], key);
       if (r?.budget?.refuse) return budgetLine(r);
+      if (r?.caucus) return 'Our own voters would not accept this deal, and our leader will not sign it.';
       return r?.sticking
         ? `We are some way apart. "${r.sticking.title}" is the biggest problem for our members.`
         : pick(['This does not give us enough of what we campaigned on.', 'Not yet. Our voters expect more from us.'], key);

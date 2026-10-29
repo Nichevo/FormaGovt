@@ -1,7 +1,12 @@
 import { readJson, writeJson } from './storage';
 import type { Challenge } from './share';
 
-export interface PlayRecord extends Required<Omit<Challenge, 'daily' | 'days'>> {
+export interface PlayRecord extends Required<Omit<Challenge, 'daily' | 'days' | 'rules' | 'challenges'>> {
+  /** Rules version; games saved before v1.2 have none and played v1.1. */
+  rules?: Challenge['rules'];
+  challenges?: boolean;
+  /** v1.2: the negotiator's hint was opened during the game. */
+  hintUsed?: boolean;
   id: string;
   /** Length of talks; games saved before v1.1 have none and were ten days. */
   days?: number;
@@ -10,7 +15,7 @@ export interface PlayRecord extends Required<Omit<Challenge, 'daily' | 'days'>> 
   at: string;
   scenarioLabel: string;
   outcome: 'won' | 'lost';
-  lostTo?: 'deadline' | 'rival';
+  lostTo?: 'deadline' | 'rival' | 'caucus';
   score: number;
   partners: string[];
 }

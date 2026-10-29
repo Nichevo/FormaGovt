@@ -79,6 +79,8 @@ export const PolicySchema = z.object({
   sourceUrl: z.string().url(),
   /** Set by the game on the scaled-back version of a bottom line; never in the data files. */
   isCompromise: z.boolean().optional(),
+  /** Set by the game when a deal only sends the policy to select committee or backs it as a members' bill. */
+  commitment: z.enum(['committee', 'members-bill']).optional(),
 });
 export type Policy = z.infer<typeof PolicySchema>;
 

@@ -28,6 +28,8 @@ import {
   rivalSeats,
   takenPortfolios,
   seatsSecured,
+  abstainCredit,
+  abstainingSeats,
   summarise,
   waitDay,
   waitForNews,
@@ -39,7 +41,15 @@ import {
   SMALL_OFFER,
   BIG_OFFER,
   QUICK_OFFERS_PER_DAY,
+  canSetAside,
+  CHALLENGE_AFTER_DAYS,
+  firmnessFor,
+  hintFor,
+  rulesOf,
 } from '../engine/game';
+import { ABSTAIN_POLICY_LIMIT, CAUCUS_FLOOR, COMMITMENT_LABELS, MAX_SOFT_COMMITMENTS, type Commitment } from '../engine/negotiation';
+import { REVOLT_BELOW } from '../engine/voters';
+import { RULES_LABELS } from '../engine/rules';
 import { budgetFor, formatChange, formatMoney, hardestYear } from '../engine/budget';
 import {
   bestPersonFor,
@@ -118,8 +128,11 @@ export function GameScreen({
       totalSeats: setup.result.totalSeats,
       seed: setup.seed,
       days: setup.days,
+      rules: setup.rules,
+      leadershipChallenges: setup.challenges,
     }),
   );
+  const [hintUsed, setHintUsed] = useState(false);
   const [tab, setTab] = useState<'negotiate' | 'compare' | 'budget'>('negotiate');
   const partnerIds = Object.keys(game.partners).sort((a, b) => (seats[b] ?? 0) - (seats[a] ?? 0));
   const [selectedId, setSelectedId] = useState(partnerIds[0] ?? '');
@@ -130,7 +143,7 @@ export function GameScreen({
   if (game.outcome !== 'playing') {
     return (
       <>
-        <Results game={game} setup={setup} onQuit={onQuit} onRematch={onRematch} onCard={setCard} />
+        <Results game={game} setup={setup} hintUsed={hintUsed} onQuit={onQuit} onRematch={onRematch} onCard={setCard} />
         {cardView}
       </>
     );
@@ -172,7 +185,16 @@ export function GameScreen({
       const compromise = new Set(draft.compromisePolicyIds ?? []);
       if (c.compromise) compromise.add(id);
       else compromise.delete(id);
-      keep = { ...draft, partnerPolicyIds: [...new Set([...draft.partnerPolicyIds, id])], compromisePolicyIds: [...compromise] };
+      const { [id]: _, ...commitments } = draft.commitments ?? {};
+      keep = {
+        ...draft,
+        partnerPolicyIds: [...new Set([...draft.partnerPolicyIds, id])],
+        compromisePolicyIds: [...compromise],
+        commitments,
+        setAsideIds: (draft.setAsideIds ?? []).filter((x) => x !== id),
+      };
+    } else if (c?.dropPolicy) {
+      keep = { ...draft, playerPolicyIds: draft.playerPolicyIds.filter((x) => x !== c.dropPolicy!.id) };
     } else if (c?.addPortfolio) {
       keep = { ...draft, portfolios: [...draft.portfolios, c.addPortfolio] };
     } else if (response?.budget?.fix?.items.length && (c?.cutPolicy || c?.softenPolicy)) {
@@ -197,11 +219,36 @@ export function GameScreen({
           <strong>
             Day {Math.min(game.day, game.days)} of {game.days}
           </strong>
-          <span className="muted"> · playing as {player.name}</span>
+          <span className="muted">
+            {' '}
+            · playing as {player.name} · {RULES_LABELS[rulesOf(game).version].label.replace(/ \(.*\)$/, '')} rules
+            {game.leadershipChallenges ? ', leadership challenges on' : ''}
+          </span>
         </div>
+        {game.caucus?.unrestSince !== undefined && (
+          <p className="warnings caucus-banner">
+            <strong>Caucus unrest.</strong> Your voters are at {mood.mood}, below {REVOLT_BELOW}. Lift them above {REVOLT_BELOW} by the end
+            of day {game.caucus.unrestSince + CHALLENGE_AFTER_DAYS}, or your caucus votes on your leadership (sooner if mood falls below 20).
+            Hurting most:{' '}
+            {mood.factors
+              .filter((f) => f.points < 0)
+              .sort((a, b) => a.points - b.points)
+              .slice(0, 2)
+              .map((f) => `${f.label} (${f.points})`)
+              .join('; ')}
+            . <Explain topic="leadership" label="leadership challenges" />
+          </p>
+        )}
         <div>
           <span className="progress-text">You: {progressText(progress.player, game.majority)}</span>
           {progress.player.signing > 0 && <span className="muted small"> ({progress.player.signing} still signing off)</span>}
+          {abstainingSeats(game) > 0 && (
+            <span className="muted small">
+              {' '}
+              (counts {abstainingSeats(game)} abstaining MPs as the {abstainCredit(game, abstainingSeats(game))} seats they take off the majority{' '}
+              <Explain topic="abstain" label="abstaining" />)
+            </span>
+          )}
         </div>
         <SeatBar secured={progress.player.secured} agreed={progress.player.secured + progress.player.signing} majority={game.majority} total={game.totalSeats} />
         <div className="muted">
@@ -299,6 +346,7 @@ export function GameScreen({
                 const state = game.partners[id]!;
                 const tag = state.status === 'open' || state.status === 'rival-signing' ? partyMood(game, id, PARTIES) : null;
                 const unlikely = state.status === 'open' && !isLikelyPartner(p, player);
+                const firmness = state.status === 'open' || state.status === 'rival-signing' ? firmnessFor(game, PARTIES, id) : 1;
                 return (
                   <li key={id}>
                     <button
@@ -325,6 +373,7 @@ export function GameScreen({
                       )}
                       {tag && tag.label && <span className={`tag ${tag.mood}`}>{tag.label}</span>}
                       {unlikely && <span className="tag unlikely">Unlikely partner: from the other side of politics</span>}
+                      {firmness < 1 && <span className="tag keen">Bottom lines {Math.round(firmness * 100)}% firm</span>}
                       {state.rivalStrain && (state.status === 'rival' || state.status === 'rival-signing') && (
                         <span className="tag keen">Unhappy with the rival bloc</span>
                       )}
@@ -367,6 +416,7 @@ export function GameScreen({
               onCloseRenegotiation={() => play(closeRenegotiation(game, partner.id))}
               onReapproach={() => play(reapproach(game, PARTIES, partner.id))}
               onCard={setCard}
+              onHintOpened={() => setHintUsed(true)}
             />
           )}
         </div>
@@ -423,6 +473,7 @@ interface OfferBuilderProps {
   onCloseRenegotiation: () => void;
   onReapproach: () => void;
   onCard: (policy: Policy) => void;
+  onHintOpened: () => void;
 }
 
 /** A policy title that opens its card, with its budget effect. */
@@ -460,12 +511,28 @@ function countChanges(base: Offer, draft: Offer): number {
     diff(base.playerPolicyIds, draft.playerPolicyIds) +
     diff(base.compromisePolicyIds, draft.compromisePolicyIds) +
     diff(base.portfolios, draft.portfolios) +
+    diff(softKeys(base), softKeys(draft)) +
+    diff(base.setAsideIds, draft.setAsideIds) +
     (base.arrangement === draft.arrangement ? 0 : 1)
   );
 }
 
+function softKeys(offer: Offer): string[] {
+  return Object.entries(offer.commitments ?? {}).map(([id, c]) => `${id}:${c}`);
+}
+
+type PolicyFilter = 'all' | 'key' | 'acceptable';
+
+const FILTER_LABELS: Record<PolicyFilter, string> = {
+  all: 'All policies',
+  key: 'Bottom lines and flagships',
+  acceptable: 'Hide red lines',
+};
+
 function theyWanted(response: OfferResponse | undefined): string | null {
   const c = response?.counter;
+  if (c?.dropPolicy) return `"${c.dropPolicy.title}" left out: their voters would not accept it`;
+  if (response?.caucus && !c) return 'more for their own voters';
   if (c?.addPolicy && c.either?.length) return [c.addPolicy, ...c.either].map((p) => p.title).join(' or ');
   if (c?.addPolicy) return c.compromise && c.addPolicy.compromise ? `${c.addPolicy.compromise.title} (compromise)` : c.addPolicy.title;
   if (c?.addPortfolio) return PORTFOLIOS.find((p) => p.id === c.addPortfolio)?.label ?? null;
@@ -491,16 +558,26 @@ function OfferBuilder({
   onCloseRenegotiation,
   onReapproach,
   onCard,
+  onHintOpened,
 }: OfferBuilderProps) {
+  const [filter, setFilter] = useState<PolicyFilter>('all');
+  const [hintOpen, setHintOpen] = useState(false);
   const state = game.partners[partner.id]!;
+  const rules = rulesOf(game);
   const taken = takenPortfolios(game, partner.id);
   const programme = agreedPolicies(game, PARTIES, partner.id).filter((p) => !partner.policies.some((own) => own.id === p.id));
   const programmeClashes = programme.filter((p) => reactionTo(partner, p) === -2);
   const compromised = new Set(draft.compromisePolicyIds ?? []);
   const asked = player.policies.filter((p) => draft.playerPolicyIds.includes(p.id)).map((p) => (compromised.has(p.id) && canCompromise(p) ? compromiseOf(p) : p));
   const redLines = asked.filter((p) => reactionTo(partner, p) === -2);
+  const soft = draft.commitments ?? {};
+  const asideIds = draft.setAsideIds ?? [];
   const missingBottomLines = partner.policies.filter(
-    (p) => p.isBottomLine && !draft.partnerPolicyIds.includes(p.id) && !metByAlternative(partner, p, draft.partnerPolicyIds, draft.compromisePolicyIds),
+    (p) =>
+      p.isBottomLine &&
+      !asideIds.includes(p.id) &&
+      (!draft.partnerPolicyIds.includes(p.id) || !!soft[p.id]) &&
+      !metByAlternative(partner, p, draft.partnerPolicyIds, draft.compromisePolicyIds, soft),
   );
   const reply = lastResponse(game, partner.id);
   const wanted = theyWanted(reply);
@@ -542,7 +619,9 @@ function OfferBuilder({
               .join(', ') || 'no policies'}
             {deal.arrangement === 'coalition'
               ? `; ${deal.portfolios.length} cabinet role${deal.portfolios.length === 1 ? '' : 's'}`
-              : '; confidence and supply'}
+              : deal.arrangement === 'abstain'
+                ? '; they abstain on confidence'
+                : '; confidence and supply'}
             .
           </div>
         )}
@@ -595,6 +674,63 @@ function OfferBuilder({
       </label>
     ) : null;
 
+  const softCount = Object.keys(soft).length;
+  const commitmentPicker = (p: Policy) => {
+    if (!rules.softCommitments || !(draft.partnerPolicyIds.includes(p.id) || draft.playerPolicyIds.includes(p.id))) return null;
+    // A lesser commitment never meets a partner's bottom line, so it is not offered there.
+    if (p.isBottomLine && partner.policies.includes(p)) return null;
+    const full = softCount >= MAX_SOFT_COMMITMENTS && !soft[p.id];
+    return (
+      <label className="commitment-picker">
+        as{' '}
+        <select
+          value={soft[p.id] ?? 'full'}
+          onChange={(e) => {
+            const { [p.id]: _, ...rest } = soft;
+            const v = e.target.value as Commitment | 'full';
+            setDraft({ ...draft, commitments: v === 'full' ? rest : { ...rest, [p.id]: v } });
+          }}
+        >
+          <option value="full">In the agreement</option>
+          <option value="committee" disabled={full}>
+            {COMMITMENT_LABELS.committee} (worth 25%)
+          </option>
+          <option value="members-bill" disabled={full}>
+            {COMMITMENT_LABELS['members-bill']} (worth 15%)
+          </option>
+        </select>
+      </label>
+    );
+  };
+  // Their policies are judged by your reaction, yours by theirs.
+  const shown = (p: Policy, theirs: boolean) =>
+    filter === 'key' ? p.isBottomLine || p.weight >= 4 : filter === 'acceptable' ? reactionTo(theirs ? player : partner, p) > -2 : true;
+  const listButtons = (theirs: boolean) => {
+    const set = (ids: string[]) => setDraft(theirs ? { ...draft, partnerPolicyIds: ids } : { ...draft, playerPolicyIds: ids });
+    const agreed = theirs
+      ? partner.policies.filter((p) => p.isBottomLine || reactionTo(player, p) >= 0)
+      : player.policies.filter((p) => reactionTo(partner, p) >= 0);
+    return (
+      <div className="row-buttons select-buttons">
+        <button type="button" onClick={() => set((theirs ? partner : player).policies.map((p) => p.id))}>
+          Select all
+        </button>
+        <button type="button" onClick={() => set(agreed.map((p) => p.id))}>
+          {theirs ? 'All I can accept + their bottom lines' : 'All they can accept'}
+        </button>
+        <button type="button" onClick={() => set([])}>
+          Clear
+        </button>
+      </div>
+    );
+  };
+  const midDay = Math.ceil(1 + (game.days - 1) / 2);
+  const asideOptions = [
+    ...partner.policies.filter((p) => p.isBottomLine || draft.partnerPolicyIds.includes(p.id)).map((p) => ({ p, owner: partner.name })),
+    ...player.policies.map((p) => ({ p, owner: 'Yours' })),
+  ];
+  const hint = hintOpen ? hintFor(game, PARTIES, draft) : null;
+
   return (
     <section className="panel offer">
       <h2>{renegotiating ? `Changing your deal with ${partner.name}` : `Offer to ${partner.name}`}</h2>
@@ -639,10 +775,28 @@ function OfferBuilder({
       <p className="muted small">
         🔒 bottom line <Explain topic="bottom-line" label="bottom lines" /> · ★ flagship · tap a policy for its card · *
         rough game estimate of the budget effect · compromise versions <Explain topic="compromise" label="compromises" />
+        {rules.softCommitments && (
+          <>
+            {' '}
+            · a ticked policy can be agreed as a select committee referral or members' bill, up to {MAX_SOFT_COMMITMENTS} a deal{' '}
+            <Explain topic="commitments" label="lesser commitments" />
+          </>
+        )}
       </p>
+      <label className="filter-row small">
+        Show{' '}
+        <select value={filter} onChange={(e) => setFilter(e.target.value as PolicyFilter)}>
+          {(Object.keys(FILTER_LABELS) as PolicyFilter[]).map((f) => (
+            <option key={f} value={f}>
+              {FILTER_LABELS[f]}
+            </option>
+          ))}
+        </select>
+      </label>
       <fieldset>
         <legend>Their policies you will include</legend>
-        {partner.policies.map((p) => (
+        {listButtons(true)}
+        {partner.policies.filter((p) => shown(p, true)).map((p) => (
           <div key={p.id} className="check-row">
             <label className={`check ${diffClass(baseOffer?.partnerPolicyIds, draft.partnerPolicyIds, p.id)}`}>
               <input
@@ -658,13 +812,15 @@ function OfferBuilder({
               </span>
             </label>
             {compromiseToggle(p)}
+            {commitmentPicker(p)}
           </div>
         ))}
       </fieldset>
 
       <fieldset>
         <legend>Your policies you want them to back</legend>
-        {player.policies.map((p) => {
+        {listButtons(false)}
+        {player.policies.filter((p) => shown(p, false)).map((p) => {
           const r = reactionTo(partner, compromised.has(p.id) && canCompromise(p) ? compromiseOf(p) : p);
           return (
             <div key={p.id} className="check-row">
@@ -682,10 +838,35 @@ function OfferBuilder({
                 </span>
               </label>
               {compromiseToggle(p)}
+              {commitmentPicker(p)}
             </div>
           );
         })}
       </fieldset>
+
+      {rules.agreeToDisagree && (
+        <fieldset>
+          <legend>
+            Agree to disagree <Explain topic="agree-to-disagree" label="agree to disagree" />
+          </legend>
+          {canSetAside(game) ? (
+            <label className="small">
+              Set aside one policy:{' '}
+              <select value={asideIds[0] ?? ''} onChange={(e) => setDraft({ ...draft, setAsideIds: e.target.value ? [e.target.value] : [] })}>
+                <option value="">Nothing set aside</option>
+                {asideOptions.map(({ p, owner }) => (
+                  <option key={p.id} value={p.id}>
+                    {owner}: {p.title}
+                    {p.isBottomLine ? ' (bottom line)' : ''}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : (
+            <p className="muted small">Available from day {midDay}. One policy per deal, from either side.</p>
+          )}
+        </fieldset>
+      )}
 
       <fieldset>
         <legend>
@@ -707,6 +888,22 @@ function OfferBuilder({
           />
           <span>Confidence and supply: they back you on votes that keep the government in office, with no cabinet roles. Asks less of them, and is worth less to you. <Explain topic="confidence-supply" label="confidence and supply" /></span>
         </label>
+        {rules.abstention && (
+          <label className="check">
+            <input
+              type="radio"
+              checked={draft.arrangement === 'abstain'}
+              onChange={() => setDraft({ ...draft, arrangement: 'abstain', portfolios: [] })}
+            />
+            <span>
+              Abstain on confidence: they stay on the cross benches and abstain, so you need fewer votes. At most {ABSTAIN_POLICY_LIMIT} of
+              their policies, the easiest deal to sell to their voters and the weakest for you. <Explain topic="abstain" label="abstaining" />
+            </span>
+          </label>
+        )}
+        {draft.arrangement === 'abstain' && draft.partnerPolicyIds.length > ABSTAIN_POLICY_LIMIT && (
+          <p className="warnings">Only the first {ABSTAIN_POLICY_LIMIT} of their policies you picked go into an abstention deal. Untick the rest.</p>
+        )}
       </fieldset>
 
       {draft.arrangement === 'coalition' && (
@@ -765,6 +962,13 @@ function OfferBuilder({
               {fixLine(preview.budgetProblem.fix)}
             </li>
           )}
+          {preview.partnerMood !== undefined && (
+            <li className={preview.partnerMood < CAUCUS_FLOOR ? 'bad' : ''}>
+              Their voters: {preview.partnerMood}
+              {preview.partnerMood < CAUCUS_FLOOR ? `, below the ${CAUCUS_FLOOR} their leader needs to sign` : ''}.{' '}
+              <Explain topic="their-voters" label="their voters" />
+            </li>
+          )}
           {newMoodHits.map((f) => (
             <li key={f.label} className="bad">
               Your voters: {f.label}, {f.points}
@@ -799,6 +1003,29 @@ function OfferBuilder({
           ))}
         </ul>
       )}
+
+      <details
+        className="hint"
+        open={hintOpen}
+        onToggle={(e) => {
+          const open = (e.target as HTMLDetailsElement).open;
+          setHintOpen(open);
+          if (open) onHintOpened();
+        }}
+      >
+        <summary>Negotiator's hint</summary>
+        {hint ? (
+          <p>
+            <strong className={`hint-${hint.verdict}`}>
+              {hint.verdict === 'yes' ? 'Likely yes' : hint.verdict === 'close' ? 'Close' : 'Unlikely'}
+            </strong>
+            {hint.tip ? `. ${hint.tip}` : '.'}
+          </p>
+        ) : (
+          <p className="muted small">No offer to judge yet.</p>
+        )}
+        <p className="muted small">A guess from the game, not a promise. Using it is noted on your result.</p>
+      </details>
 
       <button type="button" className="primary" onClick={onSend}>
         {renegotiating ? 'Send changes' : 'Send offer'} ({['same day', 'uses a day', 'takes 2 days'][offerDays(game, draft)]})
@@ -870,7 +1097,7 @@ function WhyCard({ why }: { why: WhySigned }) {
         <strong>What the rival gave them:</strong> {why.policies.length} of their policies
         {why.bottomLines.length > 0 &&
           ` (bottom lines: ${why.bottomLines.map((b) => `${b.policy.title}${b.compromise ? ', as a compromise' : ''}`).join('; ')})`}
-        , {why.arrangement === 'coalition' ? `a coalition with ${why.portfolios.length > 0 ? why.portfolios.join(', ') : 'no cabinet roles'}` : 'confidence and supply'}.
+        , {why.arrangement === 'coalition' ? `a coalition with ${why.portfolios.length > 0 ? why.portfolios.join(', ') : 'no cabinet roles'}` : why.arrangement === 'abstain' ? 'an agreement to abstain on confidence' : 'confidence and supply'}.
       </p>
       {why.comparison && <p>{why.comparison}</p>}
       <ul>
@@ -920,12 +1147,14 @@ function PressConferencePanel({ partner, onChoose }: { partner: Party; onChoose:
 function Results({
   game,
   setup,
+  hintUsed,
   onQuit,
   onRematch,
   onCard,
 }: {
   game: GameState;
   setup: GameSetup;
+  hintUsed: boolean;
   onQuit: () => void;
   onRematch: () => void;
   onCard: (policy: Policy) => void;
@@ -953,6 +1182,9 @@ function Results({
       score: summary.score,
       partners: summary.partners,
       daily: setup.daily,
+      rules: setup.rules,
+      challenges: setup.challenges,
+      hintUsed,
     });
     const partiesWon = records.filter((r) => r.outcome === 'won').map((r) => r.playerId);
     setFresh(unlock(earnedBy({ game, scenarioId: setup.scenarioId, daily: setup.daily, partiesWon })));
@@ -984,7 +1216,9 @@ function Results({
         <p>
           {game.lostTo === 'rival' && game.rivalId
             ? `The rival bloc led by ${PARTY_BY_ID[game.rivalId]!.name} reached ${game.majority} seats first and will form the government.`
-            : 'Nobody could put together a majority by the deadline. A snap election would follow.'}
+            : game.lostTo === 'caucus'
+              ? `Your caucus replaced you as leader: your voters had turned against the deal. ${player.name} will take a new leader back into talks.`
+              : 'Nobody could put together a majority by the deadline. A snap election would follow.'}
         </p>
       )}
       <p className="score">
@@ -1018,7 +1252,9 @@ function Results({
       )}
       <p className="muted small">
         Scenario: {setup.scenarioLabel}
-        {setup.daily ? " (today's challenge)" : ''}.
+        {setup.daily ? " (today's challenge)" : ''}. {RULES_LABELS[rulesOf(game).version].label.replace(/ \(.*\)$/, '')} rules
+        {game.leadershipChallenges ? ', leadership challenges on' : ''}
+        {hintUsed ? ". Negotiator's hint used" : ''}.
       </p>
       {fresh.length > 0 && (
         <div className="new-achievements">
@@ -1123,6 +1359,8 @@ function Results({
               playerId: player.id,
               won,
               lostToRival: game.lostTo === 'rival',
+              lostToCaucus: game.lostTo === 'caucus',
+              hintUsed,
               partners: summary.partners,
               seats: seatsSecured(game),
               majority: game.majority,

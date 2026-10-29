@@ -4,6 +4,8 @@ export interface CardData {
   playerId: string;
   won: boolean;
   lostToRival: boolean;
+  lostToCaucus?: boolean;
+  hintUsed?: boolean;
   partners: string[];
   seats: number;
   majority: number;
@@ -45,6 +47,8 @@ export function downloadResultCard(data: CardData): void {
     ? `${player.name}${partners.length ? ` with ${partners.map((p) => p.name).join(', ')}` : ' alone'}: ${data.seats} seats (needed ${data.majority})`
     : data.lostToRival
       ? 'The rival bloc reached a majority first'
+      : data.lostToCaucus
+        ? 'Replaced as leader by the caucus before a government was formed'
       : 'Nobody reached a majority: a snap election would follow';
   wrap(ctx, line, 64, 320, 1072, 42);
 
@@ -54,7 +58,7 @@ export function downloadResultCard(data: CardData): void {
     const scoreWidth = ctx.measureText(`${data.score}`).width;
     ctx.font = '32px system-ui, sans-serif';
     ctx.fillStyle = '#6b6a65';
-    ctx.fillText('/ 100 game score', 64 + scoreWidth + 20, 500);
+    ctx.fillText(data.hintUsed ? "/ 100 game score · negotiator's hint used" : '/ 100 game score', 64 + scoreWidth + 20, 500);
   }
 
   ctx.fillStyle = '#6b6a65';

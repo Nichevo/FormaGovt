@@ -266,3 +266,20 @@ button.link { text-align: left; }
 .why-number summary { cursor: pointer; }
 .footer .version, .election-day .version { font-size: 0.8rem; color: var(--muted); margin: 4px 0 0; }
 .version-badge { font-size: 0.8rem; font-weight: 500; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; vertical-align: middle; }
+
+/* v1.2 */
+.rules-picker { margin: 8px 0; }
+.rules-picker .check { align-items: flex-start; }
+.select-buttons { margin: 4px 0 8px; gap: 6px; flex-wrap: wrap; }
+.select-buttons button { font-size: 0.85rem; padding: 4px 10px; }
+.filter-row { display: block; margin: 8px 0; }
+.caucus-banner { padding: 8px 12px; border: 1px solid #c62828; border-radius: 8px; }
+.hint { margin: 12px 0; padding: 8px 12px; border: 1px dashed var(--accent); border-radius: 8px; }
+.hint summary { cursor: pointer; font-weight: 600; }
+.hint-yes { color: #2e7d32; }
+.hint-close { color: #b26a00; }
+.hint-no { color: #c62828; }
+.whats-new { border-color: var(--accent); }
+.whats-new ul { padding-left: 18px; }
+.commitment-picker { display: block; margin: 2px 0 6px 28px; font-size: 0.8rem; color: var(--muted, #6b6a65); }
+.commitment-picker select { font-size: 0.8rem; padding: 1px 4px; max-width: 70%; }

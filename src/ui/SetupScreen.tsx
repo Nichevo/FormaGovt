@@ -13,6 +13,7 @@ import { AchievementsPanel } from './AchievementsPanel';
 import { dailyChallenge } from '../engine/daily';
 import { DEFAULT_DAYS, SHORT_DAYS } from '../engine/game';
 import type { Challenge } from './share';
+import { LATEST_RULES, RULES_LABELS, RULES_VERSIONS, type RulesVersion } from '../engine/rules';
 
 const VARIANCE_LABELS: Record<Exclude<VarianceLevel, 'custom'>, string> = {
   off: 'Off: use the scenario exactly',
@@ -42,6 +43,8 @@ export function SetupScreen({
   const [seed, setSeed] = useState(() => known?.seed ?? randomSeed());
   const [short, setShort] = useState(known?.days === SHORT_DAYS);
   const days = short ? SHORT_DAYS : DEFAULT_DAYS;
+  const [rules, setRules] = useState<RulesVersion>(known?.rules ?? LATEST_RULES);
+  const [challenges, setChallenges] = useState(known ? !!known.challenges : true);
   const [playerId, setPlayerId] = useState<string | null>(
     known?.playerId && PARTY_BY_ID[known.playerId] ? known.playerId : null,
   );
@@ -59,8 +62,9 @@ export function SetupScreen({
         majority: result.majority,
         totalSeats: result.totalSeats,
         days,
+        rules,
       }),
-    [result, days],
+    [result, days, rules],
   );
   const ordered = [...result.parties].sort((a, b) => b.total - a.total);
   const byPosition = [...result.parties].sort((a, b) => leftRight(a.partyId) - leftRight(b.partyId));
@@ -96,7 +100,7 @@ export function SetupScreen({
                   ]),
                 ),
               );
-              onReplay({ ...daily, days: DEFAULT_DAYS, daily: true });
+              onReplay({ ...daily, days: DEFAULT_DAYS, rules: LATEST_RULES, challenges: true, daily: true });
             }}
           >
             Play today's challenge
@@ -249,6 +253,27 @@ export function SetupScreen({
             <input type="checkbox" checked={short} onChange={() => setShort(!short)} />
             <span>Short game ({SHORT_DAYS} days of talks instead of {DEFAULT_DAYS})</span>
           </label>
+          <fieldset className="rules-picker">
+            <legend>
+              Rules <Explain topic="rules" label="rules versions" />
+            </legend>
+            {RULES_VERSIONS.map((v) => (
+              <label key={v} className="check">
+                <input type="radio" name="rules" checked={rules === v} onChange={() => setRules(v)} />
+                <span>
+                  <strong>{RULES_LABELS[v].label}</strong> <span className="muted small">{RULES_LABELS[v].detail}</span>
+                </span>
+              </label>
+            ))}
+            <label className="check">
+              <input type="checkbox" disabled={rules !== '1.2'} checked={rules === '1.2' && challenges} onChange={() => setChallenges(!challenges)} />
+              <span>
+                Leadership challenges: if your voters stay unhappy, your caucus warns you, then may vote you out{' '}
+                <Explain topic="leadership" label="leadership challenges" />
+                {rules !== '1.2' && <span className="muted small"> (v1.2 rules only)</span>}
+              </span>
+            </label>
+          </fieldset>
           <button
             type="button"
             className="primary"
@@ -264,8 +289,18 @@ export function SetupScreen({
                 scenarioLabel: scenario.label,
                 startedAt: Date.now(),
                 days,
+                rules,
+                challenges: rules === '1.2' && challenges,
                 // Still the daily game only if nothing was changed.
-                daily: !!known?.daily && known.seed === seed && known.variance === variance && known.scenarioId === scenarioId && known.playerId === playerId && !short,
+                daily:
+                  !!known?.daily &&
+                  known.seed === seed &&
+                  known.variance === variance &&
+                  known.scenarioId === scenarioId &&
+                  known.playerId === playerId &&
+                  !short &&
+                  rules === LATEST_RULES &&
+                  challenges,
               })
             }
           >
