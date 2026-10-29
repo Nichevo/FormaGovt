@@ -261,6 +261,52 @@
       "fiscalBasis": "estimate",
       "fiscalNote": "Game estimate, not a costing. Assumes a regional fund of about $300m a year, about the size of past regional development funds.",
       "sourceUrl": "https://www.newcastleherald.com.au/story/9367059/now-or-never-nz-first-pushes-culture-war-policies/"
+    },
+    {
+      "id": "nzf-bnz",
+      "title": "Buy back BNZ",
+      "summary": "Buys the Bank of New Zealand and merges it with Kiwibank into a Crown-owned bank, funded by bonds and Crown investors.",
+      "issue": "governance",
+      "stance": -1,
+      "weight": 3,
+      "isBottomLine": false,
+      "voterSalience": 0.5,
+      "fiscalImpactNZDm": 0,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Debt-funded purchase; the game assumes bank profits roughly cover the interest, so no yearly effect.",
+      "sourceUrl": "https://www.odt.co.nz/news/national/peters-outlines-compulsory-kiwisaver-and-bnz-buyback-plans"
+    },
+    {
+      "id": "nzf-rail",
+      "title": "Ten-point rail plan",
+      "summary": "Keeps the Te Huia train, sets up Auckland and Wellington rail companies, upgrades the Kaimai Tunnel and plans more Auckland main lines.",
+      "issue": "governance",
+      "stance": 0,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.4,
+      "fiscalImpactNZDm": -60,
+      "fiscalType": "spending",
+      "fiscalBasis": "party",
+      "fiscalNote": "The party's costed items total about $235m, spread over four years here.",
+      "fiscalSourceUrl": "https://www.1news.co.nz/2026/10/27/nz-first-would-keep-te-huia-form-city-rail-firms-upgrade-kaimai/",
+      "sourceUrl": "https://www.1news.co.nz/2026/10/27/nz-first-would-keep-te-huia-form-city-rail-firms-upgrade-kaimai/"
+    },
+    {
+      "id": "nzf-offshore-survey",
+      "title": "$1bn offshore oil and gas survey",
+      "summary": "Funds a $1bn survey of offshore oil and gas reserves.",
+      "issue": "climate-environment",
+      "stance": 1.5,
+      "weight": 2,
+      "isBottomLine": false,
+      "voterSalience": 0.4,
+      "fiscalImpactNZDm": -250,
+      "fiscalType": "spending",
+      "fiscalBasis": "estimate",
+      "fiscalNote": "Game estimate, not a costing. The $1bn survey cost spread over four years.",
+      "sourceUrl": "https://www.nzherald.co.nz/nz/politics/election-2026-nz-first-leader-winston-peters-to-unveil-new-policy-at-campaign-launch-to-conclude-convention/ZA3PMUUM7JDOTPOWJCM62BE7XU/"
     }
   ]
 }
