@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { PARTIES, PARTY_BY_ID } from './parties';
 import { SCENARIOS, averagePolls, POLLS } from './scenarios';
 import { allocateSeats } from '../engine/seats';
-import { DELIVERY_2026, DELIVERY_STATUSES } from './delivery';
 
 describe('party data', () => {
   it('has all seven parties', () => {
@@ -57,17 +56,5 @@ describe('scenarios', () => {
     expect(result.totalSeats).toBeGreaterThanOrEqual(120);
     const seated = result.parties.reduce((s, p) => s + p.total, 0) + result.otherElectorates;
     expect(seated).toBe(result.totalSeats);
-  });
-});
-
-describe('policy delivery tracker', () => {
-  it('cites a source and a known party and status for every item', () => {
-    for (const item of DELIVERY_2026.items) {
-      expect(PARTY_BY_ID[item.party], item.title).toBeDefined();
-      expect(Object.keys(DELIVERY_STATUSES)).toContain(item.status);
-      expect(item.sourceUrl).toMatch(/^https:\/\//);
-      expect(item.checked).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    }
-    if (DELIVERY_2026.available) expect(DELIVERY_2026.agreementUrl).toMatch(/^https:\/\//);
   });
 });

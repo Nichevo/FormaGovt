@@ -316,9 +316,3 @@ button.link { text-align: left; }
 .who-votes-change td, .who-votes-change th { padding: 4px 6px; }
 .who-votes-change { border-collapse: collapse; }
 .who-votes-change td, .who-votes-change th { text-align: left; border-bottom: 1px solid var(--border); }
-.tracker-list { list-style: none; padding: 0; }
-.tracker-list li { margin: 6px 0; }
-.tracker-status { font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); }
-.tracker-status.done { color: #2e7d32; }
-.tracker-status.changed, .tracker-status.in-progress { color: #b26a00; }
-.tracker-status.dropped { color: #c62828; }
