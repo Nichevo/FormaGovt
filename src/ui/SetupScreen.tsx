@@ -153,7 +153,7 @@ export function SetupScreen({
           )}
         </p>
 
-        <WhoVotes value={turnout} onChange={setTurnout} before={unchanged} after={result} />
+        <WhoVotes value={turnout} onChange={setTurnout} partyVote={scenario.partyVote} before={unchanged} after={result} />
 
         <Hemicycle parties={byPosition} otherSeats={result.otherElectorates} totalSeats={result.totalSeats} />
         <p className="majority">
