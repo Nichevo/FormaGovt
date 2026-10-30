@@ -13,6 +13,7 @@ import {
   leanOf,
   splitVote,
   TURNOUT_PRESETS,
+  votesByGroup,
   type TurnoutSettings,
 } from './turnout';
 
@@ -73,5 +74,19 @@ describe('who votes', () => {
     expect(decodeTurnout('e1,2;t3', ['greens'])).toBeUndefined();
     expect(decodeTurnout(null, [])).toBeUndefined();
     expect(defaultTurnout().enrol).toHaveLength(AGE_BANDS.length);
+  });
+
+  it('gives each group a party vote that adds up to the result', () => {
+    const t = preset('youth-surge');
+    const groups = votesByGroup(pollAverage.partyVote, t);
+    const totals: Record<string, number> = {};
+    for (const g of groups) for (const [p, v] of Object.entries(g.votes)) totals[p] = (totals[p] ?? 0) + v;
+    const after = applyTurnout(pollAverage, t).partyVote;
+    for (const p of Object.keys(after)) expect(share(totals, p)).toBeCloseTo(after[p]!, 6);
+    // Unchanged turnout reproduces the poll, group by group.
+    const today = votesByGroup(pollAverage.partyVote, defaultTurnout());
+    const sum: Record<string, number> = {};
+    for (const g of today) for (const [p, v] of Object.entries(g.votes)) sum[p] = (sum[p] ?? 0) + v;
+    for (const p of Object.keys(pollAverage.partyVote)) expect(share(sum, p)).toBeCloseTo(share(pollAverage.partyVote, p), 2);
   });
 });

@@ -82,6 +82,8 @@ import { saveRecord } from './history';
 import { unlock } from './achievementStore';
 import { ACHIEVEMENTS, earnedBy } from '../engine/achievements';
 import { ACTUAL_2026 } from '../data/actual';
+import { DELIVERY_2026 } from '../data/delivery';
+import { PolicyTracker } from './PolicyTracker';
 import type { GovType } from '../engine/game';
 import { downloadResultCard } from './resultCard';
 import { challengeUrl, shareLink } from './share';
@@ -1276,6 +1278,11 @@ function Results({
               Source
             </a>
           </p>
+        </div>
+      )}
+      {DELIVERY_2026.available && (
+        <div className="panel">
+          <PolicyTracker />
         </div>
       )}
       <div className="two-col">

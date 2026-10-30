@@ -287,7 +287,13 @@ button.link { text-align: left; }
 /* Who votes? */
 .who-votes { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin: 12px 0; }
 .who-votes summary { cursor: pointer; font-weight: 600; }
-.pyramid { margin: 12px 0; }
+.pyramid { margin: 12px 0; min-width: 0; }
+.pyramid h4 { margin: 0 0 6px; font-size: 0.9rem; }
+.pyramids { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) { .pyramids { grid-template-columns: 1fr; } }
+.party-pyramid .pyramid-bar span { flex: none; }
+.pyramid-mode { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; color: var(--muted); }
+.table-scroll { overflow-x: auto; }
 .pyramid-head, .pyramid-row { display: grid; grid-template-columns: 1fr 3.2em 1fr; align-items: center; gap: 6px; }
 .pyramid-head { font-size: 0.8rem; color: var(--muted); }
 .pyramid-head span:first-child { text-align: right; }
@@ -310,3 +316,9 @@ button.link { text-align: left; }
 .who-votes-change td, .who-votes-change th { padding: 4px 6px; }
 .who-votes-change { border-collapse: collapse; }
 .who-votes-change td, .who-votes-change th { text-align: left; border-bottom: 1px solid var(--border); }
+.tracker-list { list-style: none; padding: 0; }
+.tracker-list li { margin: 6px 0; }
+.tracker-status { font-size: 0.75rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); }
+.tracker-status.done { color: #2e7d32; }
+.tracker-status.changed, .tracker-status.in-progress { color: #b26a00; }
+.tracker-status.dropped { color: #c62828; }

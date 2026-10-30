@@ -3,6 +3,7 @@ import { POLLS } from '../data/scenarios';
 import { BASELINE } from '../engine/budget';
 import { DISCLAIMER } from './Disclaimer';
 import { VERSION_LABEL } from '../version';
+import { PolicyTracker } from './PolicyTracker';
 
 function hostOf(url: string): string {
   try {
@@ -85,6 +86,8 @@ export function About({ onClose }: { onClose: () => void }) {
         <li>The game is switched off on election day, 7 November 2026.</li>
         <li>The 2017 scenario is a what-if: real 2017 seats played with today's parties and policies.</li>
       </ul>
+
+      <PolicyTracker />
 
       <h3>Where the data comes from</h3>
       <ul>

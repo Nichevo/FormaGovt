@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { PARTIES, PARTY_BY_ID } from '../data/parties';
 import type { SeatResult } from '../engine/seats';
 import {
@@ -6,6 +7,8 @@ import {
   groupsUnder,
   isDefaultTurnout,
   TURNOUT_PRESETS,
+  votesByGroup,
+  type GroupChange,
   type TurnoutSettings,
 } from '../engine/turnout';
 import { Explain } from './Explain';
@@ -17,11 +20,14 @@ const signed = (n: number, digits = 0) => `${n > 0 ? '+' : n < 0 ? '−' : '±'}
 export function WhoVotes({
   value,
   onChange,
+  partyVote,
   before,
   after,
   locked,
 }: {
   value: TurnoutSettings;
+  /** The scenario's party vote before any turnout change. */
+  partyVote: Record<string, number>;
   onChange: (t: TurnoutSettings) => void;
   /** Seats with nobody's turnout changed. */
   before: SeatResult;
@@ -56,7 +62,9 @@ export function WhoVotes({
             them were not enrolled on {new Date(DEMOGRAPHICS.asOf).toLocaleDateString('en-NZ', { day: 'numeric', month: 'long' })}.
             Each group's vote leans the way recent polls show it does, and the result matches the poll until you change something.
           </p>
+          <div className="pyramids">
           <div className="pyramid" role="img" aria-label="Population by age and sex: voted, enrolled but not voting, not enrolled">
+            <h4>Who can vote</h4>
             <div className="pyramid-head">
               <span>Women</span>
               <span />
@@ -97,6 +105,8 @@ export function WhoVotes({
                 <i className="unenrolled" /> Not enrolled
               </span>
             </div>
+          </div>
+          <PartyPyramid partyVote={partyVote} value={value} groups={groups} widest={widest} />
           </div>
 
           <div className="preset-buttons">
@@ -182,7 +192,8 @@ export function WhoVotes({
             Sources: <a href={DEMOGRAPHICS.sources.enrolment.url} target="_blank" rel="noreferrer">enrolment</a>,{' '}
             <a href={DEMOGRAPHICS.sources.turnout.url} target="_blank" rel="noreferrer">2023 turnout by age</a>,{' '}
             <a href={DEMOGRAPHICS.sources.population.url} target="_blank" rel="noreferrer">population by age and sex</a>,{' '}
-            <a href={DEMOGRAPHICS.sources.leans.url} target="_blank" rel="noreferrer">party vote by age and sex</a>. Electorate seats stay as
+            <a href={DEMOGRAPHICS.sources.leans.url} target="_blank" rel="noreferrer">party vote by age and sex</a> (Roy Morgan only splits
+            age at 50, so the party mix changes there). Electorate seats stay as
             in the scenario. A game estimate, not a forecast.
           </p>
         </>
@@ -230,5 +241,124 @@ function ChangeTable({ before, after }: { before: SeatResult; after: SeatResult 
         )}
       </tbody>
     </table>
+  );
+}
+
+/** Left to right, so the bars read the same way on both sides. */
+const PARTY_ORDER = ['greens', 'tpm', 'labour', 'opportunity', 'nzfirst', 'national', 'act', 'other'];
+const nameOf = (id: string) => PARTY_BY_ID[id]?.name ?? 'Others';
+const shortOf = (id: string) => PARTY_BY_ID[id]?.shortName ?? 'Oth';
+const colourOf = (id: string) => PARTY_BY_ID[id]?.colour ?? '#9a9a9a';
+
+/** Party vote by age and sex: the voters from the first pyramid, split by who they vote for. */
+function PartyPyramid({
+  partyVote,
+  value,
+  groups,
+  widest,
+}: {
+  partyVote: Record<string, number>;
+  value: TurnoutSettings;
+  groups: GroupChange[];
+  widest: number;
+}) {
+  const [mode, setMode] = useState<'votes' | 'share'>('share');
+  const byGroup = votesByGroup(partyVote, value);
+  const parties = PARTY_ORDER.filter((p) => p in partyVote).concat(Object.keys(partyVote).filter((p) => !PARTY_ORDER.includes(p)));
+  const rowOf = (band: string, sex: 'female' | 'male') => {
+    const i = groups.findIndex((g) => g.group.band === band && g.group.sex === sex);
+    const votes = byGroup[i]!.votes;
+    const total = Object.values(votes).reduce((s, v) => s + v, 0);
+    return { votes, total };
+  };
+  const pct = (n: number, total: number) => (total > 0 ? (n / total) * 100 : 0);
+  const sexName = (sex: 'female' | 'male') => (sex === 'female' ? 'Women' : 'Men');
+
+  return (
+    <div className="pyramid party-pyramid">
+      <h4>How they vote</h4>
+      <div className="pyramid-head">
+        <span>Women</span>
+        <span />
+        <span>Men</span>
+      </div>
+      <div role="img" aria-label="Party vote by age and sex. The table below has the figures.">
+        {[...AGE_BANDS].reverse().map((band) => {
+          const bar = (sex: 'female' | 'male') => {
+            const { votes, total } = rowOf(band, sex);
+            const scale = mode === 'votes' ? total / widest : 1;
+            return (
+              <div className={`pyramid-bar ${sex}`}>
+                {parties.map((p) =>
+                  votes[p]! > 0 ? (
+                    <span
+                      key={p}
+                      style={{ width: `${(votes[p]! / total) * scale * 100}%`, background: colourOf(p) }}
+                      title={`${sexName(sex)} ${band}: ${nameOf(p)} ${pct(votes[p]!, total).toFixed(0)}% (${fmt(votes[p]!)} votes)`}
+                    />
+                  ) : null,
+                )}
+              </div>
+            );
+          };
+          return (
+            <div className="pyramid-row" key={band}>
+              {bar('female')}
+              <span className="pyramid-age">{band}</span>
+              {bar('male')}
+            </div>
+          );
+        })}
+      </div>
+      <div className="pyramid-legend small">
+        {parties.map((p) => (
+          <span key={p}>
+            <i style={{ background: colourOf(p) }} /> {nameOf(p)}
+          </span>
+        ))}
+      </div>
+      <div className="pyramid-mode small">
+        <label>
+          <input type="radio" name="pyramid-mode" checked={mode === 'share'} onChange={() => setMode('share')} /> Share of each group
+        </label>
+        <label>
+          <input type="radio" name="pyramid-mode" checked={mode === 'votes'} onChange={() => setMode('votes')} /> Number of votes
+        </label>
+      </div>
+      <details className="small">
+        <summary>Show as a table</summary>
+        <div className="table-scroll">
+          <table className="who-votes-change">
+            <thead>
+              <tr>
+                <th>Group</th>
+                {parties.map((p) => (
+                  <th key={p} title={nameOf(p)}>
+                    {shortOf(p)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {AGE_BANDS.flatMap((band) =>
+                (['female', 'male'] as const).map((sex) => {
+                  const { votes, total } = rowOf(band, sex);
+                  return (
+                    <tr key={`${band}-${sex}`}>
+                      <td>
+                        {sexName(sex)} {band}
+                      </td>
+                      {parties.map((p) => (
+                        <td key={p}>{pct(votes[p]!, total).toFixed(0)}%</td>
+                      ))}
+                    </tr>
+                  );
+                }),
+              )}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
   );
 }
