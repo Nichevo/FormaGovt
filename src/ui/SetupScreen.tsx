@@ -10,7 +10,7 @@ import type { GameSetup } from './App';
 import { Explain } from './Explain';
 import { HistoryPanel } from './HistoryPanel';
 import { AchievementsPanel } from './AchievementsPanel';
-import { dailyChallenge } from '../engine/daily';
+import { dailyChallenge, DAILY_SCENARIO_ID, DAILY_VARIANCE } from '../engine/daily';
 import { DEFAULT_DAYS, SHORT_DAYS } from '../engine/game';
 import type { Challenge } from './share';
 import { LATEST_RULES, RULES_LABELS, RULES_VERSIONS, type RulesVersion } from '../engine/rules';
@@ -99,10 +99,10 @@ export function SetupScreen({
           <button
             type="button"
             onClick={() => {
-              const pollAverage = SCENARIOS.find((s) => s.id === 'poll-average')!;
+              const base = SCENARIOS.find((s) => s.id === DAILY_SCENARIO_ID)!;
               const daily = dailyChallenge(PARTIES, (s) =>
                 Object.fromEntries(
-                  allocateSeats(applyVariance(pollAverage, { level: 'election-night', seed: s })).parties.map((p) => [
+                  allocateSeats(applyVariance(base, { level: DAILY_VARIANCE, seed: s })).parties.map((p) => [
                     p.partyId,
                     p.total,
                   ]),
