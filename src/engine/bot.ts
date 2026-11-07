@@ -41,6 +41,7 @@ export function playBot(
     days?: number;
     rules?: RulesVersion;
     leadershipChallenges?: boolean;
+    ease?: number;
   },
   strategy: BotStrategy = 'closest',
 ): BotRun {
@@ -171,7 +172,7 @@ export type Difficulty = 'easy' | 'medium' | 'hard';
  */
 export function rateDifficulty(
   parties: Party[],
-  setup: { seats: Record<string, number>; majority: number; totalSeats: number; days?: number; rules?: RulesVersion },
+  setup: { seats: Record<string, number>; majority: number; totalSeats: number; days?: number; rules?: RulesVersion; ease?: number },
   seeds: number[] = [11, 22, 33],
 ): Record<string, Difficulty> {
   const ratings: Record<string, Difficulty> = {};

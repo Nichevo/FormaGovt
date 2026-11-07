@@ -47,16 +47,23 @@ const assumedElectorates = {
 
 const latest = POLLS[0]!;
 
-interface ResultStage {
+export interface ResultStage {
   available: boolean;
   asOf: string;
   counted: string;
   sourceUrl: string;
+  officialUrl: string;
   partyVote: Record<string, number>;
   electorates: Record<string, number>;
   otherElectorates: number;
   marginalElectorates: MarginalElectorate[];
 }
+
+/** The real 2026 results as entered, for the summary at the top of the setup screen. */
+export const RESULTS_2026 = {
+  electionNight: results2026.electionNight as ResultStage,
+  official: results2026.official as ResultStage,
+};
 
 function resultScenario(id: string, label: string, stage: ResultStage, what: string): Scenario[] {
   if (!stage.available) return [];

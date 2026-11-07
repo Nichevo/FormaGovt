@@ -1,7 +1,9 @@
 import { readJson, writeJson } from './storage';
 import type { Challenge } from './share';
 
-export interface PlayRecord extends Required<Omit<Challenge, 'daily' | 'days' | 'rules' | 'challenges' | 'turnout'>> {
+export interface PlayRecord extends Required<Omit<Challenge, 'daily' | 'days' | 'rules' | 'challenges' | 'turnout' | 'ease'>> {
+  /** Ease setting; games saved before v1.2.3 have none and played 0. */
+  ease?: number;
   /** "Who votes?" changes the game started with. */
   turnout?: Challenge['turnout'];
   /** Rules version; games saved before v1.2 have none and played v1.1. */

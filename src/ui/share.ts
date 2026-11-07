@@ -2,6 +2,7 @@ import type { VarianceLevel } from '../engine/variance';
 import { isRulesVersion, type RulesVersion } from '../engine/rules';
 import { decodeTurnout, encodeTurnout, isDefaultTurnout, type TurnoutSettings } from '../engine/turnout';
 import { PARTIES } from '../data/parties';
+import { clampEase } from '../engine/ease';
 
 /** Everything needed to replay the same election result and party. */
 export interface Challenge {
@@ -17,11 +18,13 @@ export interface Challenge {
   challenges?: boolean;
   /** "Who votes?" changes to enrolment and turnout; null or missing plays the scenario as is. */
   turnout?: TurnoutSettings | null;
+  /** Ease setting, 0 (normal rules, the hardest) to 4; links without one play 0. */
+  ease?: number;
   /** Set when this is today's daily challenge; never part of a link. */
   daily?: boolean;
 }
 
-const VARIANCES = ['off', 'poll-error', 'election-night'] as const;
+const VARIANCES = ['off', 'poll-error', 'election-night', 'special-votes'] as const;
 
 /** Links shared before talks became three weeks long keep their ten days. */
 const LEGACY_DAYS = 10;
@@ -33,6 +36,7 @@ export function challengeHash(c: Challenge): string {
   if (c.rules && c.rules !== '1.1') params.set('r', c.rules);
   if (c.rules === '1.2' && c.challenges) params.set('c', '1');
   if (c.turnout && !isDefaultTurnout(c.turnout)) params.set('w', encodeTurnout(c.turnout));
+  if (c.ease) params.set('e', String(c.ease));
   return `#play?${params.toString()}`;
 }
 
@@ -53,7 +57,7 @@ export function parseChallenge(hash: string): Challenge | null {
   const r = params.get('r');
   const rules: RulesVersion = isRulesVersion(r) ? r : '1.1';
   const turnout = decodeTurnout(params.get('w'), PARTIES.map((p) => p.id)) ?? null;
-  return { scenarioId, variance, seed, playerId: params.get('p') ?? undefined, days, rules, challenges: rules === '1.2' && params.get('c') === '1', turnout };
+  return { scenarioId, variance, seed, playerId: params.get('p') ?? undefined, days, rules, challenges: rules === '1.2' && params.get('c') === '1', turnout, ease: clampEase(params.get('e')) };
 }
 
 /** Uses the phone's share sheet where there is one, otherwise copies the link. */

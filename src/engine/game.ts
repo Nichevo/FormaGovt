@@ -1,3 +1,4 @@
+import { clampEase, EASE_RIVAL_DELAY_STEP, EASE_TRUST_STEP } from './ease';
 import type { Party, Policy } from '../data/schema';
 import { budgetFor, type Budget } from './budget';
 import {
@@ -174,6 +175,8 @@ export interface GameState {
   /** v1.2 setting: the player's caucus can vote them out when voters stay unhappy. */
   leadershipChallenges?: boolean;
   caucus?: CaucusState;
+  /** Ease setting, 1 to 4; absent is 0, the normal (hardest) rules. */
+  ease?: number;
 }
 
 /** v1.2 leadership challenges: how restless the player's caucus is. */
@@ -257,6 +260,8 @@ export interface NewGame {
   /** Rules version; v1.1 unless set. */
   rules?: RulesVersion;
   leadershipChallenges?: boolean;
+  /** Ease setting, 0 (normal rules) to 4 (easiest). */
+  ease?: number;
 }
 
 export function createGame({
@@ -269,11 +274,13 @@ export function createGame({
   days = DEFAULT_DAYS,
   rules,
   leadershipChallenges,
+  ease: easeSetting,
 }: NewGame): GameState {
+  const ease = clampEase(easeSetting);
   const partners: Record<string, PartnerState> = {};
   for (const party of parties) {
     if (party.id === player.id || (seats[party.id] ?? 0) === 0) continue;
-    const trust = party.relationships.find((r) => r.partyId === player.id)?.trust ?? 30;
+    const trust = Math.min(100, (party.relationships.find((r) => r.partyId === player.id)?.trust ?? 30) + ease * EASE_TRUST_STEP);
     partners[party.id] = { trust, failures: 0, status: 'open', rivalAttempts: 0 };
   }
   const state: GameState = {
@@ -294,6 +301,7 @@ export function createGame({
     news: [],
     ...(rules && rules !== '1.1' ? { rules } : {}),
     ...(rules === '1.2' && leadershipChallenges ? { leadershipChallenges: true } : {}),
+    ...(ease > 0 ? { ease } : {}),
   };
   // A party that already holds a majority on its own wins straight away.
   return recordDay(checkOutcome(state), parties);
@@ -546,6 +554,7 @@ export function contextFor(state: GameState, parties: Party[], offer: Offer): Ne
     renegotiation: !!current.renegotiating && !current.unsettled,
     reapproach: !!current.reapproached && current.status === 'open' && !current.deal,
     currentPartners,
+    ease: state.ease,
   };
 }
 
@@ -1039,7 +1048,7 @@ function newsFor(state: GameState, parties: Party[], before: DayPoint, now: DayP
 function rivalMove(state: GameState, parties: Party[]): GameState {
   const rival = parties.find((p) => p.id === state.rivalId);
   // The player gets a head start long enough for one big opening offer.
-  if (!rival || state.day < RIVAL_STARTS_DAY || rivalSeats(state) === 0) return state;
+  if (!rival || state.day < RIVAL_STARTS_DAY + (state.ease ?? 0) * EASE_RIVAL_DELAY_STEP || rivalSeats(state) === 0) return state;
   // Big offers take the rival two days too.
   if ((state.rivalBusyUntil ?? 0) >= state.day) return state;
   const rivalPartners = Object.entries(state.partners)

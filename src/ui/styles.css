@@ -310,3 +310,11 @@ button.link { text-align: left; }
 .who-votes-change td, .who-votes-change th { padding: 4px 6px; }
 .who-votes-change { border-collapse: collapse; }
 .who-votes-change td, .who-votes-change th { text-align: left; border-bottom: 1px solid var(--border); }
+
+/* 2026 result summary and the Ease setting */
+.result-summary { border-left: 4px solid var(--accent, #1f4e8c); }
+.result-summary h2 { margin-top: 0; }
+.bloc-list { margin: 8px 0; padding-left: 20px; }
+.start-row { flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.ease-picker { display: flex; flex-direction: column; gap: 4px; flex: 1 1 100%; max-width: 480px; margin-left: auto; }
+.ease-picker input[type='range'] { width: 100%; }

@@ -6,6 +6,8 @@ export interface CardData {
   lostToRival: boolean;
   lostToCaucus?: boolean;
   hintUsed?: boolean;
+  /** Ease setting above 0, noted on the card. */
+  ease?: number;
   partners: string[];
   seats: number;
   majority: number;
@@ -58,7 +60,8 @@ export function downloadResultCard(data: CardData): void {
     const scoreWidth = ctx.measureText(`${data.score}`).width;
     ctx.font = '32px system-ui, sans-serif';
     ctx.fillStyle = '#6b6a65';
-    ctx.fillText(data.hintUsed ? "/ 100 game score · negotiator's hint used" : '/ 100 game score', 64 + scoreWidth + 20, 500);
+    const notes = [data.hintUsed ? "negotiator's hint used" : '', data.ease ? `ease ${data.ease} of 4` : ''].filter(Boolean);
+    ctx.fillText(['/ 100 game score', ...notes].join(' · '), 64 + scoreWidth + 20, 500);
   }
 
   ctx.fillStyle = '#6b6a65';

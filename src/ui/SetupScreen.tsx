@@ -1,3 +1,4 @@
+import { clampEase, EASE_LABELS, MAX_EASE } from '../engine/ease';
 import { useMemo, useState } from 'react';
 import { allocateSeats } from '../engine/seats';
 import { applyVariance, type VarianceLevel } from '../engine/variance';
@@ -21,7 +22,11 @@ const VARIANCE_LABELS: Record<Exclude<VarianceLevel, 'custom'>, string> = {
   off: 'Off: use the scenario exactly',
   'poll-error': 'Poll error: shares move by about 2 points',
   'election-night': 'Election night: bigger swings and seat upsets',
+  'special-votes': 'Special votes: shift like past special votes, close seats re-rolled',
 };
+
+/** Special votes only make sense on an election-night count. */
+const SPECIAL_VOTES_SCENARIOS = ['result-2026-night'];
 
 /** Average stance across the policy groups, used to seat parties left to right. */
 export function leftRight(partyId: string): number {
@@ -41,7 +46,7 @@ export function SetupScreen({
 }) {
   const known = initial && SCENARIOS.some((s) => s.id === initial.scenarioId) ? initial : null;
   const [scenarioId, setScenarioId] = useState(known?.scenarioId ?? SCENARIOS[0]!.id);
-  const [variance, setVariance] = useState<Exclude<VarianceLevel, 'custom'>>(known?.variance ?? 'off');
+  const [chosenVariance, setVariance] = useState<Exclude<VarianceLevel, 'custom'>>(known?.variance ?? 'off');
   const [seed, setSeed] = useState(() => known?.seed ?? randomSeed());
   const [short, setShort] = useState(known?.days === SHORT_DAYS);
   const days = short ? SHORT_DAYS : DEFAULT_DAYS;
@@ -53,6 +58,9 @@ export function SetupScreen({
   );
 
   const scenario = SCENARIOS.find((s) => s.id === scenarioId)!;
+  const specialVotesAllowed = SPECIAL_VOTES_SCENARIOS.includes(scenarioId);
+  const variance = chosenVariance === 'special-votes' && !specialVotesAllowed ? 'off' : chosenVariance;
+  const [ease, setEase] = useState(() => clampEase(known?.ease));
   const unchanged = useMemo(
     () => allocateSeats(applyVariance(scenario, { level: variance, seed })),
     [scenario, variance, seed],
@@ -71,8 +79,9 @@ export function SetupScreen({
         totalSeats: result.totalSeats,
         days,
         rules,
+        ease,
       }),
-    [result, days, rules],
+    [result, days, rules, ease],
   );
   const ordered = [...result.parties].sort((a, b) => b.total - a.total);
   const byPosition = [...result.parties].sort((a, b) => leftRight(a.partyId) - leftRight(b.partyId));
@@ -108,7 +117,7 @@ export function SetupScreen({
                   ]),
                 ),
               );
-              onReplay({ ...daily, days: DEFAULT_DAYS, rules: LATEST_RULES, challenges: true, daily: true });
+              onReplay({ ...daily, days: DEFAULT_DAYS, rules: LATEST_RULES, challenges: true, ease: 0, daily: true });
             }}
           >
             Play today's challenge
@@ -131,13 +140,16 @@ export function SetupScreen({
           <label>
             Variance
             <select value={variance} onChange={(e) => setVariance(e.target.value as typeof variance)}>
-              {Object.entries(VARIANCE_LABELS).map(([id, label]) => (
+              {Object.entries(VARIANCE_LABELS)
+                .filter(([id]) => id !== 'special-votes' || specialVotesAllowed)
+                .map(([id, label]) => (
                 <option key={id} value={id}>
                   {label}
                 </option>
               ))}
             </select>
           </label>
+          {variance === 'special-votes' && <Explain topic="special-votes" label="special votes" />}
           {variance !== 'off' && (
             <button type="button" onClick={() => setSeed(randomSeed())}>
               Re-roll (seed {seed})
@@ -284,6 +296,26 @@ export function SetupScreen({
               </span>
             </label>
           </fieldset>
+          <label className="ease-picker">
+            <span>
+              Ease: <strong>{EASE_LABELS[ease]}</strong>{' '}
+              <Explain topic="ease" label="the Ease setting" />
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={MAX_EASE}
+              step={1}
+              value={ease}
+              onChange={(e) => setEase(clampEase(e.target.value))}
+              aria-valuetext={EASE_LABELS[ease]}
+            />
+            <span className="muted small">
+              {ease === 0
+                ? 'The normal rules: parties drive a hard bargain.'
+                : 'Other parties accept a little less, trust you a little more, and the rival bloc starts later. Shown on your result.'}
+            </span>
+          </label>
           <button
             type="button"
             className="primary"
@@ -302,6 +334,7 @@ export function SetupScreen({
                 rules,
                 challenges: rules === '1.2' && challenges,
                 turnout: isDefaultTurnout(turnout) ? null : turnout,
+                ease,
                 // Still the daily game only if nothing was changed.
                 daily:
                   !!known?.daily &&
@@ -312,6 +345,7 @@ export function SetupScreen({
                   !short &&
                   rules === LATEST_RULES &&
                   challenges &&
+                  ease === 0 &&
                   isDefaultTurnout(turnout),
               })
             }
