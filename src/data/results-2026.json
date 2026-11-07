@@ -1,0 +1,68 @@
+{
+  "note": "Real 2026 election results. Election night is the Electoral Commission's preliminary count as reported by the media (the Commission's own site could not be read when this was entered). Official is filled in after the Commission declares the final result, including special votes, due 27 November 2026.",
+  "electionNight": {
+    "available": true,
+    "asOf": "2026-11-07",
+    "counted": "90.6% of results counted, before special votes",
+    "sourceUrl": "https://www.democracyproject.org.nz/p/democracy-briefing-a-fractured-verdict",
+    "officialUrl": "https://electionresults.govt.nz/ge2026/index.html",
+    "sourceNotes": "Party vote shares for National, Labour, Greens, ACT, Opportunity and Te Pāti Māori are as reported at 90.6% counted. NZ First (9.85%) is the reported coalition total of 50.2% less National and ACT. With these shares, the game's seat calculator gives the reported Parliament of 129: National 41 electorates on an entitlement of 36, Te Pāti Māori 5 electorates on an entitlement of 1, the National, ACT and NZ First bloc on 66, Labour, Greens and Te Pāti Māori on 56, and Opportunity on 7. Labour and the Greens' 24 electorates are split 23 to 1 (Auckland Central); the exact split does not change any party's seats.",
+    "partyVote": {
+      "national": 29.34,
+      "labour": 29.13,
+      "greens": 13.32,
+      "act": 11.01,
+      "nzfirst": 9.85,
+      "opportunity": 5.94,
+      "tpm": 0.56
+    },
+    "electorates": {
+      "national": 41,
+      "labour": 23,
+      "greens": 1,
+      "act": 1,
+      "tpm": 5
+    },
+    "otherElectorates": 0,
+    "marginalElectorates": [
+      {
+        "seat": "Te Tai Tokerau",
+        "holder": "tpm",
+        "challenger": "greens",
+        "holdProbability": 0.6
+      },
+      {
+        "seat": "Mt Roskill",
+        "holder": "labour",
+        "challenger": "national",
+        "holdProbability": 0.7
+      },
+      {
+        "seat": "Wairarapa",
+        "holder": "labour",
+        "challenger": "national",
+        "holdProbability": 0.75
+      },
+      {
+        "seat": "Hamilton East",
+        "holder": "national",
+        "challenger": "labour",
+        "holdProbability": 0.6
+      }
+    ],
+    "marginalNote": "Seats with leads of a few hundred votes on election night. Hold chances are a game estimate: special votes have usually moved results slightly to the left."
+  },
+  "official": {
+    "available": false,
+    "asOf": "",
+    "counted": "",
+    "sourceUrl": "https://electionresults.govt.nz/ge2026/index.html",
+    "officialUrl": "https://electionresults.govt.nz/ge2026/index.html",
+    "sourceNotes": "",
+    "partyVote": {},
+    "electorates": {},
+    "otherElectorates": 0,
+    "marginalElectorates": [],
+    "marginalNote": ""
+  }
+}

@@ -1,5 +1,6 @@
 import pollData from './polls.json';
 import electorates2026 from './electorates-2026.json';
+import results2026 from './results-2026.json';
 import type { MarginalElectorate } from '../engine/variance';
 
 export interface Poll {
@@ -46,17 +47,74 @@ const assumedElectorates = {
 
 const latest = POLLS[0]!;
 
+export interface ResultStage {
+  available: boolean;
+  asOf: string;
+  counted: string;
+  sourceUrl: string;
+  officialUrl: string;
+  partyVote: Record<string, number>;
+  electorates: Record<string, number>;
+  otherElectorates: number;
+  marginalElectorates: MarginalElectorate[];
+}
+
+/** The real 2026 results as entered, for the summary at the top of the setup screen. */
+export const RESULTS_2026 = {
+  electionNight: results2026.electionNight as ResultStage,
+  official: results2026.official as ResultStage,
+};
+
+function resultScenario(id: string, label: string, stage: ResultStage, what: string): Scenario[] {
+  if (!stage.available) return [];
+  return [
+    {
+      id,
+      label,
+      description: `${what} ${stage.counted}.`,
+      sourceUrl: stage.sourceUrl,
+      partyVote: withOther(stage.partyVote),
+      electorates: stage.electorates,
+      otherElectorates: stage.otherElectorates,
+      marginalElectorates: stage.marginalElectorates,
+    },
+  ];
+}
+
+/**
+ * The real 2026 result: the official count once it is declared (27 November 2026),
+ * and the election-night preliminary count, which stays playable as a what-if.
+ */
+const RESULT_SCENARIOS: Scenario[] = [
+  ...resultScenario(
+    'result-2026-official',
+    '2026 official result',
+    results2026.official,
+    'The Electoral Commission\'s official 2026 result, including special votes:',
+  ),
+  ...resultScenario(
+    'result-2026-night',
+    '2026 election night (preliminary)',
+    results2026.electionNight,
+    'The 2026 election-night preliminary count:',
+  ),
+];
+
+/** The most up-to-date real result: official once declared, otherwise election night. */
+export const CURRENT_RESULT_ID = RESULT_SCENARIOS[0]?.id ?? 'poll-average';
+
 export const SCENARIOS: Scenario[] = [
+  ...RESULT_SCENARIOS,
   {
     id: 'poll-average',
-    label: `Poll average (${POLLS.length} polls)`,
+    label: `Final poll average (${POLLS.length} polls)`,
     description: `Average of the ${POLLS.length} most recent public polls, ${POLLS.at(-1)!.date} to ${latest.date}.`,
     partyVote: withOther(averagePolls(POLLS)),
     ...assumedElectorates,
   },
   {
     id: 'latest-poll',
-    label: `Latest poll: ${latest.pollster}`,
+    label: `Last poll: ${latest.pollster}`,
     description: `${latest.pollster}, fieldwork ${latest.fieldwork}.`,
     sourceUrl: latest.sourceUrl,
     partyVote: withOther(latest.partyVote),

@@ -1,3 +1,4 @@
+import { EASE_THRESHOLD_STEP } from './ease';
 import type { Party, Policy, Person } from '../data/schema';
 import { budgetFor, type Budget } from './budget';
 import type { Rules } from './rules';
@@ -201,6 +202,8 @@ export interface NegotiationContext {
   rules?: Rules;
   /** v1.2: the partner's own voters' mood if this offer went ahead. */
   partnerMoodOf?: (offer: Offer) => number;
+  /** The player's Ease setting, 0 to 4; lowers the bar for the player's offers only. */
+  ease?: number;
 }
 
 /** v1.2: a partner will not sign a deal that leaves its own voters' mood below this. */
@@ -474,6 +477,7 @@ export function acceptanceThreshold(ctx: NegotiationContext, arrangement: Arrang
   if (ctx.reapproach) base += 0.08;
   // Backing a government from the other side of politics takes more convincing.
   if (!isLikelyPartner(ctx.partner, ctx.player)) base += 0.08 * (1 - 0.5 * ctx.pressure);
+  if (ctx.ease) base -= ctx.ease * EASE_THRESHOLD_STEP;
   return arrangement === 'confidence-supply' ? base - 0.12 : arrangement === 'abstain' ? base - 0.25 : base;
 }
 

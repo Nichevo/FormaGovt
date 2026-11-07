@@ -1,3 +1,4 @@
+import { ResultSummary } from './ResultSummary';
 import { useEffect, useState } from 'react';
 import type { SeatResult } from '../engine/seats';
 import { Disclaimer, DisclaimerFooter } from './Disclaimer';
@@ -65,13 +66,14 @@ export function App() {
               if (location.hash.startsWith('#play')) history.replaceState(null, '', location.pathname);
             }}
             onRematch={() => {
-              const { scenarioId, variance, seed, playerId, days, rules, challenges, turnout } = setup;
-              setChallenge({ scenarioId, variance, seed, playerId, days, rules, challenges, turnout });
+              const { scenarioId, variance, seed, playerId, days, rules, challenges, turnout, ease } = setup;
+              setChallenge({ scenarioId, variance, seed, playerId, days, rules, challenges, turnout, ease });
               setSetup(null);
             }}
           />
         ) : (
           <>
+            <ResultSummary />
             <WhatsNew />
             <SetupScreen key={JSON.stringify(challenge)} initial={challenge} onStart={setSetup} onReplay={setChallenge} />
           </>

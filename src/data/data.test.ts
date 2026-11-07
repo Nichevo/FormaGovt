@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PARTIES, PARTY_BY_ID } from './parties';
-import { SCENARIOS, averagePolls, POLLS } from './scenarios';
+import { SCENARIOS, averagePolls, POLLS, CURRENT_RESULT_ID } from './scenarios';
 import { allocateSeats } from '../engine/seats';
 
 describe('party data', () => {
@@ -56,5 +56,35 @@ describe('scenarios', () => {
     expect(result.totalSeats).toBeGreaterThanOrEqual(120);
     const seated = result.parties.reduce((s, p) => s + p.total, 0) + result.otherElectorates;
     expect(seated).toBe(result.totalSeats);
+  });
+});
+
+describe('2026 election night result', () => {
+  const night = SCENARIOS.find((s) => s.id === 'result-2026-night')!;
+  const result = allocateSeats(night);
+  const seats = Object.fromEntries(result.parties.map((p) => [p.partyId, p.total]));
+
+  it('is offered first until the official result is in', () => {
+    expect(SCENARIOS[0]!.id).toMatch(/^result-2026-/);
+    expect(CURRENT_RESULT_ID).toBe(SCENARIOS[0]!.id);
+  });
+
+  it('reproduces the reported election-night Parliament', () => {
+    // As reported at 90.6% counted: a 129-seat House, 65 for a majority,
+    // National 41 electorates on an entitlement of 36, Te Pāti Māori 5 on 1.
+    expect(result.totalSeats).toBe(129);
+    expect(result.majority).toBe(65);
+    const nat = result.parties.find((p) => p.partyId === 'national')!;
+    expect([nat.entitlement, nat.total]).toEqual([36, 41]);
+    const tpm = result.parties.find((p) => p.partyId === 'tpm')!;
+    expect([tpm.entitlement, tpm.total]).toEqual([1, 5]);
+    expect(seats.national! + seats.act! + seats.nzfirst!).toBe(66);
+    expect(seats.labour! + seats.greens! + seats.tpm!).toBe(56);
+    expect(seats.opportunity).toBe(7);
+  });
+
+  it('counts 71 electorates', () => {
+    const won = Object.values(night.electorates).reduce((s, n) => s + n, 0) + night.otherElectorates;
+    expect(won).toBe(71);
   });
 });
