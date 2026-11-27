@@ -26,6 +26,7 @@ export interface SimSetup {
   days?: number;
   rules?: RulesVersion;
   leadershipChallenges?: boolean;
+  ease?: number;
 }
 
 export interface BalanceResult {

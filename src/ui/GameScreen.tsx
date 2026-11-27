@@ -1,3 +1,4 @@
+import { EASE_LABELS, MAX_EASE } from '../engine/ease';
 import { useEffect, useMemo, useState } from 'react';
 import { PARTIES, PARTY_BY_ID } from '../data/parties';
 import { ISSUE_LABELS, type Party, type Policy } from '../data/schema';
@@ -130,6 +131,7 @@ export function GameScreen({
       days: setup.days,
       rules: setup.rules,
       leadershipChallenges: setup.challenges,
+      ease: setup.ease,
     }),
   );
   const [hintUsed, setHintUsed] = useState(false);
@@ -223,6 +225,7 @@ export function GameScreen({
             {' '}
             · playing as {player.name} · {RULES_LABELS[rulesOf(game).version].label.replace(/ \(.*\)$/, '')} rules
             {game.leadershipChallenges ? ', leadership challenges on' : ''}
+            {game.ease ? `, ease ${game.ease} of ${MAX_EASE} (${EASE_LABELS[game.ease]})` : ''}
           </span>
         </div>
         {game.caucus?.unrestSince !== undefined && (
@@ -1186,6 +1189,7 @@ function Results({
       challenges: setup.challenges,
       turnout: setup.turnout,
       hintUsed,
+      ease: setup.ease,
     });
     const partiesWon = records.filter((r) => r.outcome === 'won').map((r) => r.playerId);
     setFresh(unlock(earnedBy({ game, scenarioId: setup.scenarioId, daily: setup.daily, partiesWon })));
@@ -1255,6 +1259,7 @@ function Results({
         Scenario: {setup.scenarioLabel}
         {setup.daily ? " (today's challenge)" : ''}. {RULES_LABELS[rulesOf(game).version].label.replace(/ \(.*\)$/, '')} rules
         {game.leadershipChallenges ? ', leadership challenges on' : ''}
+        {game.ease ? `, ease ${game.ease} of ${MAX_EASE} (${EASE_LABELS[game.ease]})` : ''}
         {hintUsed ? ". Negotiator's hint used" : ''}.
       </p>
       {fresh.length > 0 && (
@@ -1362,6 +1367,7 @@ function Results({
               lostToRival: game.lostTo === 'rival',
               lostToCaucus: game.lostTo === 'caucus',
               hintUsed,
+              ease: game.ease,
               partners: summary.partners,
               seats: seatsSecured(game),
               majority: game.majority,

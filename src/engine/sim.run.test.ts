@@ -9,7 +9,7 @@ import type { RulesVersion } from './rules';
 /** The full balance report. Slow, so it only runs with `npm run sim`. */
 describe.runIf(process.env.SIM)('balance report', () => {
   const r = allocateSeats(SCENARIOS.find((s) => s.id === (process.env.SIM_SCENARIO ?? 'poll-average'))!);
-  const base = { seats: Object.fromEntries(r.parties.map((p) => [p.partyId, p.total])), majority: r.majority, totalSeats: r.totalSeats };
+  const base = { seats: Object.fromEntries(r.parties.map((p) => [p.partyId, p.total])), majority: r.majority, totalSeats: r.totalSeats, ease: Number(process.env.SIM_EASE ?? 0) };
   const seeds = Array.from({ length: Number(process.env.SIM_SEEDS ?? 10) }, (_, i) => i + 1);
   const pct = (n: number, d: number) => `${Math.round((100 * n) / d)}%`;
   const runs: [string, RulesVersion, boolean, BotStrategy[]][] = [

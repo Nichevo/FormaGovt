@@ -32,10 +32,10 @@ export function HistoryPanel({ onReplay }: { onReplay: (c: Challenge) => void })
                   <span className="muted small">
                     {' '}
                     · {r.scenarioLabel}
-                    {r.daily ? ' (daily)' : ''} · v{r.rules ?? '1.1'} rules · {new Date(r.at).toLocaleDateString()}
+                    {r.daily ? ' (daily)' : ''} · v{r.rules ?? '1.1'} rules{r.ease ? ` · ease ${r.ease}` : ''} · {new Date(r.at).toLocaleDateString()}
                   </span>
                 </span>
-                <button type="button" onClick={() => onReplay({ ...r, days: r.days ?? 10, rules: r.rules ?? '1.1', challenges: !!r.challenges, turnout: r.turnout ?? null, daily: false })}>
+                <button type="button" onClick={() => onReplay({ ...r, days: r.days ?? 10, rules: r.rules ?? '1.1', challenges: !!r.challenges, turnout: r.turnout ?? null, ease: r.ease ?? 0, daily: false })}>
                   Replay
                 </button>
               </li>

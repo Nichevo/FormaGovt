@@ -71,7 +71,7 @@
     {
       "partyId": "opportunity",
       "trust": 10,
-      "ruledOutBias": 0
+      "ruledOutBias": 0.8
     }
   ],
   "people": [

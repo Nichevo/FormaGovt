@@ -13,8 +13,16 @@ describe('challenge links', () => {
       rules: '1.2' as const,
       challenges: true,
       turnout: null,
+      ease: 0,
     };
     expect(parseChallenge(challengeHash(c))).toEqual(c);
+  });
+
+  it('carries the Ease setting and the special votes variance', () => {
+    const c = { scenarioId: 'result-2026-night', variance: 'special-votes' as const, seed: 7, days: 21, rules: '1.2' as const, challenges: false, turnout: null, ease: 3 };
+    expect(challengeHash(c)).toContain('e=3');
+    expect(parseChallenge(challengeHash(c))).toMatchObject({ variance: 'special-votes', ease: 3 });
+    expect(parseChallenge('#play?s=poll-average&v=off&seed=1&e=9')!.ease).toBe(4);
   });
 
   it('carries "Who votes?" changes in the link', () => {

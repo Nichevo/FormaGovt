@@ -1,4 +1,9 @@
 import type { Party } from '../data/schema';
+import { CURRENT_RESULT_ID } from '../data/scenarios';
+
+/** The daily challenge plays the real 2026 result, nudged a little like a poll error. */
+export const DAILY_SCENARIO_ID = CURRENT_RESULT_ID;
+export const DAILY_VARIANCE = 'poll-error' as const;
 
 /** Today's date in New Zealand as YYYYMMDD, so everyone gets the same daily game. */
 export function nzDateKey(now: Date = new Date()): number {
@@ -13,7 +18,7 @@ export function nzDateKey(now: Date = new Date()): number {
 }
 
 /**
- * The daily challenge: the poll average with election-night swings, seeded by
+ * The daily challenge: the real 2026 result with small poll-error swings, seeded by
  * the date, and a party that rotates each day (skipping any left without seats).
  */
 export function dailyChallenge(
@@ -27,8 +32,8 @@ export function dailyChallenge(
   for (let i = 0; i < parties.length; i++) {
     const party = parties[(days + i) % parties.length]!;
     if ((seats[party.id] ?? 0) > 0) {
-      return { scenarioId: 'poll-average', variance: 'election-night' as const, seed, playerId: party.id };
+      return { scenarioId: DAILY_SCENARIO_ID, variance: DAILY_VARIANCE, seed, playerId: party.id };
     }
   }
-  return { scenarioId: 'poll-average', variance: 'election-night' as const, seed, playerId: parties[0]!.id };
+  return { scenarioId: DAILY_SCENARIO_ID, variance: DAILY_VARIANCE, seed, playerId: parties[0]!.id };
 }
