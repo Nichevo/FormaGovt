@@ -45,7 +45,7 @@
   "relationships": [
     {
       "partyId": "national",
-      "trust": 30,
+      "trust": 40,
       "ruledOutBias": 0
     },
     {

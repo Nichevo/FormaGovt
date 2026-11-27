@@ -35,6 +35,7 @@ export function ResultSummary() {
           </li>
         ))}
       </ul>
+      {stage.summaryNote && <p>{stage.summaryNote}</p>}
       {!official && (
         <p className="muted small">
           About one vote in five is still to be counted. Special votes are due in the official result on 27 November 2026
@@ -45,7 +46,7 @@ export function ResultSummary() {
       <p className="muted small">
         Source:{' '}
         <a href={stage.sourceUrl} target="_blank" rel="noreferrer">
-          {official ? 'Electoral Commission' : 'count as reported on election night'}
+          {official ? 'official result as reported on 27 November' : 'count as reported on election night'}
         </a>
         {' · '}
         <a href={stage.officialUrl} target="_blank" rel="noreferrer">
