@@ -152,17 +152,25 @@ export function groupsUnder(t: TurnoutSettings): GroupChange[] {
 
 const clamp = (v: number) => Math.min(100, Math.max(0, v));
 
+/** Votes for each party from each group under the settings, in GROUPS order. */
+export function votesByGroup(partyVote: Record<string, number>, t: TurnoutSettings): { group: Group; votes: Record<string, number> }[] {
+  const split = splitVote(partyVote);
+  const changes = groupsUnder(t);
+  return split.map((gv, i) => {
+    const extra = changes[i]!.voters - gv.voters;
+    const newShares = extra > 0 ? sharesForNew(gv.shares, partyVote, t.newVoters) : gv.shares;
+    const votes = Object.fromEntries(
+      Object.keys(partyVote).map((p) => [p, Math.max(0, gv.voters * gv.shares[p]! + extra * newShares[p]!)]),
+    );
+    return { group: gv.group, votes };
+  });
+}
+
 /** The scenario's party vote with the turnout changes applied, as percentages. */
 export function applyTurnout<T extends SeatInput>(input: T, t: TurnoutSettings | undefined): T {
   if (!t || isDefaultTurnout(t)) return input;
-  const split = splitVote(input.partyVote);
-  const changes = groupsUnder(t);
   const votes: Record<string, number> = Object.fromEntries(Object.keys(input.partyVote).map((p) => [p, 0]));
-  split.forEach((gv, i) => {
-    const extra = changes[i]!.voters - gv.voters;
-    const newShares = extra > 0 ? sharesForNew(gv.shares, input.partyVote, t.newVoters) : gv.shares;
-    for (const p of Object.keys(votes)) votes[p] = votes[p]! + gv.voters * gv.shares[p]! + extra * newShares[p]!;
-  });
+  for (const g of votesByGroup(input.partyVote, t)) for (const p of Object.keys(votes)) votes[p] = votes[p]! + g.votes[p]!;
   const total = Object.values(votes).reduce((s, v) => s + v, 0);
   return { ...input, partyVote: Object.fromEntries(Object.entries(votes).map(([p, v]) => [p, (Math.max(0, v) / total) * 100])) };
 }
