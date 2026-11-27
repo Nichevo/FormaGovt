@@ -26,3 +26,11 @@ describe('bot player', () => {
     }
   });
 });
+
+describe('bot on the official 2026 result', () => {
+  it('uses an abstention deal when full deals stall, so not every party rates hard', () => {
+    // SCENARIOS[0] is the official result: blocs tied 65-65 with Opportunity's 7 deciding.
+    const ratings = rateDifficulty(PARTIES, { ...setup, rules: '1.2' });
+    expect(Object.values(ratings).some((r) => r !== 'hard')).toBe(true);
+  }, 60_000);
+});

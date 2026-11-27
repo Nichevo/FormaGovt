@@ -5,12 +5,13 @@ import {
   makeOffer,
   pendingPress,
   reopenDeal,
+  rulesOf,
   summarise,
   waitDay,
   type GameState,
 } from './game';
 import type { RulesVersion } from './rules';
-import { canCompromise, compatibility, eligiblePortfolios, MAX_SOFT_COMMITMENTS, reactionTo, type Offer } from './negotiation';
+import { ABSTAIN_POLICY_LIMIT, canCompromise, compatibility, eligiblePortfolios, MAX_SOFT_COMMITMENTS, reactionTo, type Offer } from './negotiation';
 
 /**
  * closest and seats are the normal players used to rate difficulty. The others test
@@ -30,6 +31,17 @@ export interface BotRun {
  * and everything it can live with, asks for its own policies they can accept,
  * and follows counter-offers. Used to rate how hard each party is to play.
  */
+/** Offers before the bot falls back to asking a party only to abstain on confidence. */
+const ABSTAIN_AFTER_TRIES = 3;
+
+/** An abstention deal: the party's two weightiest policies, bottom lines first, and nothing else. */
+function abstainDraft(partner: Party, player: Party): Offer {
+  const picks = [...partner.policies]
+    .sort((a, b) => Number(b.isBottomLine) - Number(a.isBottomLine) || b.weight - a.weight || reactionTo(player, b) - reactionTo(player, a))
+    .slice(0, ABSTAIN_POLICY_LIMIT);
+  return { partnerId: partner.id, partnerPolicyIds: picks.map((p) => p.id), playerPolicyIds: [], portfolios: [], arrangement: 'abstain' };
+}
+
 export function playBot(
   player: Party,
   parties: Party[],
@@ -122,15 +134,21 @@ export function playBot(
         continue;
       }
     }
-    // Open parties first, then try to win back the rival's partners a couple of times each.
+    // Open parties first, then try to win back the rival's partners a couple of times each
+    // (a third time with an abstention deal, under rules that allow one).
+    const abstainOk = !giveaway && rulesOf(g).abstention;
     const id =
       order.find((x) => g.partners[x]!.status === 'open') ??
-      order.find((x) => (g.partners[x]!.status === 'rival' || g.partners[x]!.status === 'rival-signing') && (tries[x] ?? 0) < 2);
+      order.find((x) => (g.partners[x]!.status === 'rival' || g.partners[x]!.status === 'rival-signing') && (tries[x] ?? 0) < (abstainOk ? 3 : 2));
     if (!id) {
       g = waitDay(g, parties);
       continue;
     }
     tries[id] = (tries[id] ?? 0) + 1;
+    // A party that keeps saying no to a full deal: ask it only to abstain, as a person would.
+    if (abstainOk && (tries[id] ?? 0) >= ABSTAIN_AFTER_TRIES && drafts[id]!.arrangement !== 'abstain') {
+      drafts[id] = abstainDraft(byId.get(id)!, player);
+    }
     const draft = drafts[id]!;
     respectPartners(draft);
     g = makeOffer(g, parties, draft);
