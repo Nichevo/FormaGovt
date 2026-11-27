@@ -64,10 +64,6 @@ describe('2026 election night result', () => {
   const result = allocateSeats(night);
   const seats = Object.fromEntries(result.parties.map((p) => [p.partyId, p.total]));
 
-  it('is offered first until the official result is in', () => {
-    expect(SCENARIOS[0]!.id).toMatch(/^result-2026-/);
-    expect(CURRENT_RESULT_ID).toBe(SCENARIOS[0]!.id);
-  });
 
   it('reproduces the reported election-night Parliament', () => {
     // As reported at 90.6% counted: a 129-seat House, 65 for a majority,
@@ -86,5 +82,30 @@ describe('2026 election night result', () => {
   it('counts 71 electorates', () => {
     const won = Object.values(night.electorates).reduce((s, n) => s + n, 0) + night.otherElectorates;
     expect(won).toBe(71);
+  });
+});
+
+describe('2026 official result', () => {
+  const official = SCENARIOS.find((s) => s.id === 'result-2026-official')!;
+  const result = allocateSeats(official);
+  const seats = Object.fromEntries(result.parties.map((p) => [p.partyId, p.total]));
+
+  it('is the default scenario and the current result', () => {
+    expect(SCENARIOS[0]!.id).toBe('result-2026-official');
+    expect(CURRENT_RESULT_ID).toBe('result-2026-official');
+    expect(SCENARIOS[1]!.id).toBe('result-2026-night');
+  });
+
+  it('reproduces the declared Parliament', () => {
+    // Declared 27 November 2026: 130 seats, 66 for a majority, 10 overhang (National 6, Te Pāti Māori 4).
+    expect(result.totalSeats).toBe(130);
+    expect(result.majority).toBe(66);
+    expect(seats).toEqual({ labour: 36, national: 40, greens: 17, act: 13, nzfirst: 12, opportunity: 7, tpm: 5 });
+    const over = Object.fromEntries(result.parties.filter((p) => p.overhang > 0).map((p) => [p.partyId, p.overhang]));
+    expect(over).toEqual({ national: 6, tpm: 4 });
+  });
+
+  it('counts 71 electorates', () => {
+    expect(Object.values(official.electorates).reduce((s, n) => s + n, 0)).toBe(71);
   });
 });

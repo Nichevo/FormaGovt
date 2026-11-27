@@ -1,5 +1,5 @@
 {
-  "note": "Real 2026 election results. Election night is the Electoral Commission's preliminary count as reported by the media (the Commission's own site could not be read when this was entered). Official is filled in after the Commission declares the final result, including special votes, due 27 November 2026.",
+  "note": "Real 2026 election results. Election night is the preliminary count as reported by the media on the night. Official is the Electoral Commission's final result, including special votes, declared 27 November 2026.",
   "electionNight": {
     "available": true,
     "asOf": "2026-11-07",
@@ -50,19 +50,35 @@
         "holdProbability": 0.6
       }
     ],
-    "marginalNote": "Seats with leads of a few hundred votes on election night. Hold chances are a game estimate: special votes have usually moved results slightly to the left."
+    "marginalNote": "Seats with leads of a few hundred votes on election night. Hold chances are a game estimate: special votes have usually moved results slightly to the left.",
+    "summaryNote": ""
   },
   "official": {
-    "available": false,
-    "asOf": "",
-    "counted": "",
-    "sourceUrl": "https://electionresults.govt.nz/ge2026/index.html",
+    "available": true,
+    "asOf": "2026-11-27",
+    "counted": "all votes counted, including 484,865 special votes",
+    "sourceUrl": "https://www.1news.co.nz/2026/11/27/the-special-votes-are-in-whats-changed-since-election-night/",
     "officialUrl": "https://electionresults.govt.nz/ge2026/index.html",
-    "sourceNotes": "",
-    "partyVote": {},
-    "electorates": {},
+    "sourceNotes": "Official result declared by the Electoral Commission on 27 November 2026, as reported by 1News, The Spinoff and the Electoral Commission notice reproduced by whatsoninvers.nz. Party votes: Labour 863,238, National 819,012, Green 406,356, ACT 304,521, NZ First 277,565, Opportunity 175,093, Te Pāti Māori 18,310 of 2,888,890. Electorates: National 40, Labour 22, Green 3 (Auckland Central, Wellington Bays, Wellington North), ACT 1 (Epsom), Te Pāti Māori 5. Changed from election night: Hamilton East and Wairarapa to Labour, Wellington Bays to the Greens. Judicial recount applications close 2 December 2026.",
+    "partyVote": {
+      "labour": 29.88,
+      "national": 28.35,
+      "greens": 14.06,
+      "act": 10.54,
+      "nzfirst": 9.6,
+      "opportunity": 6.06,
+      "tpm": 0.63
+    },
+    "electorates": {
+      "national": 40,
+      "labour": 22,
+      "greens": 3,
+      "act": 1,
+      "tpm": 5
+    },
     "otherElectorates": 0,
     "marginalElectorates": [],
-    "marginalNote": ""
+    "marginalNote": "",
+    "summaryNote": "Since election night, special votes moved Hamilton East and Wairarapa from National to Labour and Wellington Bays from Labour to the Greens: National is down to 40 seats and the Greens up to 17. National, ACT and NZ First have 65, one short of a majority, so neither side can govern without Opportunity. Recount applications close on 2 December."
   }
 }

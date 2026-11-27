@@ -53,6 +53,8 @@ export interface ResultStage {
   counted: string;
   sourceUrl: string;
   officialUrl: string;
+  /** What changed or matters, shown in the summary at the top of the setup screen. */
+  summaryNote?: string;
   partyVote: Record<string, number>;
   electorates: Record<string, number>;
   otherElectorates: number;

@@ -70,8 +70,8 @@
     },
     {
       "partyId": "opportunity",
-      "trust": 25,
-      "ruledOutBias": 0.7
+      "trust": 35,
+      "ruledOutBias": 0.3
     }
   ],
   "people": [
